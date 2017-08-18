@@ -54,19 +54,21 @@ else if(isset($openexplorer)){
   	Файл
   	<div id="filemenu<?echo $appid;?>" style="display:none; position:absolute; z-index:9000; background:#fff; width:auto;">
   <ul id="mmenu<?echo $appid;?>">
-    <li><div>Открыть файл</div></li>
-  	<li><div>Создать проект</div></li>
-    <li><div>Создать файл</div></li>
-  	<li><div>Сохранить</div></li>
-  	<li><div>Сохранить как...</div></li>
+    <li><div>Open file</div></li>
+    <li><div>Create file</div></li>
+  	<li><div onclick="savefile<?echo $appid;?>($('#destionation<?echo $appid;?>.value()'))">Save</div></li>
+  	<li><div>Save as..</div></li>
   </ul>
   </div>
   </div>
-  <div id="launchapp" onClick="launch<?echo $appid;?>();" class="ui-button ui-widget ui-corner-all">
-    <span class="ui-icon ui-icon-play">Run</span>
+  <div id="launchapp" onClick="launch<?echo $appid;?>()" class="ui-button ui-widget ui-corner-all">
+    <span class="ui-icon ui-icon-play"></span>Run
   </div>
   <div class="ui-button ui-widget ui-corner-all">
-    <span class="ui-icon ui-icon-stop">Stop</span>
+    <span class="ui-icon ui-icon-stop"></span>Stop
+  </div>
+  <div id="launchapp" onClick="savefile<?echo $appid;?>('<?echo $inputdir;?>')" class="ui-button ui-widget ui-corner-all">
+    <span class="ui-icon ui-icon-disk"></span>Save
   </div>
   <div>
     <input style="background-color:#403f3f; border:1px solid #a5a5a5;  font-size:15px; color:#fff; padding:5px;  width:70%;  margin:10px;" type="text" id="destionation<?echo $appid;?>" value="<?echo $inputdir;?>">
@@ -81,9 +83,9 @@ else if(isset($openexplorer)){
       ?>
     </td>
     <td id="contentget<?echo $appid;?>" style="height:500px; width:97%; display:block;">
-        <div class="hljs" onchange="hlupd<?echo $appid;?>()" contenteditable="true" style="height:100%; display:block; border: 1px solid #3c3c3c;">
+        <div class="hljs" onchange="hlupd<?echo $appid;?>()" contenteditable="true" style="display:block; border: 1px solid #3c3c3c;">
           <code>
-            <div style="white-space:pre-wrap;" id="content<?echo $appid;?>">
+            <div style="white-space:pre-wrap; max-width:800px; min-width:600px; min-height:480px;" id="content<?echo $appid;?>">
           <?
           if($launch=='true'){
               $handle=fopen($filedir.$tempfile,"r+");
@@ -123,6 +125,7 @@ else if(isset($openexplorer)){
 </td>
 </tr>
 </table>
+</div>
 <script>
 function launch<?echo $appid;?>(){
   var str = $("#contentget<?echo $appid;?>").text();
@@ -134,6 +137,22 @@ function launch<?echo $appid;?>(){
 
 function loadfile<?echo $appid;?>(file){
   $("#<?echo $appid;?>").load("<?echo $folder;?>main.php?launch=open&filedir="+file+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+}
+
+function savefile<?echo $appid;?>(destination){
+  var str = $("#contentget<?echo $appid;?>").text();
+  str = str.replace(/<span class="hljs.*">([\s\S]+?)<\/span>/gim, "$i");
+  str = str.replace(/^\s*/,'').replace(/\s*$/,'');
+  $.ajax({
+    type: "POST",
+    url: "<?echo $folder;?>savecontent",
+    data: {
+       content:str,
+       folder:destination
+    }
+  }).done(function(o) {
+//console.log('saved');
+});
 }
 
 $(function(){
@@ -148,6 +167,7 @@ function hlupd<?echo $appid;?>(){
     $('div code').each(function(i, block){
       hljs.highlightBlock(block);
     });
+    $( "#content<?echo $appid;?>" ).resizable({containment:"body",autoHide:true});
   });
 };
 
