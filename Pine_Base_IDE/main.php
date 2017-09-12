@@ -91,7 +91,7 @@ else if(isset($openexplorer)){
     <td id="contentget<?echo $appid;?>" style="height:500px; width:97%; display:block;">
         <div class="hljs" onchange="hlupd<?echo $appid;?>()" contenteditable="true" style="display:block; border: 1px solid #3c3c3c;">
           <code>
-            <div style="white-space:pre-wrap; max-width:800px; min-width:600px; min-height:480px;" id="content<?echo $appid;?>">
+            <div style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $appid;?>">
           <?
           if($launch=='true'){
               $handle=fopen($filedir.$tempfile,"r+");
