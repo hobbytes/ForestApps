@@ -2,7 +2,9 @@
 <div id="<?echo $appname.$appid;?>" style="background-color:#ebebeb; height:600px; width:700px; color:#000; max-height:95%; max-width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
 <div style="width: 100%; font-size: 30px; background: #466991; box-shadow: 250px 0 0 #466991; color:#fff; padding:10px;">VK</div>
 <?php
-/*Twitter Reader*/
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 //Инициализируем переменные
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];

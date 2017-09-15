@@ -3,7 +3,9 @@
 <?php
 /*Console*/
 //Подключаем библиотеки
-
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 //Инициализируем переменные
 $click=$_GET['mobile'];
 $appdownload=$_GET['appdownload'];

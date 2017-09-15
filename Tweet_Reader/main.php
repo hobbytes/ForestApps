@@ -3,6 +3,9 @@
 <?php
 /*Twitter Reader*/
 //Инициализируем переменные
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 $tweetuser=$_GET['tweetuser'];

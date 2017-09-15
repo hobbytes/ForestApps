@@ -3,19 +3,15 @@
 <?php
 /*Test*/
 //Подключаем библиотеки
-include '../../core/library/filesystem.php';
-include '../../core/library/bd.php';
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 //Инициализируем переменные
-$fo = new filecalc;
-$faction = new fileaction;
-$dir = $_GET['dir'];
-$del = $_GET['del'];
 $click=$_GET['mobile'];
 //Запускаем сессию
 session_start();
 //обрабатываем кновку удаления
 $appid=$_GET['appid'];
-$version='0.1';
 //Логика
 $file=file_get_contents('https://dagomysweather.ru/source/scripts/temperature/main.php');
 echo $file;

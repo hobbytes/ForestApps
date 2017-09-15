@@ -1,9 +1,10 @@
 <?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#1b1b1b; height:500px; color:#f2f2f2; width:800px; border-radius:0px 0px 5px 5px; overflow:hidden;">
 <?php
-/*Console*/
 //Подключаем библиотеки
-
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 //Инициализируем переменные
 $click=$_GET['mobile'];
 $appdownload=$_GET['appdownload'];

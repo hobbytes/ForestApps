@@ -9,6 +9,11 @@ $appid  = $_GET['appid'];
 include 'assets/libs/phpFileTree/php_file_tree.php';
 include '../../core/library/permissions.php';
 include '../../core/library/gui.php';
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$object = new gui;
+$newpermission = new PermissionRequest;
+$security->appprepare();
 //Инициализируем переменные
 $click  = $_GET['mobile'];
 $launch = $_GET['launch'];
@@ -16,8 +21,6 @@ $folder = $_GET['destination'];
 $filedir  = $_GET['filedir'];
 $openexplorer  = $_GET['pbloader'];
 $savecon  = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['content']);
-$object = new gui;
-$newpermission = new PermissionRequest;
 /*****Ассоциируем файлы*****/
 $newpermission->fileassociate(array('foc','js','css','ini','fth','link'), $folder.'main.php', 'pbloader', $appname);
 //Запускаем сессию

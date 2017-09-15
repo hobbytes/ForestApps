@@ -6,7 +6,9 @@ $appid=$_GET['appid'];
 <div id="<?echo $appname.$appid;?>" style="background-color:#2f2f2f; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*--------Подключаем библиотеки--------*/
-
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 /*
 Инициализируем переменные
 $click - переменная используется для определения действия (клик или прикосновение)

@@ -1,4 +1,7 @@
 <?
+include '../../core/library/etc/security.php';
+$security	=	new security;
+$security->appprepare();
 session_start();
 if(isset($_SESSION['loginuser'])){
   $content = $_POST['content'];
