@@ -84,7 +84,6 @@ backgroundfontcolor='$backgroundfontcolor'\n
 .rgba-picker {
   width: 165px;
   margin: 20px auto;
-  height: 95px;
 }
 .rgba-picker .sliders {
   width: 80px;
@@ -352,6 +351,7 @@ backgroundfontcolor='$backgroundfontcolor'\n
   <div class="color-preview">
     <div class="color"></div>
   </div>
+  <input class="rgbinput<?echo $appid?>" style="text-align:center;" type="text" value="" oninput="setRgba('input')" onchange="setRgba('input')" />
 </div>
 </div>
 <script>
@@ -373,6 +373,7 @@ backgroundfontcolor='$backgroundfontcolor'\n
    if(!_alpha){
      _alpha='1';
    }
+   $('.rgbinput<?echo $appid?>').val(obj_color);
    $('.red-slider').children('input').val(parseInt(channel[0]));
    $('.green-slider').children('input').val(parseInt(channel[1]));
    $('.blue-slider').children('input').val(parseInt(channel[2]));
@@ -382,15 +383,19 @@ backgroundfontcolor='$backgroundfontcolor'\n
    //console.log($('.green-slider').children('input').val() + "|" + channel[1]);
   }
 
-function setRgba () {
-  //var obj = '.'+window.objectaction;
-  var red = document.querySelector('.rgba-picker .red-slider input').value;
-  var green = document.querySelector('.rgba-picker .green-slider input').value;
-  var blue = document.querySelector('.rgba-picker .blue-slider input').value;
-  var alpha = document.querySelector('.rgba-picker .silver-slider input').value / 100;
-  var color = "rgba(" + red + "," + green + "," + blue + "," + alpha + ")";
+function setRgba (mode) {
+  var color = '';
+  if(mode == 'input'){
+    color = $('.rgbinput<?echo $appid?>').val();
+  }else{
+    var red = document.querySelector('.rgba-picker .red-slider input').value;
+    var green = document.querySelector('.rgba-picker .green-slider input').value;
+    var blue = document.querySelector('.rgba-picker .blue-slider input').value;
+    var alpha = document.querySelector('.rgba-picker .silver-slider input').value / 100;
+    color = "rgba(" + red + "," + green + "," + blue + "," + alpha + ")";
+  }
   document.querySelector(".rgba-picker .color-preview .color").style.backgroundColor = color;
-
+  $('.rgbinput<?echo $appid?>').val(color);
   if(obj!=''){
       //$(".backgroundtheme").css('background', back_);
       $("#aboutmenu").css('display','none');
