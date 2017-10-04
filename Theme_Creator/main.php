@@ -359,6 +359,7 @@ backgroundfontcolor='$backgroundfontcolor'\n
   var obj = '';
   var type  = '';
   var selector  = '';
+  var back_ = $(".backgroundtheme").css('background');
  function theme_button<?echo $appid?>(object){
    var _obj = object.id;
    obj  = $("#"+_obj).attr('object');
@@ -391,6 +392,7 @@ function setRgba () {
   document.querySelector(".rgba-picker .color-preview .color").style.backgroundColor = color;
 
   if(obj!=''){
+      //$(".backgroundtheme").css('background', back_);
       $("#aboutmenu").css('display','none');
       $("."+obj).css(type,color);
       if(obj=='dragwindow' && type == 'background-color'){
@@ -400,6 +402,10 @@ function setRgba () {
       }
       if(obj=='menutheme'){
         $("#aboutmenu").css('display','block');
+      }
+      if(obj=='backgroundtheme'){
+        $(".backgroundtheme").css('background','');
+        $(".backgroundtheme").css('background-color',color);
       }
   }
 }
@@ -419,7 +425,7 @@ function theme_save<?echo $appid?>(status){
     var backgroundcolor = $('.backgroundtheme').css('background-color');
     var backgroundfontcolor = $('.linktheme').css('color');
 
-    $("#<?echo $appid;?>").load("<?echo $folder?>themecreator.php?name="+escape(themename)+"&status="+status+"&menubackcolor="+escape(menubackcolor)+"&menufontcolor="+escape(menufontcolor)+"&topbarbackcolor="+escape(topbarbackcolor)+"&topbarfontcolor="+escape(topbarfontcolor)+"&draggablebackcolor="+escape(draggablebackcolor)+"&draggablefontcolor="+escape(draggablefontcolor)+"&backgroundcolor="+escape(backgroundcolor)+"&backgroundfontcolor="+escape(backgroundfontcolor)+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>");
+    $("#<?echo $appid;?>").load("<?echo $folder?>main.php?name="+escape(themename)+"&status="+status+"&menubackcolor="+escape(menubackcolor)+"&menufontcolor="+escape(menufontcolor)+"&topbarbackcolor="+escape(topbarbackcolor)+"&topbarfontcolor="+escape(topbarfontcolor)+"&draggablebackcolor="+escape(draggablebackcolor)+"&draggablefontcolor="+escape(draggablefontcolor)+"&backgroundcolor="+escape(backgroundcolor)+"&backgroundfontcolor="+escape(backgroundfontcolor)+"&id=<?echo rand(0,10000).'&appname='.$appname.'&destination='.$folder.'&appid='.$appid;?>");
   }else{
     $('.<?echo $appid?>themename').focus();
   }
