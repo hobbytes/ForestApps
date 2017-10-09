@@ -7,6 +7,8 @@ $appid=$_GET['appid'];
 <?php
 /*--------Подключаем библиотеки--------*/
 include '../../core/library/etc/security.php';
+/*--------Запускаем сессию--------*/
+session_start();
 /*--------Проверяем безопасность--------*/
 $security	=	new security;
 $security->appprepare();
@@ -17,8 +19,6 @@ $folder - переменная хранит место запуска прогр
 */
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
-/*--------Запускаем сессию--------*/
-session_start();
 /*--------Логика--------*/
 ?>
 </div>
