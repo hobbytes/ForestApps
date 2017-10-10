@@ -33,10 +33,14 @@ if(!empty($from_user) && !empty($send_message)){
     file_put_contents($chat_file,$new_chat_file);
 }
 
-$contacts_file = 'contacts.foc';
+$contacts_file = $doc_dir.'/'.$chat_dir.'/contacts.foc';
+if (!is_file($contacts_file)){
+  file_put_contents($contacts_file,"[$to_user]");
+}
 $get_contacts = file_get_contents($contacts_file);
  if(!eregi($from_user.'=',$get_contacts)){
-   file_put_contents($contacts_file,"[contacts]\r\n".$from_user.'=');
+   $get_contacts = str_replace("[$to_user]","[$to_user]\r\n".$from_user.'=',$get_contacts);
+   file_put_contents($contacts_file,$get_contacts);
  }
 
 echo 'true';
