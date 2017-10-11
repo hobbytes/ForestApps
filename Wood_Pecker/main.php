@@ -42,12 +42,13 @@ elseif (!is_dir($doc_dir.'/'.$chat_dir)) {
 $send_message = $_GET['send_message'];
 if(!empty($to_user) && !empty($send_message)){
   $date =  date('d_m_y');
-  $time = date('h_i_s');
+  $time = date('H_i_s');
   $json = file_get_contents('http://forest.hobbytes.com/media/os/ubase/getuser.php?login='.$to_user);
-  $user_info = json_decode($json ,TRUE);
-  $status = file_get_contents('http://'.$user_info['followlink'].'/system/apps/Wood_Pecker/receiver.php?to_user='.$to_user.'&from_user='.$_SESSION['loginuser'].'&send_message='.$send_message.'&d='.$date.'&t='.$time);
+  $user_info = json_decode($json, TRUE);
+  include '../../core/library/etc/http.php';
+  $new_request = new http;
+  $status = $new_request->makeNewRequest('http://'.$user_info['followlink'].'/system/apps/Wood_Pecker/receiver','Wood Pecker Chat',$data = array('to_user' => $to_user, 'from_user' => $_SESSION['loginuser'], 'send_message' => $send_message, 'd' => $date, 't' => $time));
   if($status==true){
-  $send_message = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$send_message);
     if (!is_file($chat_file)){
       file_put_contents($chat_file,"[$wp_sel_user]");
     }
@@ -84,6 +85,8 @@ $get_contacts = file_get_contents($contacts_file);
 
 $history_file = parse_ini_file($chat_file,TRUE);
 $contacts_file = parse_ini_file($doc_dir.'/'.$chat_dir.'/contacts.foc',TRUE);
+
+$chat_file_mod = md5(date("d.m.y, H:i:s.",filemtime($chat_file)));
 
 /*
 Инициализируем переменные
@@ -136,14 +139,14 @@ $folder=$_GET['destination'];
           echo '<div class="msgbubble" style="float:left; text-align:left;">
           <div style="font-size: 12px; color:#878787; padding:0 10px;"><b style="font-variant:all-small-caps; font-size:15px;">'.$wp_sel_user.'</b> '.$date.', '.$time.'</div>
           <div style="width:100%; color:#fff; background:#94c2ed; padding:10px; border-radius:10px;">
-          '.preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$history_file[$wp_sel_user][$key]).'
+          '.$history_file[$wp_sel_user][$key].'
           </div>
           </div>';
         }else{
         echo '<div class="msgbubble" style="float:right; text-align:right;">
         <div style="font-size: 12px; color:#878787; padding:0 10px;"><b style="font-variant:all-small-caps; font-size:15px;">you</b> '.$date.', '.$time.'</div>
         <div style="width:100%; color:#fff; background:#8bc34a; padding:10px; border-radius:10px;">
-        '.preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$history_file[$wp_sel_user][$key]).'
+        '.$history_file[$wp_sel_user][$key].'
         </div>
         </div>';
         }
@@ -166,7 +169,7 @@ $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?e
 $("#wp_<?echo $wp_sel_user?>").css('background','#8a4231');
 function wp_send<?echo $appid;?>(value){
   if(value){
-    $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?to_user="+value+"&sender=own&send_message="+escape($("#sendinput<?echo $appid?>").text())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
+    $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?to_user="+value+"&sender=own&send_message="+$("#sendinput<?echo $appid?>").text()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
   }
 };
 
@@ -177,6 +180,32 @@ function wp_add<?echo $appid;?>(){
   }
 };
 
+function wp_checker<?echo $appid;?>(){
+  $.ajax({
+    type: "POST",
+    url: "<?echo $folder;?>checker",
+    data: {
+       sel_user:"<?echo $wp_sel_user?>",
+       chat_file_mod:"<?echo $chat_file_mod?>"
+    },
+    success: function(data){
+      status = data.replace(/^\s*/,'').replace(/\s*$/,'');
+      if (status == 'y'){
+        clearInterval(timerId);
+        wp_load<?echo $appid;?>('wp_sel_user','<?echo $wp_sel_user?>');
+      }
+    }
+  }).done(function(o) {
+});
+}
+
+var timerId = setInterval(function(){
+  if($("#<?echo $appname.$appid;?>").length){
+    wp_checker<?echo $appid;?>();
+}else{
+  clearInterval(timerId);
+}
+},5000);
 </script>
 <?
 unset($appid);//Очищаем переменную $appid

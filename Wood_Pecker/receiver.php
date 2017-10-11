@@ -1,12 +1,11 @@
 <?
 include '../../core/library/bd.php';
 $wp_bd = new readbd;
-
-$send_message = $_GET['send_message'];
-$date = $_GET['d'];
-$time = $_GET['t'];
-$from_user = $_GET['from_user'];
-$to_user = $_GET['to_user'];
+$send_message = $_POST['send_message'];
+$date = $_POST['d'];
+$time = $_POST['t'];
+$from_user = $_POST['from_user'];
+$to_user = $_POST['to_user'];
 
 $wp_bd->readglobal2("password","forestusers","login",$to_user);
 $wp_pass = $getdata;
@@ -22,7 +21,6 @@ elseif (!is_dir($doc_dir.'/'.$chat_dir)) {
 }
 
 if(!empty($from_user) && !empty($send_message)){
-    $send_message = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$send_message);
     if (!is_file($chat_file)){
       file_put_contents($chat_file,"[$from_user]");
     }
@@ -30,7 +28,9 @@ if(!empty($from_user) && !empty($send_message)){
     $send_message = '"'.$send_message.'"';
     $send_message = 'msg_d_'.$date.'_t_'.$time.'='.$send_message;
     $new_chat_file = str_replace("[$from_user]","[$from_user]\r\n$send_message",$get_chat);
-    file_put_contents($chat_file,$new_chat_file);
+    if(file_put_contents($chat_file,$new_chat_file)){
+      echo 'true';
+    }
 }
 
 $contacts_file = $doc_dir.'/'.$chat_dir.'/contacts.foc';
@@ -43,6 +43,5 @@ $get_contacts = file_get_contents($contacts_file);
    file_put_contents($contacts_file,$get_contacts);
  }
 
-echo 'true';
 
 ?>
