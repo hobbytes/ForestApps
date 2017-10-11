@@ -1,11 +1,11 @@
 <?
 include '../../core/library/bd.php';
 $wp_bd = new readbd;
-$send_message = $_POST['send_message'];
+$send_message = $_POST['sm'];
 $date = $_POST['d'];
 $time = $_POST['t'];
-$from_user = $_POST['from_user'];
-$to_user = $_POST['to_user'];
+$from_user = $_POST['fu'];
+$to_user = $_POST['tu'];
 
 $wp_bd->readglobal2("password","forestusers","login",$to_user);
 $wp_pass = $getdata;

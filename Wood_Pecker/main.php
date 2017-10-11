@@ -47,7 +47,7 @@ if(!empty($to_user) && !empty($send_message)){
   $user_info = json_decode($json, TRUE);
   include '../../core/library/etc/http.php';
   $new_request = new http;
-  $status = $new_request->makeNewRequest('http://'.$user_info['followlink'].'/system/apps/Wood_Pecker/receiver','Wood Pecker Chat',$data = array('to_user' => $to_user, 'from_user' => $_SESSION['loginuser'], 'send_message' => $send_message, 'd' => $date, 't' => $time));
+  $status = $new_request->makeNewRequest('http://'.$user_info['followlink'].'/system/apps/Wood_Pecker/receiver','Wood Pecker Chat',$data = array('tu' => $to_user, 'fu' => $_SESSION['loginuser'], 'sm' => $send_message, 'd' => $date, 't' => $time));
   if($status==true){
     if (!is_file($chat_file)){
       file_put_contents($chat_file,"[$wp_sel_user]");
@@ -169,7 +169,22 @@ $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?e
 $("#wp_<?echo $wp_sel_user?>").css('background','#8a4231');
 function wp_send<?echo $appid;?>(value){
   if(value){
-    $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?to_user="+value+"&sender=own&send_message="+$("#sendinput<?echo $appid?>").text()+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
+    $.ajax({
+      type: "POST",
+      url: "<?echo $folder;?>sender",
+      data: {
+         sm:$("#sendinput<?echo $appid?>").text(),
+         tu:value,
+         o:'own'
+      },
+      success: function(data){
+        status_send = data.replace(/^\s*/,'').replace(/\s*$/,'');
+        if (status_send == 'true'){
+          $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?to_user="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
+        }
+      }
+    }).done(function(o) {
+  });
   }
 };
 
@@ -205,7 +220,7 @@ var timerId = setInterval(function(){
 }else{
   clearInterval(timerId);
 }
-},5000);
+},8000);
 </script>
 <?
 unset($appid);//Очищаем переменную $appid
