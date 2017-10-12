@@ -184,7 +184,7 @@ $folder=$_GET['destination'];
 <script>
 /*--------Логика JS--------*/
 function wp_load<?echo $appid;?>(key,value){
-  clearInterval(timerId);
+  clearInterval(timerId<?echo $appid;?>);
   $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
 };
 
@@ -246,7 +246,7 @@ function wp_newmessage(message_content,type,owner){
 function wp_add<?echo $appid;?>(){
   var new_c = $("#wp_newcontact<?echo $appid;?>").val();
   if(new_c){
-    clearInterval(timerId);
+    clearInterval(timerId<?echo $appid;?>);
     $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?new_contact="+new_c+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
   }
 };
@@ -265,7 +265,7 @@ function wp_checker<?echo $appid;?>(){
       success: function(data){
         status = data.replace(/^\s*/,'').replace(/\s*$/,'');
         if (status == 'y'){
-          clearInterval(timerId);
+          clearInterval(timerId<?echo $appid;?>);
           wp_load<?echo $appid;?>('wp_sel_user','<?echo $wp_sel_user?>');
         }
       }
@@ -274,11 +274,11 @@ function wp_checker<?echo $appid;?>(){
   }
 }
 
-var timerId = setInterval(function(){
+var timerId<?echo $appid;?> = setInterval(function(){
   if($("#<?echo $appname.$appid;?>").length){
     wp_checker<?echo $appid;?>();
 }else{
-  clearInterval(timerId);
+  clearInterval(timerId<?echo $appid;?>);
 }
 },8000);
 </script>
