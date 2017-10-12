@@ -143,7 +143,7 @@ $folder=$_GET['destination'];
     <div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">add</div>
   </div>
   <div id="messagebox<?echo $appid?>" style="min-height:400px; background: #ececec; width:70%; height:100%; float:right;">
-    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc;"><?echo 'Chat with: <b>'.$wp_sel_user.'</b>';?></div>
+    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;"><?echo 'Chat with: <b>'.$wp_sel_user.'</b><span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'()">clear</span>';?></div>
     <div id="messages<?echo $appid?>" style="min-height:300px; word-break: break-word; padding:5px; height:70%; overflow:auto; overflow-x:hidden;">
       <?
       foreach ($history_file[$wp_sel_user] as $key => $value){
@@ -210,9 +210,27 @@ function wp_send<?echo $appid;?>(value){
           $("#sendinput<?echo $appid?>").html('');
         }
       }
-    }).done(function(o) {
-  });
+    });
   }
+};
+
+function wp_clear<?echo $appid;?>(value){
+  var wp_su = "<?echo $wp_sel_user?>";
+    $.ajax({
+      type: "POST",
+      url: "<?echo $folder;?>clear",
+      data: {
+         cf:"<?echo $chat_file?>",
+         su:wp_su
+      },
+      success: function(data){
+        status_clear = data.replace(/^\s*/,'').replace(/\s*$/,'');
+        if (status_clear == 'true'){
+          $("#messages<?echo $appid?>").html('');
+          $("#wp_"+wp_su+"").remove();
+        }
+      }
+    });
 };
 
 function wp_newmessage(message_content,type,owner){
@@ -234,22 +252,26 @@ function wp_add<?echo $appid;?>(){
 };
 
 function wp_checker<?echo $appid;?>(){
-  $.ajax({
-    type: "POST",
-    url: "<?echo $folder;?>checker",
-    data: {
-       sel_user:"<?echo $wp_sel_user?>",
-       chat_file_mod:"<?echo $chat_file_mod?>"
-    },
-    success: function(data){
-      status = data.replace(/^\s*/,'').replace(/\s*$/,'');
-      if (status == 'y'){
-        clearInterval(timerId);
-        wp_load<?echo $appid;?>('wp_sel_user','<?echo $wp_sel_user?>');
+  var wp_user = "<?echo $wp_sel_user?>";
+  var wp_cfm = "<?echo $chat_file_mod?>";
+  if(wp_user!=''){
+    $.ajax({
+      type: "POST",
+      url: "<?echo $folder;?>checker",
+      data: {
+         su:wp_user,
+         cfm:wp_cfm
+      },
+      success: function(data){
+        status = data.replace(/^\s*/,'').replace(/\s*$/,'');
+        if (status == 'y'){
+          clearInterval(timerId);
+          wp_load<?echo $appid;?>('wp_sel_user','<?echo $wp_sel_user?>');
+        }
       }
-    }
-  }).done(function(o) {
-});
+    }).done(function(o) {
+  });
+  }
 }
 
 var timerId = setInterval(function(){

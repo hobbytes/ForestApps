@@ -2,8 +2,8 @@
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
 session_start();
-$wp_sel_user = $_POST['sel_user'];
-$chat_file_mod = $_POST['chat_file_mod'];
+$wp_sel_user = $_POST['su'];
+$chat_file_mod = $_POST['cfm'];
 if(!empty($wp_sel_user) && !empty($chat_file_mod)){
   include '../../core/library/bd.php';
   $wp_bd = new readbd;
