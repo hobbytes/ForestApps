@@ -1,0 +1,9 @@
+[Wood_Pecker]
+send_button = Отправить
+add_button = Добавить
+add_label = Добавить пользователя
+clear_button = Очистить диалог
+own_label = Вы
+chat_label = 'Чат с пользователем'
+user_error = 'Пользователь не был найден'
+message_error = 'Сообщение не доставлено'

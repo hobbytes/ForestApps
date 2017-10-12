@@ -17,8 +17,8 @@ session_start();
 $security	=	new security;
 $security->appprepare();
 /*--------Загружаем файл локализации--------*/
-$wp_lang  = parse_ini_file('app.lang');
 $cl = $_SESSION['locale'];
+$wp_lang  = parse_ini_file('lang/'.$cl.'.lang');
 /*-load chat-*/
 $to_user = $_GET['to_user'];
 if(isset($to_user)){
@@ -56,7 +56,7 @@ $get_contacts = file_get_contents($contacts_file);
    file_put_contents($contacts_file,$get_contacts);
  }
  elseif(!empty($new_contact) && $check_user == 'false'){
-   $wp_gui->errorLayot('user not found: <b>'.$new_contact.'</b>');
+   $wp_gui->errorLayot($wp_lang['user_error'].': <b>'.$new_contact.'</b>');
  }
 
 $history_file = parse_ini_file($chat_file,TRUE);
@@ -64,11 +64,6 @@ $contacts_file = parse_ini_file($doc_dir.'/'.$chat_dir.'/contacts.foc',TRUE);
 
 $chat_file_mod = md5(date("d.m.y, H:i:s.",filemtime($chat_file)));
 
-/*
-Инициализируем переменные
-$click - переменная используется для определения действия (клик или прикосновение)
-$folder - переменная хранит место запуска программы
-*/
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
 /*--------Логика--------*/
@@ -139,11 +134,11 @@ $folder=$_GET['destination'];
       echo '<div id="wp_'.$key.'" onclick="wp_load'.$appid.'('."'wp_sel_user'".',this.id)" class="wp_contacts ui-forest">'.$key.'</div>';
     }
     ?>
-    <input id="wp_newcontact<?echo $appid?>" style="margin:10px; width:90%; padding:10px; background:#ececec; border:none;" type="text" />
-    <div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">add</div>
+    <input id="wp_newcontact<?echo $appid?>" style="margin:10px; width:90%; padding:10px; background:#ececec; border:none;" type="text" placeholder="<? echo $wp_lang['add_label'];?>"/>
+    <div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;"><? echo $wp_lang['add_button'];?></div>
   </div>
   <div id="messagebox<?echo $appid?>" style="min-height:400px; background: #ececec; width:70%; height:100%; float:right;">
-    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;"><?echo 'Chat with: <b>'.$wp_sel_user.'</b><span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'()">clear</span>';?></div>
+    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;"><?echo $wp_lang['chat_label'].': <b>'.$wp_sel_user.'</b><span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'()">'.$wp_lang['clear_button'].'</span>';?></div>
     <div id="messages<?echo $appid?>" style="min-height:300px; word-break: break-word; padding:5px; height:70%; overflow:auto; overflow-x:hidden;">
       <?
       foreach ($history_file[$wp_sel_user] as $key => $value){
@@ -164,7 +159,7 @@ $folder=$_GET['destination'];
         echo '
         <div class="wp_msgbubble wp_msgbubble_own">
           <div class="wp_message_info">
-            <b>you</b> '.$date.', '.$time.'
+            <b>'.$wp_lang['own_label'].'</b> '.$date.', '.$time.'
           </div>
           <div class="wp_msg_bubble wp_msg_bubble_own">
             '.$history_file[$wp_sel_user][$key].'
@@ -176,7 +171,7 @@ $folder=$_GET['destination'];
     </div>
   <div id="sendbox<?echo $appid?>" style="min-height:100px; height:30%; border-top:1px solid #bbb; background: #e0e0e0;">
     <div id="sendinput<?echo $appid?>" style="-webkit-user-modify: read-write; width:85%; height:50px; overflow:auto; overflow-x:hidden; word-break:break-word; background:#fff; margin:5px auto; padding:10px;"></div>
-    <div id="sendbutton_wp<?echo $appid?>" onclick="wp_send<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-accept ui-forest-center">send</div>
+    <div id="sendbutton_wp<?echo $appid?>" onclick="wp_send<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-accept ui-forest-center"><?echo $wp_lang['send_button']?></div>
 </div>
   </div>
 </div>
@@ -206,7 +201,7 @@ function wp_send<?echo $appid;?>(value){
           wp_newmessage(msg_content,'_own','_own');
           $("#sendinput<?echo $appid?>").html('');
         }else{
-          wp_newmessage('#error: message is not delivered','_error','_own');
+          wp_newmessage('#error: <?echo $wp_lang['message_error'];?>','_error','_own');
           $("#sendinput<?echo $appid?>").html('');
         }
       }

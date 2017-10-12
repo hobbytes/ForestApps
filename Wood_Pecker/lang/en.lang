@@ -1,0 +1,9 @@
+[Wood_Pecker]
+send_button = Submit
+add_button = Add
+add_label = Add user
+clear_button = Clear the dialog
+own_label = you
+chat_label = 'Chat with'
+user_error = 'The user was not found'
+message_error = 'Message not delivered'
