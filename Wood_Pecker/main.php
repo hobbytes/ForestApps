@@ -39,34 +39,6 @@ elseif (!is_dir($doc_dir.'/'.$chat_dir)) {
   mkdir($doc_dir.'/'.$chat_dir);
 }
 
-$send_message = $_GET['send_message'];
-if(!empty($to_user) && !empty($send_message)){
-  $date =  date('d_m_y');
-  $time = date('H_i_s');
-  $json = file_get_contents('http://forest.hobbytes.com/media/os/ubase/getuser.php?login='.$to_user);
-  $user_info = json_decode($json, TRUE);
-  include '../../core/library/etc/http.php';
-  $new_request = new http;
-  $status = $new_request->makeNewRequest('http://'.$user_info['followlink'].'/system/apps/Wood_Pecker/receiver','Wood Pecker Chat',$data = array('tu' => $to_user, 'fu' => $_SESSION['loginuser'], 'sm' => $send_message, 'd' => $date, 't' => $time));
-  if($status==true){
-    if (!is_file($chat_file)){
-      file_put_contents($chat_file,"[$wp_sel_user]");
-    }
-    $owner = $_GET['sender'];
-    if(!empty($owner)){
-      $owner = $owner.'_';
-    }
-
-    $get_chat = file_get_contents($chat_file);
-    $send_message = '"'.$send_message.'"';
-    $send_message = 'msg_'.$owner.'d_'.$date.'_t_'.$time.'='.$send_message;
-    $new_chat_file = str_replace("[$wp_sel_user]","[$wp_sel_user]\r\n$send_message",$get_chat);
-    file_put_contents($chat_file,$new_chat_file);
-}else{
-  $wp_gui->errorLayot("This message is not delivered");
-}
-}
-
 $contacts_file = $doc_dir.'/'.$chat_dir.'/contacts.foc';
 if(!is_file($contacts_file)){
   file_put_contents($contacts_file,'['.$_SESSION['loginuser'].']');
@@ -180,6 +152,7 @@ function wp_send<?echo $appid;?>(value){
       success: function(data){
         status_send = data.replace(/^\s*/,'').replace(/\s*$/,'');
         if (status_send == 'true'){
+          clearInterval(timerId);
           $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?to_user="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
         }
       }
