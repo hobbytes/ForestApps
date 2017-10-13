@@ -138,7 +138,7 @@ $folder=$_GET['destination'];
     <div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;"><? echo $wp_lang['add_button'];?></div>
   </div>
   <div id="messagebox<?echo $appid?>" style="min-height:400px; background: #ececec; width:70%; height:100%; float:right;">
-    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;"><?echo $wp_lang['chat_label'].': <b>'.$wp_sel_user.'</b><span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'()">'.$wp_lang['clear_button'].'</span>';?></div>
+    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;"><?echo $wp_lang['chat_label'].': <b>'.$wp_sel_user.'</b><span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'(false)">'.$wp_lang['clear_button'].'</span>';?></div>
     <div id="messages<?echo $appid?>" style="min-height:300px; word-break: break-word; padding:5px; height:70%; overflow:auto; overflow-x:hidden;">
       <?
       foreach ($history_file[$wp_sel_user] as $key => $value){
@@ -146,13 +146,18 @@ $folder=$_GET['destination'];
         $time = str_replace(array('_d','t_','_'),array('','',':'),stristr(stristr($date,'d_'),'t_'));
         $date = str_replace(array('d_','_','_t'),array('','.',''),stristr(stristr($date,'_t',true),'d_'));
         if(!eregi('own',$key)){
+          if($history_file[$wp_sel_user][$key] == md5('new_request'.$chat_file_name.$wp_sel_user)){
+            $other_message = $wp_lang['message_request'].'<div id="" onclick="wp_clear'.$appid.'(true)"" class="ui-forest-button ui-forest-accept ui-forest-center">'.$wp_lang['add_button'].'</div>';
+          }else{
+            $other_message = $history_file[$wp_sel_user][$key];
+          }
           echo '
           <div class="wp_msgbubble wp_msgbubble_other">
             <div class="wp_message_info">
               <b>'.$wp_sel_user.'</b> '.$date.', '.$time.'
             </div>
             <div class="wp_msg_bubble wp_msg_bubble_other">
-              '.$history_file[$wp_sel_user][$key].'
+              '.$other_message.'
             </div>
           </div>';
         }else{
@@ -184,9 +189,14 @@ function wp_load<?echo $appid;?>(key,value){
 };
 
 $("#wp_<?echo $wp_sel_user?>").css('background','#6a98fd');
-function wp_send<?echo $appid;?>(value){
+function wp_send<?echo $appid;?>(value, n_msg){
   if(value){
-    var msg_content = $("#sendinput<?echo $appid?>").text();
+    var msg_content = '';
+    if(n_msg){
+      msg_content = n_msg;
+    }else{
+      msg_content = $("#sendinput<?echo $appid?>").text();
+    }
     $.ajax({
       type: "POST",
       url: "<?echo $folder;?>sender",
@@ -209,20 +219,25 @@ function wp_send<?echo $appid;?>(value){
   }
 };
 
-function wp_clear<?echo $appid;?>(value){
+function wp_clear<?echo $appid;?>(accept){
   var wp_su = "<?echo $wp_sel_user?>";
     $.ajax({
       type: "POST",
       url: "<?echo $folder;?>clear",
       data: {
          cf:"<?echo $chat_file?>",
-         su:wp_su
+         su:wp_su,
+         a:accept
       },
       success: function(data){
         status_clear = data.replace(/^\s*/,'').replace(/\s*$/,'');
         if (status_clear == 'true'){
           $("#messages<?echo $appid?>").html('');
-          $("#wp_"+wp_su+"").remove();
+          if(accept==false){
+            $("#wp_"+wp_su+"").remove();
+          }else{
+            wp_send<?echo $appid;?>("<?echo $wp_sel_user?>", "<?echo $wp_lang['message_request_accpet']?>");
+          }
         }
       }
     });

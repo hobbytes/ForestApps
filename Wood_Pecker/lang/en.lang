@@ -7,3 +7,5 @@ own_label = you
 chat_label = 'Chat with'
 user_error = 'The user was not found'
 message_error = 'Message not delivered'
+message_request = 'This user wants to exchange messages with you'
+message_request_accpet = 'Now you can send and receive messages'

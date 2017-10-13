@@ -2,13 +2,12 @@
 if (function_exists('date_default_timezone_set'))
 date_default_timezone_set('Europe/Moscow');
 
-include '../../core/library/bd.php';
 include '../../core/library/etc/security.php';
-$wp_bd = new readbd;
 session_start();
 $security	=	new security;
 $security->appprepare();
-
+include '../../core/library/bd.php';
+$wp_bd = new readbd;
 $to_user = $_POST['tu'];
 $wp_sel_user = $to_user;
 $send_message = $_POST['sm'];
