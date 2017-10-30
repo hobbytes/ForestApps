@@ -6,7 +6,7 @@ $appid=$_GET['appid'];
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
 /*--------Подключаем библиотеки--------*/
-include '../../core/library/etc/security.php';
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
 /*--------Запускаем сессию--------*/
 session_start();
 /*--------Проверяем безопасность--------*/

@@ -39,7 +39,7 @@ if($launch  ==  'true'){
 }else{
 }
   ?>
-  <script>makeprocess2('<?echo $folder.$filedir.$tempfile.'&destination='.$folder.'temp/'?>','','');</script>
+  <script>makeprocess('<?echo $folder.$filedir.$tempfile.'&destination='.$folder.'temp/'?>','','','<?echo $tempfile?>');</script>
   <?
   $inputdir = $folder.$filedir.$tempfile;
 }
