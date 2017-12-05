@@ -383,6 +383,7 @@ backgroundfontcolor='$backgroundfontcolor'\n
    //console.log($('.green-slider').children('input').val() + "|" + channel[1]);
   }
 
+var wallLink = $('#background-wall').attr('src');
 function setRgba (mode) {
   var color = '';
   if(mode == 'input'){
@@ -409,8 +410,10 @@ function setRgba (mode) {
         $("#aboutmenu").css('display','block');
       }
       if(obj=='backgroundtheme'){
-        $(".backgroundtheme").css('background','');
+        $('#background-wall').attr('src','data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=');
         $(".backgroundtheme").css('background-color',color);
+      }else{
+        $('#background-wall').attr('src',wallLink);
       }
   }
 }
