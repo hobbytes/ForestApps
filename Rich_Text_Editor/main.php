@@ -32,14 +32,15 @@ session_start();
 /*--------Логика--------*/
 ?>
 <style>
-#editor {
+.editor {
   box-shadow: 0 0 2px #CCC;
   min-height: 150px;
   overflow: auto;
   padding: 1em;
-  margin-top: 20px;
+  margin: 20px 10px;
   resize: vertical;
   outline: none;
+  background: #fff;
 }
 
 .toolbar {
@@ -125,7 +126,7 @@ a.palette-item {
 }
 </style>
 <link href='https://fonts.googleapis.com/css?family=Dosis|Candal' rel='stylesheet' type='text/css'>
-<div style="width:600px;">
+<div>
 <div class="toolbar">
 <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
 <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
@@ -157,8 +158,9 @@ a.palette-item {
 <a href="#" data-command='p'>P</a>
 <a href="#" data-command='subscript'><i class='fa fa-subscript'></i></a>
 <a href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
+<div onClick='save<?echo $appid;?>()' style="width: auto;" class="ui-forest-button ui-forest-accept ui-forest-center"><span>Save</span></div>
 </div>
-<div id='editor' contenteditable>
+<div id='editor<?echo $appid;?>' class="editor" contenteditable>
 <?
 if(isset($rteloader)){
   echo file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader);
@@ -191,6 +193,24 @@ $('.toolbar a').click(function(e) {
   }
   else document.execCommand($(this).data('command'), false, null);
 });
+
+function save<?echo $appid;?>(){
+  var folder = "<? echo $rteloader ?>";
+  if(folder != null){
+    var str = $("#editor<?echo $appid;?>").text();
+    $.ajax({
+      type: "POST",
+      url: "<?echo $folder;?>savecontent",
+      data: {
+         content: str,
+         folder: "<?echo $_SERVER['DOCUMENT_ROOT']?>"+folder
+      }
+    }).done(function(o) {
+  });
+  }
+}
+
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
 <?
 unset($appid);//Очищаем переменную $appid
