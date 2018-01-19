@@ -73,9 +73,73 @@ function add_domain<?echo $appid?>(){
         echo '<div class="s-container"><div class="name-container">'.$name.'</div>'.$data.'</div>';
       }
     }
+
+    //how old
+    $btimestamp = strtotime($json['bdate']);
+    $age = date('Y') - date('Y', $btimestamp);
+    if(date('md', $btimestamp) > date('md')){
+      $age--;
+    }
+
+    //gender
+    $get_sex = $json['sex'];
+    $gender = '';
+    if(!empty($get_sex)){
+      switch($get_sex){
+        case 0:
+            $gender = 'пол не указан';
+            break;
+        case 1:
+            $gender = 'женский';
+            break;
+        case 2:
+            $gender = 'мужской';
+            break;
+      }
+    }
+
+    //relation
+    $get_relation = $json['relation'];
+    $relation = '';
+    if(!empty($get_relation)){
+      switch($get_relation){
+        case 0:
+            $relation = 'не указано';
+            break;
+        case 1:
+            $relation = 'не женат/не замужем';
+            break;
+        case 2:
+            $relation = 'есть друг/есть подруга';
+            break;
+        case 3:
+            $relation = 'помовлен/помовлена';
+            break;
+        case 4:
+            $relation = 'женат/замужем';
+            break;
+        case 5:
+            $relation = 'все сложно';
+            break;
+        case 6:
+            $relation = 'в активном поиске';
+            break;
+        case 7:
+            $relation = 'влюблен/влюблена';
+            break;
+        case 8:
+            $relation = 'в гражданском браке';
+            break;
+      }
+    }
+
     echo '<div style="margin:10px 0;">';
     echo '<img src="'.$json['small_photo'].'" style="padding:10px; border-radius:60px; width:100px; height:100px;" class="ui-forest-blink" onClick="makeprocess(\'system/apps/Image_Viewer/main.php\',\''.$json['large_photo'].'\',\'photoviewload\', \'Image_Viewer\')">';
+    dataContainer('Имя', $json['first_name'].' '.$json['last_name']);
     dataContainer('id', $json['id'].' | '.$json['domain']);
+    dataContainer('Дата рождения', $json['bdate'] . ' ('.$age.')');
+    dataContainer('Пол', $gender);
+    dataContainer('Отношения', $relation);
     dataContainer('Город', $json['country'].', '.$json['home_town']);
     dataContainer('Интересы', $json['interests']);
     echo '</div>';
