@@ -60,6 +60,16 @@ $json = json_decode($get_json,TRUE);
   font-size: 20px;
   font-weight:600;
 }
+
+.a-button{
+  color:#fff;
+  font-size:18px;
+  background-color:#5f86c4;
+  cursor:pointer;
+  padding: 0 10px;
+  border-radius:5px;
+  margin:auto 5px;
+}
 </style>
 <script>
 function add_domain<?echo $appid?>(){
@@ -159,7 +169,7 @@ function add_domain<?echo $appid?>(){
     }
 
     echo '<div style="margin:10px 0;">';
-    echo '<img src="'.$json['small_photo'].'" style="padding:10px; border-radius:60px; width:100px; height:100px;" class="ui-forest-blink" onClick="makeprocess(\'system/apps/Image_Viewer/main.php\',\''.$json['large_photo'].'\',\'photoviewload\', \'Image_Viewer\')">';
+    echo '<img src="'.$json['small_photo'].'" style="padding:10px; border-radius:60px; width:100px; height:100px; object-fit: cover;" class="ui-forest-blink" onClick="makeprocess(\'system/apps/Image_Viewer/main.php\',\''.$json['large_photo'].'\',\'photoviewload\', \'Image_Viewer\')">';
     dataContainer('Имя', $json['first_name'].' '.$json['last_name']);
     dataContainer('id', $json['id'].' | '.$json['domain']);
     dataContainer('Дата рождения', $json['bdate'] . ' ('.$age.')');
@@ -183,7 +193,7 @@ function add_domain<?echo $appid?>(){
     {
       for ($i = 0; $i < count($key); $i++) {
         if(!empty($key[$i]['uid'])){
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span style="color:#fff; font-size:18px; background-color:#5f86c4; cursor:pointer; padding: 0 10px; border-radius:5px; margin:auto 5px;" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
         }
       }
     }
@@ -196,7 +206,7 @@ function add_domain<?echo $appid?>(){
     inBlock('Женщин',  $json['sexCount']['w']);
     inBlock('Неизвестно',  $json['sexCount']['u']);
 
-    echo '<div id="showallfriends'.$appid.'" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
+    echo '<div id="showallfriends'.$appid.'" class="ui-forest-blink" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
     echo '<div id="allfriends'.$appid.'" style="display:none; padding: 7px;">';
     foreach ($json['friends'] as $key)
     {
@@ -207,7 +217,7 @@ function add_domain<?echo $appid?>(){
           }else{
             $online = '';
           }
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span style="color:#fff; font-size:18px; background-color:#5f86c4; cursor:pointer; padding: 0 10px; border-radius:5px; margin:auto 5px;" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
         }
       }
     }
