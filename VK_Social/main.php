@@ -43,6 +43,23 @@ $json = json_decode($get_json,TRUE);
 .name-container{
   color: #8e8e8e;
 }
+.in-container{
+  text-transform: uppercase;
+  display: inline-block;
+  width:  100px;
+  height: 50px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  padding: 15px;
+  font-size:  12px;
+  text-align: center;
+}
+
+.in-value{
+  margin: 10px;
+  font-size: 20px;
+  font-weight:600;
+}
 </style>
 <script>
 function add_domain<?echo $appid?>(){
@@ -72,6 +89,14 @@ function add_domain<?echo $appid?>(){
       if(!empty($data)){
         echo '<div class="s-container"><div class="name-container">'.$name.'</div>'.$data.'</div>';
       }
+    }
+
+    function inBlock($lablel, $value){
+      echo '<div class="in-container">
+      '.$lablel.'
+      <div class="in-value">
+      '.$value.'
+      </div></div>';
     }
 
     //how old
@@ -152,7 +177,7 @@ function add_domain<?echo $appid?>(){
     echo '<div style="margin:10px 0;">';
     dataContainer('Ключевые слова', $json['keywords']);
     echo '</div>';
-    echo '<div class="s-container"><div class="name-container">Возможные родственники</div>';
+    echo '<div style="margin:10px 0;"><div class="s-container"><div class="name-container">Возможные родственники</div>';
     $i=0;
     foreach ($json['family'] as $key)
     {
@@ -162,7 +187,31 @@ function add_domain<?echo $appid?>(){
         }
       }
     }
-    echo '</div>';
+    echo '</div></div>';
+
+    echo '<div style="margin:10px 0;"><div class="s-container"><div class="name-container">Друзья</div>';
+
+    inBlock('Всего друзей',  $json['count']);
+    inBlock('Мужчин',  $json['sexCount']['m']);
+    inBlock('Женщин',  $json['sexCount']['w']);
+    inBlock('Неизвестно',  $json['sexCount']['u']);
+
+    echo '<div id="showallfriends'.$appid.'" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
+    echo '<div id="allfriends'.$appid.'" style="display:none; padding: 7px;">';
+    foreach ($json['friends'] as $key)
+    {
+      for ($i = 0; $i < count($key); $i++) {
+        if(!empty($key[$i]['uid'])){
+          if($key[$i]['online'] == 1){
+            $online = ' <span style="color: #f44336;">[online]</span>';
+          }else{
+            $online = '';
+          }
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span style="color:#fff; font-size:18px; background-color:#5f86c4; cursor:pointer; padding: 0 10px; border-radius:5px; margin:auto 5px;" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+        }
+      }
+    }
+    echo '</div></div></div><br><br>';
   }
 
   ?>
@@ -170,6 +219,15 @@ function add_domain<?echo $appid?>(){
 
 </div>
 <script>
+$("#showallfriends<?echo $appid?>").click(function(){
+  if($("#allfriends<?echo $appid?>").is( ":hidden" )){
+    $("#showallfriends<?echo $appid?>").text('Скрыть всех друзей');
+    $("#allfriends<?echo $appid?>").slideDown("fast");
+  }else{
+    $("#showallfriends<?echo $appid?>").text('Показать всех друзей');
+    $("#allfriends<?echo $appid?>").slideUp("fast");
+}
+});
 UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
 <?
