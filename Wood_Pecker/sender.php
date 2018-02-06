@@ -40,10 +40,12 @@ if(!empty($to_user) && !empty($send_message)){
       $owner = $owner.'_';
     }
     $get_chat = file_get_contents($chat_file);
+    $_send_message = $send_message;
     $send_message = '"'.$send_message.'"';
     $send_message = 'msg_'.$owner.'d_'.$date.'_t_'.$time.'='.$send_message;
     $new_chat_file = str_replace("[$wp_sel_user]","[$wp_sel_user]\r\n$send_message",$get_chat);
     file_put_contents($chat_file,$new_chat_file);
+    $new_request->makeNewRequest('http://'.$user_info['followlink'].'/system/core/functions/NotificationReciever','Wood Pecker Chat',$data = array('login' => $to_user, 'body' => $_send_message, 'appname' => 'Wood Pecker', 'key' => 'to_user', 'value' => $_SESSION['loginuser']));
     echo 'true';
 }else{
   echo 'false';
