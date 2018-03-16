@@ -175,7 +175,10 @@ function add_domain<?echo $appid?>(){
       $relation = str_replace(array("#o","#c"),array("<span class='gray-label'>",'</span>'),$get_relation);
     }
 
-    $fidelity = str_replace(array("#o","#c"),array("<span class='gray-label'>",'</span>'),$json['fidelity']);
+    $fidelity = '';
+    if(!preg_match('/0%/i',$json['fidelity'])){
+      $fidelity = str_replace(array("#o","#c"),array("<span class='gray-label'>",'</span>'),$json['fidelity']);
+    }
 
     echo '<div style="margin:10px 0;">';
     echo '<img src="'.$json['small_photo'].'" style="padding:10px; border-radius:60px; width:100px; height:100px; object-fit: cover;" class="ui-forest-blink" onClick="makeprocess(\'system/apps/Image_Viewer/main.php\',\''.$json['large_photo'].'\',\'photoviewload\', \'Image_Viewer\')">';
