@@ -33,6 +33,7 @@ $get_domain = $_GET['domain'];
 
 $get_json = file_get_contents('http://forest.hobbytes.com/media/os/modules/social.php?token='.$token.'&id='.$get_domain.'&h='.$hash);
 $json = json_decode($get_json,TRUE);
+
 ?>
 <style>
 .s-container{
@@ -192,8 +193,8 @@ function add_domain<?echo $appid?>(){
     foreach ($json['family'] as $key)
     {
       for ($i = 0; $i < count($key); $i++) {
-        if(!empty($key[$i]['uid'])){
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+        if(!empty($key[$i]['id'])){
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
         }
       }
     }
@@ -208,10 +209,11 @@ function add_domain<?echo $appid?>(){
 
     echo '<div id="showallfriends'.$appid.'" class="ui-forest-blink" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
     echo '<div id="allfriends'.$appid.'" style="display:none; padding: 7px;">';
+    
     foreach ($json['friends'] as $key)
     {
       for ($i = 0; $i < count($key); $i++) {
-        if(!empty($key[$i]['uid'])){
+        if(!empty($key[$i]['id'])){
           if($key[$i]['online'] == 1){
             $online = ' <span style="color: #f44336;">[online]</span>';
           }else{
