@@ -64,12 +64,17 @@ $json = json_decode($get_json,TRUE);
 
 .a-button{
   color:#fff;
-  font-size:18px;
+  font-size:12px;
   background-color:#5f86c4;
   cursor:pointer;
-  padding: 0 10px;
+  padding: 4 10px;
   border-radius:5px;
   margin:auto 5px;
+}
+
+.gray-label{
+  color:#8e8e8e;
+  font-size: 12px;
 }
 </style>
 <script>
@@ -85,12 +90,12 @@ function add_domain<?echo $appid?>(){
       $online = 'онлайн';
     }
     echo '<div style="padding:10px; background-color:#5f86c4; color:#fff;">
+    <div style="display:flex; margin:12px 0;">
+    <input id="'.$appid.'domain" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 150px; padding: 5px;" value="'.$get_domain.'" type="text" name="'.$appid.'domain">
+    <div onClick="add_domain'.$appid.'()" class="ui-forest-button ui-forest-accept" style="margin: 0 10px;">Analyze</div>
+    </div>
   '.$json['first_name'].' '.$json['last_name'].'
   <div style="color:#d6d6d6; font-size:13px;">'.$online.'</div>
-  <div style="text-align:right;">
-  <input id="'.$appid.'domain" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 150px; padding: 5px; margin: 0 10;" value="'.$get_domain.'" type="text" name="'.$appid.'domain">
-  <div onClick="add_domain'.$appid.'()" class="ui-forest-button ui-forest-accept" style="float:right;">Analyze</div>
-  </div>
   </div>';
 
   if(!empty($json['error'])){
@@ -136,8 +141,7 @@ function add_domain<?echo $appid?>(){
 
     //relation
     $get_relation = $json['relation'];
-    $relation = '';
-    if(!empty($get_relation)){
+    if(!empty($get_relation) && is_int($get_relation)){
       switch($get_relation){
         case 0:
             $relation = 'не указано';
@@ -167,7 +171,11 @@ function add_domain<?echo $appid?>(){
             $relation = 'в гражданском браке';
             break;
       }
+    }else{
+      $relation = str_replace(array("#o","#c"),array("<span class='gray-label'>",'</span>'),$get_relation);
     }
+
+    $fidelity = str_replace(array("#o","#c"),array("<span class='gray-label'>",'</span>'),$json['fidelity']);
 
     echo '<div style="margin:10px 0;">';
     echo '<img src="'.$json['small_photo'].'" style="padding:10px; border-radius:60px; width:100px; height:100px; object-fit: cover;" class="ui-forest-blink" onClick="makeprocess(\'system/apps/Image_Viewer/main.php\',\''.$json['large_photo'].'\',\'photoviewload\', \'Image_Viewer\')">';
@@ -176,6 +184,7 @@ function add_domain<?echo $appid?>(){
     dataContainer('Дата рождения', $json['bdate'] . ' ('.$age.')');
     dataContainer('Пол', $gender);
     dataContainer('Отношения', $relation);
+    dataContainer('Верность', $fidelity);
     dataContainer('Город', $json['country'].', '.$json['home_town']);
     dataContainer('Интересы', $json['interests']);
     echo '</div>';
@@ -209,7 +218,7 @@ function add_domain<?echo $appid?>(){
 
     echo '<div id="showallfriends'.$appid.'" class="ui-forest-blink" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
     echo '<div id="allfriends'.$appid.'" style="display:none; padding: 7px;">';
-    
+
     foreach ($json['friends'] as $key)
     {
       for ($i = 0; $i < count($key); $i++) {
@@ -219,7 +228,7 @@ function add_domain<?echo $appid?>(){
           }else{
             $online = '';
           }
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['uid'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
         }
       }
     }
