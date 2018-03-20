@@ -2,7 +2,12 @@
 /*--------Получаем App Name и App ID--------*/
 $appname  = $_GET['appname'];
 $appid  = $_GET['appid'];
-$rteloader  = $_GET['rteloader'];
+$rteloader = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
+$mode = '1';
+if(empty($rteloader)){
+  $rteloader  = $_GET['rteloader'];
+  $mode = '0';
+}
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:hidden;">
 <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css'>
@@ -41,6 +46,7 @@ session_start();
   resize: vertical;
   outline: none;
   background: #fff;
+  white-space: pre-wrap;
 }
 
 .toolbar {
@@ -163,7 +169,11 @@ a.palette-item {
 <div id='editor<?echo $appid;?>' class="editor" contenteditable>
 <?
 if(isset($rteloader)){
+  if($mode == '1'){
+  echo htmlentities(file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader));
+}else{
   echo file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader);
+}
 }
 ?>
 </div>
@@ -197,7 +207,18 @@ $('.toolbar a').click(function(e) {
 function save<?echo $appid;?>(){
   var folder = "<? echo $rteloader ?>";
   if(folder != null){
+    <?
+    if($mode == '0'){
+    ?>
+    var str = $("#editor<?echo $appid;?>").html();
+    <?
+  }
+    else{
+    ?>
     var str = $("#editor<?echo $appid;?>").text();
+    <?
+    }
+    ?>
     $.ajax({
       type: "POST",
       url: "<?echo $folder;?>savecontent",
