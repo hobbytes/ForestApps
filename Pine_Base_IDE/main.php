@@ -19,7 +19,11 @@ $click  = $_GET['mobile'];
 $launch = $_GET['launch'];
 $folder = $_GET['destination'];
 $filedir  = $_GET['filedir'];
-$openexplorer  = $_GET['pbloader'];
+
+$openexplorer = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
+if(empty($openexplorer)){
+  $openexplorer  = $_GET['pbloader'];
+}
 $savecon  = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['content']);
 /*****Ассоциируем файлы*****/
 $newpermission->fileassociate(array('foc','js','css','ini','fth','link'), $folder.'main.php', 'pbloader', $appname);
