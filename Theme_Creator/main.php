@@ -3,7 +3,7 @@
 if($_GET['getinfo'] == 'true'){
 	include '../../core/library/etc/appinfo.php';
 	$appinfo = new AppInfo;
-	$appinfo->setInfo('Theme Creator', '1.1', 'Forest Media', 'Theme Creator');
+	$appinfo->setInfo('Theme Creator', '1.2', 'Forest Media', 'Редактор тем');
 }
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];

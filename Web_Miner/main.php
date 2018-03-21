@@ -1,5 +1,10 @@
 <?
 /*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Web Miner', '1.1', 'Forest Media', 'Web Miner');
+}
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>

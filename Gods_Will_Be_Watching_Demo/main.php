@@ -1,6 +1,14 @@
-<?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
+<?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Gods Will Be Watching Demo', '1.0', 'http://impactjs.com', 'Gods Will Be Watching Demo');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#1b1b1b; height:500px; color:#f2f2f2; width:800px; border-radius:0px 0px 5px 5px; overflow:hidden;">
-<?php
+<?
 //Подключаем библиотеки
 include '../../core/library/etc/security.php';
 $security	=	new security;

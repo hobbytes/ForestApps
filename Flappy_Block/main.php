@@ -1,8 +1,15 @@
-<?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
+<?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Flappy Block', '1.0', 'codepen.io', 'Flappy Block');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
 <div id="<?echo $appname.$appid;?>" class="flappyblock" style="background-color:#1b1b1b; height:600px; color:#f2f2f2; width:1000px; border-radius:0px 0px 5px 5px; overflow:hidden;">
 
 <?php
-/*Console*/
 //Подключаем библиотеки
 include '../../core/library/etc/security.php';
 $security	=	new security;

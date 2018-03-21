@@ -1,4 +1,12 @@
-<?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
+<?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Calculator', '1.0', 'codepen.io', 'Калькулятор');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
 <div id="<?echo $appname.$appid;?>" class="minesweeper" style="background-color:#f2f2f2; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden;">
 <?php
 include '../../core/library/etc/security.php';

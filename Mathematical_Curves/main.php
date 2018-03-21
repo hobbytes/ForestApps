@@ -1,10 +1,14 @@
 <?
-/*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Matchematical Curves', '1.0', 'codepen.io', 'Matchematical Curves');
+}
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#2f2f2f; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
-<?php
+<?
 /*--------Подключаем библиотеки--------*/
 include '../../core/library/etc/security.php';
 $security	=	new security;
