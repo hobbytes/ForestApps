@@ -1,5 +1,10 @@
 <?
 /*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('App Name', '1.0', 'Author', 'Second Name');
+}
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>

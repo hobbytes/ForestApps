@@ -2,7 +2,7 @@
 if($_GET['getinfo'] == 'true'){
 	include '../../core/library/etc/appinfo.php';
 	$appinfo = new AppInfo;
-	$appinfo->setInfo('Task Manager', '1.0', 'Forest OS Team', 'Диспетчер задач');
+	$appinfo->setInfo('Task Manager', '1.0', 'Forest Media', 'Диспетчер задач');
 }
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];

@@ -1,4 +1,12 @@
-<?$appname=$_GET['appname'];$appid=$_GET['appid'];?>
+<?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Console', '1.0', 'Forest Media', 'Консоль');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#1b1b1b; height:100%; color:#f2f2f2; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden;">
 <?php
 /*Console*/

@@ -1,4 +1,9 @@
 <?
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Pine Base IDE', '1.5', 'Forest Media', 'Pine Base IDE');
+}
 $appname  = $_GET['appname'];
 $appid  = $_GET['appid'];
 ?>

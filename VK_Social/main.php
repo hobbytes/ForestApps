@@ -1,5 +1,10 @@
 <?
 /*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('VK Social', '1.0', 'Forest Media', 'VK Social');
+}
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>

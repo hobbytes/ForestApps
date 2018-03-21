@@ -1,5 +1,10 @@
 <?
 /*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Rich Text Editor', '1.2', 'codepen.io', 'Rich Text Editor');
+}
 $appname  = $_GET['appname'];
 $appid  = $_GET['appid'];
 $rteloader = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);

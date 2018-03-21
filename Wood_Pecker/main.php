@@ -1,5 +1,10 @@
 <?
 /*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Wood Pecker', '1.4', 'Forest Media', 'Wood Pecker');
+}
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>

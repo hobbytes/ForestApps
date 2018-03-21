@@ -1,5 +1,10 @@
 <?
 /*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Theme Creator', '1.1', 'Forest Media', 'Theme Creator');
+}
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 session_start();
