@@ -8,7 +8,7 @@ if($_GET['getinfo'] == 'true'){
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
-<div id="<?echo $appname.$appid;?>" style="background: url('https://picsum.photos/900/700/?blur&h=<?echo md5(date('dmyh'))?>') 100% 100% / cover no-repeat fixed; background-color:#f2f2f2; height:100%; width:100%; border-radius:0px 0px 5px 5px;">
+<div id="<?echo $appname.$appid;?>" style="background: url('https://picsum.photos/900/700/?&h=<?echo md5(date('dmyh'))?>') 100% 100% / cover no-repeat fixed; background-color:#f2f2f2; height:100%; width:100%; border-radius:0px 0px 5px 5px;">
 <?php
 /*--------Подключаем библиотеки--------*/
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
@@ -47,7 +47,7 @@ $name = $array->name;
 $icon = 'http://openweathermap.org/img/w/'.$array->weather[0]->icon.'.png';
 echo '<div style="font-size:20px; color:#fff; padding:10px 0px; background-color:rgba(0,0,0,0.65); width:100%; height:100%; text-align:center;">';
 echo $name.', '.date('d.m.y');
-echo '<div style="font-size:70px; font-weight:600; text-shadow:1px 0px 5px #000;">'.$temp.'<sup>o</sup>C</div>';
+echo '<div style="font-size:70px; font-weight:600; padding: 0 47px; text-shadow:1px 0px 5px #000;">'.$temp.'<sup>o</sup>C</div>';
 echo '<div>Сейчас '.$description.'<img style="vertical-align:middle;" src="'.$icon.'"/></div>';
 echo '<div>Давление: '.round($pressure).' мм. рт.ст.</div>';
 echo '<div>Влажность: '.$humidity.'%</div>';
