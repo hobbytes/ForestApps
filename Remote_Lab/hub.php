@@ -13,6 +13,7 @@ if(!empty($array) && !empty($timestamp)){
   foreach ($array as $value => $key){
   $content.="$value='$key'\n";
   }
-  file_put_contents('hub.foc',$content);
+  $_content = file_get_contents('hub.foc');
+  file_put_contents('hub.foc',"$_content\n$content");
 }
 ?>

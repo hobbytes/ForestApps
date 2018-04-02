@@ -93,11 +93,12 @@ if(!empty($_GET['addunit'])){ //	check new unit
 	$token = md5($unitName.date('dmyhis'));// generate token
 	$token = $security->__encode($token, $key);
 	$TwinUnitError = '';// error flag for new unit block
-	$NewUnitFolder = $unitFolder.'/'.str_replace(' ','_',$unitName);
+	$NewUnitFolder = $unitFolder.'/'.md5($unitName.date('dmyhis'));
 	if(!is_dir($NewUnitFolder)){
 		mkdir($NewUnitFolder);// make folder
 		$FileContent = "[main]\nname=".$_GET['addunit']."\ntoken='$token'\n";// config.foc content
 		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
+		copy('hub.php', $NewUnitFolder.'/hub.php');
 	}else{
 		$TwinUnitError = 'true';
 	}
