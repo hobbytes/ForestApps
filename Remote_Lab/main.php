@@ -1,0 +1,145 @@
+<?
+/*--------Получаем App Name и App ID--------*/
+if($_GET['getinfo'] == 'true'){
+	include '../../core/library/etc/appinfo.php';
+	$appinfo = new AppInfo;
+	$appinfo->setInfo('Remote Lab', '1.0', 'Forest Media', 'Remote Lab');
+}
+$appname=$_GET['appname'];
+$appid=$_GET['appid'];
+?>
+<div id="<?echo $appname.$appid;?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden;">
+<style>
+.lab-unit{
+	width:128px;
+	text-align: center;
+	background: #fff;
+	margin: 20px 10px;
+	padding: 20px;
+	color:#8a8a8a;
+	cursor: default;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+	border-radius: 2px;
+	user-select: none;
+	border-bottom: 3px solid #fff;
+	float: left;
+}
+
+.lab-unit:hover{
+	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+	border-bottom: 3px solid #009688;
+}
+
+.lab-unit-babel{
+	font-size: 17px;
+	font-variant-caps:all-small-caps;
+	padding-bottom: 10px;
+}
+
+.lab-unit-button{
+	padding: 7px;
+	margin-top: 5px;
+	background: #009688;
+	color:	#fff;
+	cursor: pointer;
+}
+
+.lab-unit-button:hover{
+	background: #02b1a1;
+}
+
+.lab-unit input{
+	border:2px solid #009688;
+	width:128px;
+	font-size: 16px;
+	padding: 6px;
+	color:#009688;
+	border-radius:3px;
+}
+</style>
+<?php
+/*--------Подключаем библиотеки--------*/
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
+/*--------Запускаем сессию--------*/
+session_start();
+/*--------Проверяем безопасность--------*/
+$security	=	new security;
+$security->appprepare();
+
+$bd = new readbd;
+$bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
+
+$key = $getdata;//get key
+
+$click	=	$_GET['mobile'];
+$folder	=	$_GET['destination'];
+/*--------App Logic--------*/
+$dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/Remote_Lab/';
+$unitFolder = $dir.'/Units';//	units folder
+if(!is_dir($dir)){ // check folder
+	mkdir($dir);
+}
+?>
+<div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
+	Remote Lab
+</div>
+<?
+if(!empty($_GET['addunit'])){ //	check new unit
+	$unitName = $_GET['addunit'];// Unit Name
+	if(!is_dir($unitFolder)){ // check folder
+		mkdir($unitFolder);
+	}
+	$token = md5($unitName.date('dmyhis'));// generate token
+	$token = $security->__encode($token, $key);
+	$TwinUnitError = '';// error flag for new unit block
+	$NewUnitFolder = $unitFolder.'/'.str_replace(' ','_',$unitName);
+	if(!is_dir($NewUnitFolder)){
+		mkdir($NewUnitFolder);// make folder
+		$FileContent = "[main]\nname=".$_GET['addunit']."\ntoken='$token'\n";// config.foc content
+		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
+	}else{
+		$TwinUnitError = 'true';
+	}
+}
+?>
+<div class="lab-unit">
+	<div class="lab-unit-babel">
+		New Unit
+	</div>
+	<input id="newunit<?echo $appid;?>" type="text" placeholder="Unit Name">
+	<div class="lab-unit-button" onclick="addunit<?echo $appid;?>()">
+		Create
+	</div>
+	<?
+	if($TwinUnitError == 'true'){
+		echo '<div style="margin-top:10px; color:#f44336; font-size:14px;">Unit already exists!</div>';
+	}
+	?>
+</div>
+<?
+foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/Remote_Lab/Units/*/config.foc') as $filenames)
+{
+	$config = parse_ini_file($filenames); //get config
+	$name = $config['name']; //get name
+	$token = $security->__decode($config['token'], $key); //get token
+	echo '
+	<div class="lab-unit">
+		<div class="lab-unit-babel">
+			'.$name.'
+		</div>
+		<div style="font-size:8px;">
+			'.$token.'
+		</div>
+	</div>
+	';
+}
+?>
+</div>
+<script>
+/*--------Логика JS--------*/
+function addunit<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid;?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+</script>
+<?
+unset($appid);
+?>
