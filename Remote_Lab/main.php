@@ -8,7 +8,7 @@ if($_GET['getinfo'] == 'true'){
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden;">
+<div id="<?echo $appname.$appid;?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
 <style>
 .lab-unit{
 	width:128px;
@@ -23,6 +23,7 @@ $appid=$_GET['appid'];
 	user-select: none;
 	border-bottom: 3px solid #fff;
 	float: left;
+	overflow: hidden;
 }
 
 .lab-unit:hover{
@@ -56,6 +57,20 @@ $appid=$_GET['appid'];
 	color:#009688;
 	border-radius:3px;
 }
+
+.lab-unit-tag{
+	background: linear-gradient(#4dc6fd, #2196F3);
+	color: #fff;
+	width: max-content;
+	padding: 5px;
+	border-radius: 5px;
+	margin: 5px;
+}
+.ct-label.ct-horizontal{
+	position: relative;
+	transform: rotate(-45deg);
+	transform-origin: left top;
+}
 </style>
 <?php
 /*--------Подключаем библиотеки--------*/
@@ -81,6 +96,8 @@ if(!is_dir($dir)){ // check folder
 	mkdir($dir);
 }
 ?>
+<link rel="stylesheet" href="<?echo $folder?>assets/chartist/chartist.min.css">
+<script src="<?echo $folder?>assets/chartist/chartist.min.js"></script>
 <div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
 	Remote Lab
 </div>
@@ -90,19 +107,92 @@ if(!empty($_GET['addunit'])){ //	check new unit
 	if(!is_dir($unitFolder)){ // check folder
 		mkdir($unitFolder);
 	}
+
 	$token = md5($unitName.date('dmyhis'));// generate token
 	$token = $security->__encode($token, $key);
 	$TwinUnitError = '';// error flag for new unit block
 	$NewUnitFolder = $unitFolder.'/'.md5($unitName.date('dmyhis'));
 	if(!is_dir($NewUnitFolder)){
 		mkdir($NewUnitFolder);// make folder
-		$FileContent = "[main]\nname=".$_GET['addunit']."\ntoken='$token'\n";// config.foc content
+		$FileContent = "[main]\nname=".$_GET['addunit']."\ntoken='$token'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
 		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
-		copy('hub.php', $NewUnitFolder.'/hub.php');
 	}else{
 		$TwinUnitError = 'true';
 	}
 }
+if(!empty($_GET['selectunit'])){ //	check new unit
+	$unitName = $_GET['selectunit'];// Unit Name
+	$hubFile = $unitFolder.'/'.$unitName.'/hub.foc';
+	$configFile = $unitFolder.'/'.$unitName.'/config.foc';
+	$hub = parse_ini_file($hubFile,true);
+	$config = parse_ini_file($configFile);
+	$input_array = explode(',',$config['labels']);
+	$labels = '';
+	$series = '';
+	$count = 0;
+	foreach ($hub as $value => $key){
+		$count++;
+		$ts = gmdate("d-m-y",$key['timestamp']);
+		$temp = $key['temperature'];
+		//$series = $series.','.$temp;
+		$labels = $labels.','."'$ts'";
+		foreach ($key as $_value => $_key){
+			if($_value!='timestamp'){
+				$series = $series.','.$_key;;
+			}
+		}
+	}
+
+	//echo $series;
+	echo '
+	<div class="lab-unit resizeunit" style="width:auto;">
+		<div class="lab-unit-babel">
+			Statistics
+		</div>
+		<div style="background:#f9f9f9; padding:10px;">
+			<div style="text-align:left;">Data received: <span class="lab-unit-tag">'.$count.'</span></div><br>
+			Intput data:<div style="display:inline-table;">
+			';
+			foreach ($input_array as $data){
+				echo '<div class="lab-unit-tag">'.$data.'</div>';
+			}
+			echo '
+			</div>
+		</div>
+	</div>
+
+	<div class="lab-unit resizeunit" style="width:auto;">
+		<div class="lab-unit-babel">
+			Charts
+		</div>
+		<div class="ct-chart ct-golden-section" style="width:400px;">
+		</div>
+	</div>
+
+	<div class="lab-unit resizeunit" style="width:auto;">
+		<div class="lab-unit-babel">
+			RAW Data
+		</div>
+		<div style="white-space:pre-wrap; text-align:left; overflow:hidden; overflow-y:auto; padding:10px; border:2px solid #00bcd4; background:#f9f9f9; #color:#3a3a3a; height:200px;" contenteditable="true">
+		'.file_get_contents($hubFile).'
+		</div>
+	</div>
+	';
+	?>
+	<script>
+		var data = {
+			labels:[<?echo ltrim($labels,',')?>],
+			series: [
+				[<?echo  ltrim($series,',')?>]
+			]
+		};
+		var options ={
+		};
+		new Chartist.Line('.ct-chart',data,options);
+	</script>
+	<?
+}else{
+
 ?>
 <div class="lab-unit">
 	<div class="lab-unit-babel">
@@ -125,7 +215,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 	$name = $config['name']; //get name
 	$token = $security->__decode($config['token'], $key); //get token
 	echo '
-	<div class="lab-unit">
+	<div class="lab-unit" id="'.$token.'" onclick="selectunit'.$appid.'(this)">
 		<div class="lab-unit-babel">
 			'.$name.'
 		</div>
@@ -135,11 +225,15 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 	</div>
 	';
 }
+}
 ?>
 </div>
 <script>
 /*--------Логика JS--------*/
 function addunit<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid;?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+function selectunit<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?selectunit="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+$(".resizeunit").resizable();
+
 </script>
 <?
 unset($appid);
