@@ -146,9 +146,11 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$series_ = '';
 	$b = array();
 	$c = array();
+	$t='';
 	foreach ($input_array as $keys) {
 	$c = array($keys => array_column($a,"$keys"));
 	array_push($b,$c);
+	$t.= "'$keys',";
 }
 
 foreach($b as $test){
@@ -216,7 +218,7 @@ $series = str_replace(array(",]","]["),array("]","],["),$series_);
 			},
 			plugins:[
 				Chartist.plugins.legend({
-					legendNames:['test','test2'],
+					legendNames:[<?echo ltrim($t,',')?>],
 				})
 			]
 		};
