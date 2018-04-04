@@ -98,7 +98,7 @@ if(!is_dir($dir)){ // check folder
 	mkdir($dir);
 }
 ?>
-<link rel="stylesheet" href="<?echo $folder?>assets/chartist/chartist.min.css">
+<link rel="stylesheet" href="<?echo $folder?>assets/chartist/chartist.min.css?h=test">
 <script src="<?echo $folder?>assets/chartist/chartist.min.js"></script>
 <script src="<?echo $folder?>assets/chartist/legend.js"></script>
 <div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
@@ -210,6 +210,10 @@ $series = str_replace(array(",]","]["),array("]","],["),$series_);
 			]
 		};
 		var options ={
+			fullWidth: true,
+			chartPadding:{
+				right: 40
+			},
 			plugins:[
 				Chartist.plugins.legend({
 					legendNames:['test','test2'],
