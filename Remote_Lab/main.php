@@ -24,6 +24,7 @@ $appid=$_GET['appid'];
 	border-bottom: 3px solid #fff;
 	float: left;
 	overflow: hidden;
+	min-width: min-content;
 }
 
 .lab-unit:hover{
@@ -66,11 +67,12 @@ $appid=$_GET['appid'];
 	border-radius: 5px;
 	margin: 5px;
 }
-.ct-label.ct-horizontal{
+/*.ct-label.ct-horizontal{
 	position: relative;
 	transform: rotate(-45deg);
 	transform-origin: left top;
 }
+*/
 </style>
 <?php
 /*--------Подключаем библиотеки--------*/
@@ -98,6 +100,7 @@ if(!is_dir($dir)){ // check folder
 ?>
 <link rel="stylesheet" href="<?echo $folder?>assets/chartist/chartist.min.css">
 <script src="<?echo $folder?>assets/chartist/chartist.min.js"></script>
+<script src="<?echo $folder?>assets/chartist/legend.js"></script>
 <div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
 	Remote Lab
 </div>
@@ -130,34 +133,53 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$labels = '';
 	$series = '';
 	$count = 0;
+	$a = array();
 	foreach ($hub as $value => $key){
 		$count++;
-		$ts = gmdate("d-m-y",$key['timestamp']);
-		$temp = $key['temperature'];
-		//$series = $series.','.$temp;
-		$labels = $labels.','."'$ts'";
-		foreach ($key as $_value => $_key){
-			if($_value!='timestamp'){
-				$series = $series.','.$_key;;
-			}
+		$ts = gmdate("d.m",$key['timestamp']);
+		foreach ($input_array as $keys) {
+			array_push($a,$key);
 		}
+		$labels = $labels.','."'$ts'";
 	}
 
-	//echo $series;
+	$series_ = '';
+	$b = array();
+	$c = array();
+	foreach ($input_array as $keys) {
+	$c = array($keys => array_column($a,"$keys"));
+	array_push($b,$c);
+}
+
+foreach($b as $test){
+		foreach ($test as $key => $value) {
+			$series_.='[';
+					foreach ($value as $keys) {
+						$series_.=$keys.',';
+					}
+					$series_.=']';
+		}
+}
+$series = str_replace(array(",]","]["),array("]","],["),$series_);
+
 	echo '
+	<div>
 	<div class="lab-unit resizeunit" style="width:auto;">
 		<div class="lab-unit-babel">
-			Statistics
+			Info
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
+			<div style="text-align:left;">Name: <span class="lab-unit-tag">'.$config['name'].'</span></div><br>
 			<div style="text-align:left;">Data received: <span class="lab-unit-tag">'.$count.'</span></div><br>
-			Intput data:<div style="display:inline-table;">
+			Intput data:<div style="display:inline-table; margin-bottom:10px;">
 			';
 			foreach ($input_array as $data){
 				echo '<div class="lab-unit-tag">'.$data.'</div>';
 			}
 			echo '
 			</div>
+				<div style="text-align:left;">Step: <span class="lab-unit-tag">'.$config['step'].'</span></div><br>
+				<div style="text-align:left;">Current step: <span class="lab-unit-tag">'.$config['cstep'].'</span></div><br>
 		</div>
 	</div>
 
@@ -177,16 +199,22 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 		'.file_get_contents($hubFile).'
 		</div>
 	</div>
+	</div>
 	';
 	?>
 	<script>
 		var data = {
 			labels:[<?echo ltrim($labels,',')?>],
 			series: [
-				[<?echo  ltrim($series,',')?>]
+				<?echo $series?>
 			]
 		};
 		var options ={
+			plugins:[
+				Chartist.plugins.legend({
+					legendNames:['test','test2'],
+				})
+			]
 		};
 		new Chartist.Line('.ct-chart',data,options);
 	</script>
