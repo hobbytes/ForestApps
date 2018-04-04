@@ -9,81 +9,18 @@ $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
 <div id="<?echo $appname.$appid;?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
-<style>
-.lab-unit{
-	width:128px;
-	text-align: center;
-	background: #fff;
-	margin: 20px 10px;
-	padding: 20px;
-	color:#8a8a8a;
-	cursor: default;
-	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-	border-radius: 2px;
-	user-select: none;
-	border-bottom: 3px solid #fff;
-	float: left;
-	overflow: hidden;
-	min-width: min-content;
-}
-
-.lab-unit:hover{
-	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-	border-bottom: 3px solid #009688;
-}
-
-.lab-unit-babel{
-	font-size: 17px;
-	font-variant-caps:all-small-caps;
-	padding-bottom: 10px;
-}
-
-.lab-unit-button{
-	padding: 7px;
-	margin-top: 5px;
-	background: #009688;
-	color:	#fff;
-	cursor: pointer;
-}
-
-.lab-unit-button:hover{
-	background: #02b1a1;
-}
-
-.lab-unit input{
-	border:2px solid #009688;
-	width:128px;
-	font-size: 16px;
-	padding: 6px;
-	color:#009688;
-	border-radius:3px;
-}
-
-.lab-unit-tag{
-	background: linear-gradient(#4dc6fd, #2196F3);
-	color: #fff;
-	width: max-content;
-	padding: 5px;
-	border-radius: 5px;
-	margin: 5px;
-}
-/*.ct-label.ct-horizontal{
-	position: relative;
-	transform: rotate(-45deg);
-	transform-origin: left top;
-}
-*/
-</style>
 <?php
 /*--------Подключаем библиотеки--------*/
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/filesystem.php';
 /*--------Запускаем сессию--------*/
 session_start();
 /*--------Проверяем безопасность--------*/
 $security	=	new security;
 $security->appprepare();
 
+$fileaction = new fileaction;
 $bd = new readbd;
 $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
 
@@ -97,10 +34,12 @@ $unitFolder = $dir.'/Units';//	units folder
 if(!is_dir($dir)){ // check folder
 	mkdir($dir);
 }
+
 ?>
-<link rel="stylesheet" href="<?echo $folder?>assets/chartist/chartist.min.css?h=test">
-<script src="<?echo $folder?>assets/chartist/chartist.min.js"></script>
-<script src="<?echo $folder?>assets/chartist/legend.js"></script>
+<link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/chartist/chartist.min.css','false')?>">
+<link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/style.css','false')?>">
+<script src="<?echo $folder.$fileaction->filehash('assets/chartist/chartist.min.js','false')?>"></script>
+<script src="<?echo $folder.$fileaction->filehash('assets/chartist/legend.js','false')?>"></script>
 <div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
 	Remote Lab
 </div>
@@ -189,7 +128,7 @@ $series = str_replace(array(",]","]["),array("]","],["),$series_);
 		<div class="lab-unit-babel">
 			Charts
 		</div>
-		<div class="ct-chart ct-golden-section" style="width:400px;">
+		<div class="ct-chart ct-golden-section" style="width:400px; top: 20px;">
 		</div>
 	</div>
 
