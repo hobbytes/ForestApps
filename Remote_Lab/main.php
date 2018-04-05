@@ -100,7 +100,7 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	foreach ($input_array as $keys) {
 	$c = array($keys => array_column($a,"$keys"));
 	array_push($b,$c);
-	array_push($avgValues,array($keys => array_sum($b[$count_][$keys])/$count));
+	array_push($avgValues,array($keys => round(array_sum($b[$count_][$keys])/$count)));
 	array_push($minValues,array($keys => min($b[$count_][$keys])));
 	array_push($maxValues,array($keys => max($b[$count_][$keys])));
 	$count_++;
@@ -137,7 +137,6 @@ foreach($b as $test){
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
 			<div style="text-align:left;">Name: <span class="lab-unit-tag">'.$config['name'].'</span></div><br>
-			<div style="text-align:left;">Data received: <span class="lab-unit-tag">'.$count.'</span></div><br>
 			Intput data:<div style="display:inline-table; margin-bottom:10px;">
 			';
 			foreach ($input_array as $data){
@@ -158,6 +157,38 @@ foreach($b as $test){
 			<canvas id="chart'.$appid.'">
 			</canvas>
 		</div>
+	</div>
+
+	<div class="lab-unit resizeunit" style="width:auto;">
+		<div class="lab-unit-label">
+			Statistics
+		</div>
+		<div style="text-align:left;">Data received: <span class="lab-unit-tag">'.$count.'</span></div><br>
+		<div class="lab-stat-block"><div class="lab-stat-block-label">Maximal values</div>';
+
+		foreach ($maxValues as $value){
+			foreach($value as $key => $value_){
+				echo '<div style="text-align:left;">'.$key.': <span class="lab-unit-tag">'.$value_.'</span></div><br>';
+			}
+		}
+
+		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">Minimal values</div>';
+
+		foreach ($minValues as $value){
+			foreach($value as $key => $value_){
+				echo '<div style="text-align:left;">'.$key.': <span class="lab-unit-tag">'.$value_.'</span></div><br>';
+			}
+		}
+
+		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">Average values</div>';
+
+		foreach ($avgValues as $value){
+			foreach($value as $key => $value_){
+				echo '<div style="text-align:left;">'.$key.': <span class="lab-unit-tag">'.$value_.'</span></div><br>';
+			}
+		}
+
+	echo '</div>
 	</div>
 
 	<div class="lab-unit resizeunit" style="width:auto;">
