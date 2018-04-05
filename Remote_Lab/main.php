@@ -36,10 +36,8 @@ if(!is_dir($dir)){ // check folder
 }
 
 ?>
-<link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/Chart/style.css','false')?>">
 <link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/style.css','false')?>">
 <script src="<?echo $folder.$fileaction->filehash('assets/Chart/Chart.min.js','false')?>"></script>
-<script src="<?echo $folder.$fileaction->filehash('assets/Chart/utils.js','false')?>"></script>
 <div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
 	Remote Lab
 </div>
@@ -70,38 +68,41 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$config = parse_ini_file($configFile);
 	$input_array = explode(',',$config['labels']);
 	$labels = '';
-	$series = '';
 	$count = 0;
 	$a = array();
 	foreach ($hub as $value => $key){
 		$count++;
-		$ts = gmdate("d.m.y",$key['timestamp']);
+		$ts = gmdate("d.m.y, H:i",$key['timestamp']);//convert unix to date
 		foreach ($input_array as $keys) {
 			array_push($a,$key);
 		}
-		$labels = $labels.','."'$ts'";
+		$labels = $labels.','."'$ts'";//get labels
 	}
 
-	$series_ = '';
+	function newColor($id){ //get color for chart
+		$backgroundColor = array("#ff6384","#36a2eb","#4caf50","#c45850","#4bc0c0","#3e95cd","#ff9800");
+		if(!empty($backgroundColor[$id])){
+			return	$backgroundColor[$id];
+		}else{
+			return sprintf('#%06X',mt_rand('0','0xFFFFFF'));
+		}
+	}
+
+	/*split arrays*/
 	$b = array();
 	$c = array();
-	$t='';
 	foreach ($input_array as $keys) {
 	$c = array($keys => array_column($a,"$keys"));
 	array_push($b,$c);
-	$t.= "'$keys',";
 }
+echo min($b[1]['humidity']);
 
-function newColor($id){
-	$backgroundColor = array("#ff6384","#36a2eb","#4caf50","#c45850","#4bc0c0","#3e95cd","#ff9800");
-	return	$backgroundColor[$id];
-}
-
-$colorCount = 0;
-
+/*get series*/
+$colorCount = 0; //set zero for counter
+$series = '';
 foreach($b as $test){
 		foreach ($test as $key => $value) {
-			$color = newColor($colorCount);
+			$color = newColor($colorCount);// get color
 			$colorCount++;
 			$series.="{
 				label: '$key',
@@ -116,7 +117,7 @@ foreach($b as $test){
 				},';
 		}
 }
-
+	$series = str_replace(',]',']',$series);
 	echo '
 	<div>
 	<div class="lab-unit resizeunit" style="width:auto;">
@@ -159,9 +160,6 @@ foreach($b as $test){
 	</div>
 	';
 	?>
-	<?//echo ltrim($labels,',')?>
-	<?//echo $series?>
-	<?//echo ltrim($t,',')?>
 	<script>
 		var config = {
 			type: 'line',
@@ -173,7 +171,7 @@ foreach($b as $test){
 				responsive: true,
 				title: {
 					display: true,
-					text: 'Chart.js Line Chart'
+					text: '<?echo $config['name']?>'
 				},
 				tooltips: {
 					mode: 'index',
