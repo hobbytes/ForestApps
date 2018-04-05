@@ -71,10 +71,12 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$count = 0;
 	$a = array();
 	foreach ($hub as $value => $key){
+
+		array_push($a,$key);
 		$count++;
 		$ts = gmdate("d.m.y, H:i",$key['timestamp']);//convert unix to date
 		foreach ($input_array as $keys) {
-			array_push($a,$key);
+			//array_push($a,$key);
 		}
 		$labels = $labels.','."'$ts'";//get labels
 	}
@@ -91,19 +93,27 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	/*split arrays*/
 	$b = array();
 	$c = array();
+	$minValues = array();
+	$maxValues = array();
+	$avgValues = array();
+	$count_ = 0;
 	foreach ($input_array as $keys) {
 	$c = array($keys => array_column($a,"$keys"));
 	array_push($b,$c);
+	array_push($avgValues,array($keys => array_sum($b[$count_][$keys])/$count));
+	array_push($minValues,array($keys => min($b[$count_][$keys])));
+	array_push($maxValues,array($keys => max($b[$count_][$keys])));
+	$count_++;
+
 }
-echo min($b[1]['humidity']);
 
 /*get series*/
-$colorCount = 0; //set zero for counter
+$Count = 0; //set zero for counter
 $series = '';
 foreach($b as $test){
 		foreach ($test as $key => $value) {
-			$color = newColor($colorCount);// get color
-			$colorCount++;
+			$color = newColor($Count);// get color
+			$Count++;
 			$series.="{
 				label: '$key',
 				backgroundColor: '$color',
@@ -113,10 +123,11 @@ foreach($b as $test){
 						$series.=$keys.',';
 					}
 					$series.='],
-					fill: false,
+					fill: false
 				},';
 		}
 }
+
 	$series = str_replace(',]',']',$series);
 	echo '
 	<div>
