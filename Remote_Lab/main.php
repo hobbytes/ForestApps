@@ -36,10 +36,10 @@ if(!is_dir($dir)){ // check folder
 }
 
 ?>
-<link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/chartist/chartist.min.css','false')?>">
+<link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/Chart/style.css','false')?>">
 <link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/style.css','false')?>">
-<script src="<?echo $folder.$fileaction->filehash('assets/chartist/chartist.min.js','false')?>"></script>
-<script src="<?echo $folder.$fileaction->filehash('assets/chartist/legend.js','false')?>"></script>
+<script src="<?echo $folder.$fileaction->filehash('assets/Chart/Chart.min.js','false')?>"></script>
+<script src="<?echo $folder.$fileaction->filehash('assets/Chart/utils.js','false')?>"></script>
 <div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
 	Remote Lab
 </div>
@@ -75,7 +75,7 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$a = array();
 	foreach ($hub as $value => $key){
 		$count++;
-		$ts = gmdate("d.m",$key['timestamp']);
+		$ts = gmdate("d.m.y",$key['timestamp']);
 		foreach ($input_array as $keys) {
 			array_push($a,$key);
 		}
@@ -92,21 +92,35 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$t.= "'$keys',";
 }
 
+function newColor($id){
+	$backgroundColor = array("#ff6384","#36a2eb","#4caf50","#c45850","#4bc0c0","#3e95cd","#ff9800");
+	return	$backgroundColor[$id];
+}
+
+$colorCount = 0;
+
 foreach($b as $test){
 		foreach ($test as $key => $value) {
-			$series_.='[';
+			$color = newColor($colorCount);
+			$colorCount++;
+			$series.="{
+				label: '$key',
+				backgroundColor: '$color',
+				borderColor: '$color',
+				data: [";
 					foreach ($value as $keys) {
-						$series_.=$keys.',';
+						$series.=$keys.',';
 					}
-					$series_.=']';
+					$series.='],
+					fill: false,
+				},';
 		}
 }
-$series = str_replace(array(",]","]["),array("]","],["),$series_);
 
 	echo '
 	<div>
 	<div class="lab-unit resizeunit" style="width:auto;">
-		<div class="lab-unit-babel">
+		<div class="lab-unit-label">
 			Info
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
@@ -125,15 +139,17 @@ $series = str_replace(array(",]","]["),array("]","],["),$series_);
 	</div>
 
 	<div class="lab-unit resizeunit" style="width:auto;">
-		<div class="lab-unit-babel">
+		<div class="lab-unit-label">
 			Charts
 		</div>
-		<div class="ct-chart ct-golden-section" style="width:400px; top: 20px;">
+		<div style="width:90%; max-width:100%; min-width:500px;">
+			<canvas id="chart'.$appid.'">
+			</canvas>
 		</div>
 	</div>
 
 	<div class="lab-unit resizeunit" style="width:auto;">
-		<div class="lab-unit-babel">
+		<div class="lab-unit-label">
 			RAW Data
 		</div>
 		<div style="white-space:pre-wrap; text-align:left; overflow:hidden; overflow-y:auto; padding:10px; border:2px solid #00bcd4; background:#f9f9f9; #color:#3a3a3a; height:200px;" contenteditable="true">
@@ -143,32 +159,59 @@ $series = str_replace(array(",]","]["),array("]","],["),$series_);
 	</div>
 	';
 	?>
+	<?//echo ltrim($labels,',')?>
+	<?//echo $series?>
+	<?//echo ltrim($t,',')?>
 	<script>
-		var data = {
-			labels:[<?echo ltrim($labels,',')?>],
-			series: [
-				<?echo $series?>
-			]
-		};
-		var options ={
-			fullWidth: true,
-			chartPadding:{
-				right: 40
+		var config = {
+			type: 'line',
+			data: {
+				labels: [<?echo ltrim($labels,',')?>],
+				datasets: [<?echo $series?>]
 			},
-			plugins:[
-				Chartist.plugins.legend({
-					legendNames:[<?echo ltrim($t,',')?>],
-				})
-			]
+			options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: 'Chart.js Line Chart'
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Date'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Value'
+						}
+					}]
+				}
+			}
 		};
-		new Chartist.Line('.ct-chart',data,options);
+
+
+			var ctx = document.getElementById('chart<?echo $appid?>').getContext('2d');
+			window.myLine = new Chart(ctx, config);
 	</script>
 	<?
 }else{
 
 ?>
 <div class="lab-unit">
-	<div class="lab-unit-babel">
+	<div class="lab-unit-label">
 		New Unit
 	</div>
 	<input id="newunit<?echo $appid;?>" type="text" placeholder="Unit Name">
@@ -189,7 +232,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 	$token = $security->__decode($config['token'], $key); //get token
 	echo '
 	<div class="lab-unit" id="'.$token.'" onclick="selectunit'.$appid.'(this)">
-		<div class="lab-unit-babel">
+		<div class="lab-unit-label">
 			'.$name.'
 		</div>
 		<div style="font-size:8px;">
