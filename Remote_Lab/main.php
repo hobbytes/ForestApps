@@ -8,7 +8,7 @@ if($_GET['getinfo'] == 'true'){
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
+<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
 <?php
 /*--------Подключаем библиотеки--------*/
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
@@ -28,6 +28,7 @@ $key = $getdata;//get key
 
 $click	=	$_GET['mobile'];
 $folder	=	$_GET['destination'];
+
 /*--------App Logic--------*/
 $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/Remote_Lab/';
 $unitFolder = $dir.'/Units';//	units folder
@@ -84,6 +85,12 @@ if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep'])){
 	$SaveConfigData = str_replace($oldData, $newData, $ReplaceConfig);
 	file_put_contents($configFile, $SaveConfigData);
 }
+
+/* Delete Unit */
+if(isset($_GET['deleteunit'])){
+	$fileaction->deleteDir($unitFolder.'/'.$_GET['deleteunit']);
+}
+
 /* Load Unit */
 if(!empty($_GET['selectunit'])){ //	check new unit
 	$unitName = $_GET['selectunit'];// Unit Name
@@ -174,6 +181,9 @@ foreach($b as $test){
 		</div>
 		<div class="lab-unit-button mode-blue" onclick="saveunit'.$appid.'()">
 			Save
+		</div>
+		<div class="lab-unit-button mode-red" onclick="deleteunit'.$appid.'()">
+			Delete Unit
 		</div>
 	</div>
 
@@ -282,8 +292,8 @@ foreach($b as $test){
 	<div class="lab-unit-label">
 		New Unit
 	</div>
-	<input id="newunit<?echo $appid;?>" type="text" placeholder="Unit Name">
-	<div class="lab-unit-button" onclick="addunit<?echo $appid;?>()">
+	<input id="newunit<?echo $appid?>" type="text" placeholder="Unit Name">
+	<div class="lab-unit-button" onclick="addunit<?echo $appid?>()">
 		Create
 	</div>
 	<?
@@ -314,11 +324,12 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 </div>
 <script>
 /*--------Логика JS--------*/
-function addunit<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid;?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-function saveunit<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?name="+escape($("#name<?echo $appid;?>").text())+"&step="+escape($("#step<?echo $appid;?>").text())+"&cstep="+escape($("#cstep<?echo $appid;?>").text())+"&selectunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-function selectunit<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?selectunit="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-$(".resizeunit").resizable();
+function addunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+function saveunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?name="+escape($("#name<?echo $appid?>").text())+"&step="+escape($("#step<?echo $appid?>").text())+"&cstep="+escape($("#cstep<?echo $appid?>").text())+"&selectunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+function selectunit<?echo $appid?>(el){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?selectunit="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+function deleteunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?deleteunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 
+$(".resizeunit").resizable();
 </script>
 <?
 unset($appid);
