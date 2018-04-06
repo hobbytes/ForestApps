@@ -18,7 +18,6 @@
 .lab-unit:hover{
 	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 	border-bottom: 3px solid #009688;
-	transition: all 0.2s ease;
 }
 
 .lab-unit-label{
@@ -55,6 +54,14 @@
 .lab-unit-button.mode-red:hover{
 	background: #ea463a;
 	letter-spacing: 2px;
+}
+
+.lab-unit-app-button:hover{
+	background: #026158;
+	color: #fff !important;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border: 2px solid #026158 !important;
 }
 
 .lab-unit input{

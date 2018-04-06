@@ -39,18 +39,22 @@ if(!is_dir($dir)){ // check folder
 ?>
 <link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/style.css','false')?>">
 <script src="<?echo $folder.$fileaction->filehash('assets/Chart/Chart.min.js','false')?>"></script>
-<div style="min-width:600px; width:100%; padding:10px; font-size:37px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
-	Remote Lab
+<div style="min-width:600px; width:100%; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
+	<div id="applabel<?echo $appid?>" onclick="back<?echo $appid?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600;">
+		Remote Lab
+	</div>
 </div>
 <?
+$selectUnit = $_GET['selectunit'];
+
 if(!empty($_GET['addunit'])){ //	check new unit
 	$unitName = $_GET['addunit'];// Unit Name
 	if(!is_dir($unitFolder)){ // check folder
 		mkdir($unitFolder);
 	}
 
-	$token = md5($unitName.date('dmyhis'));// generate token
-	$token = $security->__encode($token, $key);
+	$_token = md5($unitName.date('dmyhis'));// generate token
+	$token = $security->__encode($_token, $key);
 	$TwinUnitError = '';// error flag for new unit block
 	$NewUnitFolder = $unitFolder.'/'.md5($unitName.date('dmyhis'));
 	if(!is_dir($NewUnitFolder)){
@@ -58,6 +62,7 @@ if(!empty($_GET['addunit'])){ //	check new unit
 		$nameUnit = $_GET['addunit'];
 		$FileContent = "[main]\nname='$nameUnit'\ntoken='$token'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
 		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
+		$selectUnit = $_token;
 	}else{
 		$TwinUnitError = 'true';
 	}
@@ -70,10 +75,14 @@ if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep'])){
 	$_name = $_GET['name'];
 	$_step = intval($_GET['step']);
 	$_cstep = intval($_GET['cstep']);
+	if($_cstep > $_step){
+		$_step = '0';
+		$_cstep = '0';
+	}
 	$newData = array("name='$_name'", "step='$_step'", "cstep='$_cstep'");
 
 	/* get temp data */
-	$configFile = $unitFolder.'/'.$_GET['selectunit'].'/config.foc';
+	$configFile = $unitFolder.'/'.$selectUnit.'/config.foc';
 	$configTemp = parse_ini_file($configFile);
 	$TepmName = $configTemp['name'];
 	$TepmStep = $configTemp['step'];
@@ -92,8 +101,8 @@ if(isset($_GET['deleteunit'])){
 }
 
 /* Load Unit */
-if(!empty($_GET['selectunit'])){ //	check new unit
-	$unitName = $_GET['selectunit'];// Unit Name
+if(isset($selectUnit)){ //	check new unit
+	$unitName = $selectUnit;// Unit Name
 	$hubFile = $unitFolder.'/'.$unitName.'/hub.foc';
 	$configFile = $unitFolder.'/'.$unitName.'/config.foc';
 	$hub = parse_ini_file($hubFile,true);
@@ -103,15 +112,13 @@ if(!empty($_GET['selectunit'])){ //	check new unit
 	$count = 0;
 	$a = array();
 	foreach ($hub as $value => $key){
-
 		array_push($a,$key);
 		$count++;
 		$ts = gmdate("d.m.y, H:i",$key['timestamp']);//convert unix to date
-		foreach ($input_array as $keys) {
-			//array_push($a,$key);
-		}
 		$labels = $labels.','."'$ts'";//get labels
 	}
+
+	$lastConnection = $value;//last data receive
 
 	function newColor($id){ //get color for chart
 		$backgroundColor = array("#ff6384","#36a2eb","#4caf50","#c45850","#4bc0c0","#3e95cd","#ff9800");
@@ -169,15 +176,17 @@ foreach($b as $test){
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
 			<div style="text-align:left;">Name: <span id="name'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['name'].'</span></div><br>
-			Intput data:<div style="display:inline-table; margin-bottom:10px;">
+			<div style="text-align:left;">Intput data:<div style="display:inline-table; margin-bottom:10px;">
 			';
 			foreach ($input_array as $data){
 				echo '<div class="lab-unit-tag">'.$data.'</div>';
 			}
 			echo '
 			</div>
+			</div>
 				<div style="text-align:left;">Step: <span id="step'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
 				<div style="text-align:left;">Current step: <span id="cstep'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
+				<div style="text-align:left;">Last connection: <span class="lab-unit-tag">'.$lastConnection.'</span></div>
 		</div>
 		<div class="lab-unit-button mode-blue" onclick="saveunit'.$appid.'()">
 			Save
@@ -283,6 +292,9 @@ foreach($b as $test){
 
 			var ctx = document.getElementById('chart<?echo $appid?>').getContext('2d');
 			window.myLine = new Chart(ctx, config);
+			var applabel = $("#applabel<?echo $appid?>").text();
+			$("#applabel<?echo $appid?>").text("<"+applabel);
+			$("#applabel<?echo $appid?>").addClass('lab-unit-app-button');
 	</script>
 	<?
 }else{
@@ -324,6 +336,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 </div>
 <script>
 /*--------Логика JS--------*/
+function back<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 function addunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 function saveunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?name="+escape($("#name<?echo $appid?>").text())+"&step="+escape($("#step<?echo $appid?>").text())+"&cstep="+escape($("#cstep<?echo $appid?>").text())+"&selectunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 function selectunit<?echo $appid?>(el){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?selectunit="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
