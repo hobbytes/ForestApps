@@ -54,12 +54,37 @@ if(!empty($_GET['addunit'])){ //	check new unit
 	$NewUnitFolder = $unitFolder.'/'.md5($unitName.date('dmyhis'));
 	if(!is_dir($NewUnitFolder)){
 		mkdir($NewUnitFolder);// make folder
-		$FileContent = "[main]\nname=".$_GET['addunit']."\ntoken='$token'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
+		$nameUnit = $_GET['addunit'];
+		$FileContent = "[main]\nname='$nameUnit'\ntoken='$token'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
 		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
 	}else{
 		$TwinUnitError = 'true';
 	}
 }
+
+/* Save Unit */
+if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep'])){
+
+	/* prepare data */
+	$_name = $_GET['name'];
+	$_step = intval($_GET['step']);
+	$_cstep = intval($_GET['cstep']);
+	$newData = array("name='$_name'", "step='$_step'", "cstep='$_cstep'");
+
+	/* get temp data */
+	$configFile = $unitFolder.'/'.$_GET['selectunit'].'/config.foc';
+	$configTemp = parse_ini_file($configFile);
+	$TepmName = $configTemp['name'];
+	$TepmStep = $configTemp['step'];
+	$TepmCStep = $configTemp['cstep'];
+	$oldData = array("name='$TepmName'", "step='$TepmStep'", "cstep='$TepmCStep'");
+
+	/* get default config file for replacement */
+	$ReplaceConfig = file_get_contents($configFile);
+	$SaveConfigData = str_replace($oldData, $newData, $ReplaceConfig);
+	file_put_contents($configFile, $SaveConfigData);
+}
+/* Load Unit */
 if(!empty($_GET['selectunit'])){ //	check new unit
 	$unitName = $_GET['selectunit'];// Unit Name
 	$hubFile = $unitFolder.'/'.$unitName.'/hub.foc';
@@ -136,7 +161,7 @@ foreach($b as $test){
 			Info
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
-			<div style="text-align:left;">Name: <span class="lab-unit-tag">'.$config['name'].'</span></div><br>
+			<div style="text-align:left;">Name: <span id="name'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['name'].'</span></div><br>
 			Intput data:<div style="display:inline-table; margin-bottom:10px;">
 			';
 			foreach ($input_array as $data){
@@ -144,8 +169,11 @@ foreach($b as $test){
 			}
 			echo '
 			</div>
-				<div style="text-align:left;">Step: <span class="lab-unit-tag">'.$config['step'].'</span></div><br>
-				<div style="text-align:left;">Current step: <span class="lab-unit-tag">'.$config['cstep'].'</span></div><br>
+				<div style="text-align:left;">Step: <span id="step'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
+				<div style="text-align:left;">Current step: <span id="cstep'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
+		</div>
+		<div class="lab-unit-button mode-blue" onclick="saveunit'.$appid.'()">
+			Save
 		</div>
 	</div>
 
@@ -164,7 +192,7 @@ foreach($b as $test){
 			Statistics
 		</div>
 		<div style="text-align:left;">Data received: <span class="lab-unit-tag">'.$count.'</span></div><br>
-		<div class="lab-stat-block"><div class="lab-stat-block-label">Maximal values</div>';
+		<div class="lab-stat-block"><div class="lab-stat-block-label">Max values</div>';
 
 		foreach ($maxValues as $value){
 			foreach($value as $key => $value_){
@@ -172,7 +200,7 @@ foreach($b as $test){
 			}
 		}
 
-		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">Minimal values</div>';
+		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">Min values</div>';
 
 		foreach ($minValues as $value){
 			foreach($value as $key => $value_){
@@ -195,7 +223,7 @@ foreach($b as $test){
 		<div class="lab-unit-label">
 			RAW Data
 		</div>
-		<div style="white-space:pre-wrap; text-align:left; overflow:hidden; overflow-y:auto; padding:10px; border:2px solid #00bcd4; background:#f9f9f9; #color:#3a3a3a; height:200px;" contenteditable="true">
+		<div style="white-space:pre-wrap; text-align:left; overflow:hidden; overflow-y:auto; padding:10px; border:2px dashed #4dc6fd; cursor:text; background:#f9f9f9; #color:#3a3a3a; height:200px;" contenteditable="true">
 		'.file_get_contents($hubFile).'
 		</div>
 	</div>
@@ -287,6 +315,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 <script>
 /*--------Логика JS--------*/
 function addunit<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid;?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+function saveunit<?echo $appid;?>(){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?name="+escape($("#name<?echo $appid;?>").text())+"&step="+escape($("#step<?echo $appid;?>").text())+"&cstep="+escape($("#cstep<?echo $appid;?>").text())+"&selectunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 function selectunit<?echo $appid;?>(el){$("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?selectunit="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
 $(".resizeunit").resizable();
 
