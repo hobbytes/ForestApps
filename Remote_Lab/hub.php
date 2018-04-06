@@ -19,6 +19,11 @@ unset($array['token']);
 
     $labels = '';
   if(!empty($array) && !empty($timestamp) && !empty($token) && !empty($user)){
+    /* get timezone */
+    $timezone = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/settings/timezone.foc');
+    date_default_timezone_set("$timezone");
+
+    /* check dir */
     $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/documents/Remote_Lab/Units/'.$token.'/';
     if(is_dir($dir)){
 
@@ -28,7 +33,7 @@ unset($array['token']);
 
       $cfile = file_get_contents($dir.'config.foc');// get config file
     if($step == $cstep){
-      $content = "[".date('d.m.y, h:i:s')."]\n";
+      $content = "[".date('d.m.y, H:i:s')."]\n";
 
       foreach ($array as $value => $key){
         $content.="$value='$key'\n";
