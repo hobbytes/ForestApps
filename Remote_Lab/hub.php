@@ -37,7 +37,7 @@ unset($array['token']);
 
       foreach ($array as $value => $key){
         $content.="$value='$key'\n";
-        if($value!='timestamp'){
+        if($value != 'timestamp'){
           $labels = $labels.','.$value;
         }
       }

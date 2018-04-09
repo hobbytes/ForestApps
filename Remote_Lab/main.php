@@ -102,6 +102,7 @@ if(isset($_GET['deleteunit'])){
 
 /* Load Unit */
 if(isset($selectUnit)){ //	check new unit
+
 	$unitName = $selectUnit;// Unit Name
 	$hubFile = $unitFolder.'/'.$unitName.'/hub.foc';
 	$configFile = $unitFolder.'/'.$unitName.'/config.foc';
@@ -168,6 +169,11 @@ foreach($b as $test){
 }
 
 	$series = str_replace(',]',']',$series);
+	
+	$_date = new DateTime();//prerpare for Request URL
+	$timestamp = $_date->getTimestamp();
+	$RequestURL = $_SERVER['HTTP_HOST'].'/'.$folder.'hub.php?token='.$unitName.'&user='.$_SESSION['loginuser'].'&#38timestamp='.$timestamp.'&{data=value}';
+
 	echo '
 	<div>
 	<div class="lab-unit resizeunit" style="width:auto;">
@@ -187,7 +193,8 @@ foreach($b as $test){
 				<div style="text-align:left;">Step: <span id="step'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
 				<div style="text-align:left;">Current step: <span id="cstep'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
 				<div style="text-align:left;">Last connection: <span class="lab-unit-tag">'.$lastConnection.'</span></div>
-		</div>
+		</div><br>
+		<div style="text-align:left;">Request URL: <div class="lab-unit-tag" style="width:270px; font-size:10px; cursor:text;" contenteditable="true">'.$RequestURL.'</div></div>
 		<div class="lab-unit-button mode-blue" onclick="saveunit'.$appid.'()">
 			Save
 		</div>
