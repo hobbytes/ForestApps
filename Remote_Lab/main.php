@@ -8,7 +8,7 @@ if($_GET['getinfo'] == 'true'){
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
-<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
+<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:100%; min-height:600px width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
 <?php
 /*--------Подключаем библиотеки--------*/
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
@@ -169,7 +169,7 @@ foreach($b as $test){
 }
 
 	$series = str_replace(',]',']',$series);
-	
+
 	$_date = new DateTime();//prerpare for Request URL
 	$timestamp = $_date->getTimestamp();
 	$RequestURL = $_SERVER['HTTP_HOST'].'/'.$folder.'hub.php?token='.$unitName.'&user='.$_SESSION['loginuser'].'&#38timestamp='.$timestamp.'&{data=value}';
