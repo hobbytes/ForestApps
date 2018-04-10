@@ -1,5 +1,5 @@
 <?
-/*--------Получаем App Name и App ID--------*/
+/*--------Get App Name and App ID--------*/
 if($_GET['getinfo'] == 'true'){
 	include '../../core/library/etc/appinfo.php';
 	$appinfo = new AppInfo;
@@ -8,28 +8,25 @@ if($_GET['getinfo'] == 'true'){
 $appname=$_GET['appname'];
 $appid=$_GET['appid'];
 ?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:auto;">
+<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
 <?php
-/*--------Подключаем библиотеки--------*/
+/*--------Include Libraries--------*/
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
-/*--------Запускаем сессию--------*/
+/*--------Run Session--------*/
 session_start();
-/*--------Проверяем безопасность--------*/
+/*--------Check Security--------*/
 $security	=	new security;
 $security->appprepare();
 /*
 Инициализируем переменные
-$click - переменная используется для определения действия (клик или прикосновение)
-$folder - переменная хранит место запуска программы
+$click - click or touch action
+$folder - folder var
 */
 $click=$_GET['mobile'];
 $folder=$_GET['destination'];
-/*--------Логика--------*/
+/*--------PHP Logic--------*/
 ?>
 </div>
 <script>
-/*--------Логика JS--------*/
+/*--------JS Logic--------*/
 </script>
-<?
-unset($appid);//Очищаем переменную $appid
-?>
