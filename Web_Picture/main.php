@@ -36,7 +36,7 @@ if(isset($_GET['webpicloader'])){
 	$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].$_GET['webpicloader']);
 	$name = pathinfo($_SERVER['DOCUMENT_ROOT'].$_GET['webpicloader'])['filename'];
 }else{
-	$data = '<div style="width:200px; height:200px; word-break:break-word; overflow:hidden;">&#13;&#10;</div>';
+	$data = '<div style="width:200px; height:200px;">&#13;&#10;</div>';
 }
 ?>
 <script src="<?echo $folder.$fileaction->filehash('assets/html2canvas/html2canvas.min.js','false')?>"></script>
@@ -54,7 +54,7 @@ if(isset($_GET['webpicloader'])){
 		<div id="saveimg<?echo $appid?>" class="ui-forest-button ui-forest-accept ui-forest-center" style="width:80%;">Save</div>
     <div id="saveraw<?echo $appid?>" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">Save RAW</div>
 	</div>
-	<div id="image-container<?echo $appid?>" style="height:100%; min-height:500px; float:right; background-color:#fff; width:50%; overflow:hidden;">
+	<div id="image-container<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); background-color:#fff; word-break:break-word; overflow:hidden;">
 	</div>
 </div>
 </div>
@@ -62,6 +62,7 @@ if(isset($_GET['webpicloader'])){
 /*--------JS Logic--------*/
 
 $($('#code-container<?echo $appid?>').val()).prependTo('#image-container<?echo $appid?>');
+$('#image-container<?echo $appid?>').draggable();
 $('#code-container<?echo $appid?>').bind('input propertychange', function(){
 	$('#image-container<?echo $appid?>').empty();
 	$($('#code-container<?echo $appid?>').val()).prependTo('#image-container<?echo $appid?>');
