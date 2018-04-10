@@ -54,7 +54,7 @@ if(isset($_GET['webpicloader'])){
 		<div id="saveimg<?echo $appid?>" class="ui-forest-button ui-forest-accept ui-forest-center" style="width:80%;">Save</div>
     <div id="saveraw<?echo $appid?>" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">Save RAW</div>
 	</div>
-	<div id="image-container<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); background-color:#fff; word-break:break-word; overflow:hidden;">
+	<div id="image-container<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); background-color:transparent; word-break:break-word; overflow:hidden;">
 	</div>
 </div>
 </div>

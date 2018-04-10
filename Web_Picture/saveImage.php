@@ -11,7 +11,7 @@ $name = $_REQUEST['name'];
 $user = $_REQUEST['user'];
 $ext = $_REQUEST['ext'];
 if(empty($name)){
-  $name = md5(date('d-m-y-h-i-s')).'.'.$ext;
+  $name = md5(date('d-m-y-h-i-s'));
 }
 if($ext == 'w2p'){
   $image = $data;
