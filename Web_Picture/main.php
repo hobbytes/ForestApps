@@ -46,9 +46,9 @@ if(isset($_GET['webpicloader'])){
 		<div id="scale-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center; background:#534f61; border:2px solid #706a86; color:#fff;" class="ui-slider-handle"></div>
 	</div>
 	<div style="width:100%;">
-		<div id="colorpalette1_<?echo $appid?>" onclick="setcolor<?echo $appid?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#1d80d0; float:left; background:#fff; border:3px solid; margin:0 5px;">
+		<div id="colorpalette1_<?echo $appid?>" onclick="setcolor<?echo $appid?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#1d80d0; float:left; background-color:#fff; border:3px solid; margin:0 5px;">
 		</div>
-		<div id="colorpalette2_<?echo $appid?>" onclick="setcolor<?echo $appid?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#534f62; float:left; background:#1f1f1f; border:3px solid; margin:0 5px;">
+		<div id="colorpalette2_<?echo $appid?>" onclick="setcolor<?echo $appid?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#534f62; float:left; background-color:#1f1f1f; border:3px solid; margin:0 5px;">
 		</div>
 		<div id="hidepanel<?echo $appid?>" onclick="HideRightPanel<?echo $appid?>()" style="color:#1d80d0; border:3px solid; width:40px; height:30px; float:right;" class="ui-forest-blink">
 			<div style="border-left:3px solid; width:34%; float: right; height:100%;">
@@ -57,7 +57,7 @@ if(isset($_GET['webpicloader'])){
 	</div>
 </div>
 
-<div style="min-width:700px; min-height:500px; height:91%;">
+<div id="workplace-container<?echo $appid?>" style="min-width:700px; min-height:500px; height:91%; transition:all 0.2s ease;">
 	<div id="code-pre-container<?echo $appid?>" style="height:100%; min-height:500px; float:right; background-color:#22212b; width:49%; border-left:4px solid #534f61;">
 		<textarea id="code-container<?echo $appid?>" style="height:70%; width:100%; min-height:350px; background:#2f2e38; border:3px solid #534f61; color:#fff; padding:10px; border-left:none;  border-top:none;"><?echo $data;?></textarea>
 		<div style="text-align:center; padding:10px;">
@@ -71,7 +71,7 @@ if(isset($_GET['webpicloader'])){
 		<div id="saveimg<?echo $appid?>" class="ui-forest-button ui-forest-accept ui-forest-center" style="width:80%;">Save</div>
     <div id="saveraw<?echo $appid?>" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">Save RAW</div>
 	</div>
-	<div id="image-container<?echo $appid?>" style="width:100%; height:100%; transition:all 0.2s ease;">
+	<div id="image-container<?echo $appid?>" style="width:100%; height:100%;">
 	<div id="image-render<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); cursor:default; background-color:transparent; word-break:break-word; overflow:hidden;">
 	</div>
 </div>
@@ -84,8 +84,8 @@ if(isset($_GET['webpicloader'])){
 function setcolor<?echo $appid?>(element){
 	$('.colorpalette').css('color','534f62');
 	$('#'+element.id+'').css('color','1d80d0');
-	getColor = $('#'+element.id+'').css('background');
-	$('#image-container<?echo $appid?>').css('background',''+getColor+'');
+	getColor = $('#'+element.id+'').css('background-color');
+	$('#workplace-container<?echo $appid?>').css('background-color',''+getColor+'');
 }
 
 /* Hide Right Panel */
