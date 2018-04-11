@@ -46,35 +46,37 @@ if(isset($_GET['webpicloader'])){
 		<div style="text-align:center; padding:10px;">
 			<input id="imgname<?echo $appid?>" style="font-size:17px; background:#2f2e38; border:2px solid #534f61; padding:5px; color:#fff;" type="text" value="<?echo $name?>" placeholder="Image Name">
 			<select id="selectext<?echo $appid?>" style="font-size:17px; padding:4px; background:#2f2e38; border:2px solid #534f61; color:#fff;">
-			  <option value="jpg">jpg</option>
-			  <option value="png">png</option>
+				<option value="png">png</option>
+				<option value="jpg">jpg</option>
 			  <option value="bmp">bmp</option>
 			</select>
 		</div>
 		<div id="saveimg<?echo $appid?>" class="ui-forest-button ui-forest-accept ui-forest-center" style="width:80%;">Save</div>
     <div id="saveraw<?echo $appid?>" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">Save RAW</div>
 	</div>
-	<div id="image-container<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); background-color:transparent; word-break:break-word; overflow:hidden;">
+	<div id="image-container<?echo $appid?>" style="width:100%; height:100%;">
+	<div id="image-render<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); cursor:default; background-color:transparent; word-break:break-word; overflow:hidden;">
 	</div>
+</div>
 </div>
 </div>
 <script>
 /*--------JS Logic--------*/
 
-$($('#code-container<?echo $appid?>').val()).prependTo('#image-container<?echo $appid?>');
-$('#image-container<?echo $appid?>').draggable();
+$($('#code-container<?echo $appid?>').val()).prependTo('#image-render<?echo $appid?>');
+$('#image-render<?echo $appid?>').draggable({snap:"#image-container<?echo $appid?>"});
 $('#code-container<?echo $appid?>').bind('input propertychange', function(){
-	$('#image-container<?echo $appid?>').empty();
-	$($('#code-container<?echo $appid?>').val()).prependTo('#image-container<?echo $appid?>');
+	$('#image-render<?echo $appid?>').empty();
+	$($('#code-container<?echo $appid?>').val()).prependTo('#image-render<?echo $appid?>');
 });
 $(function() {
     $("#saveimg<?echo $appid?>").click(function() {
-        html2canvas($("#image-container<?echo $appid?>").children().get(0)).then(function(canvas){
-					var imgData = canvas.toDataURL('image/jpeg');
+        html2canvas($("#image-render<?echo $appid?>").children().get(0), {backgroundColor:'rgba(0,0,0,0)', logging:false, async:true, allowTaint:true}).then(function(canvas){
 					var url = "<?echo $folder;?>saveImage";
 					var name = $("#imgname<?echo $appid?>").val();
 					var user = "<?echo $user?>";
 					var ext = $("#selectext<?echo $appid?>").val();
+					var imgData = canvas.toDataURL('image/'+ext+'');
 					$.ajax({
 						type: "POST",
 						url: url,
