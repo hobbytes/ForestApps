@@ -46,7 +46,7 @@ $folder=$_GET['destination'];
 }
 </style>
 <div>
-  <table border='1' cellpadding="5" style="border-collapse: collapse; border:1px solid #d4d4d4; width:100%; text-align: center;">
+  <table border='1' cellpadding="7" style="border-collapse: collapse; border:1px solid #d4d4d4; width:100%; text-align: center;">
     <tbody id="process_manager<?echo $appid?>">
       <tr id="process_titles<?echo $appid?>" style="color:#f2f2f2; background-color:#3a3a3a;">
         <td><?echo $language[$_SESSION['locale'].'_name_title']?></td>
@@ -65,11 +65,12 @@ var temp_id = 0;
 var new_id  = 0;
 var new_name = '';
 var new_loc = '';
+var color<?echo $appid?> = '#f5f5f5';
 $(".process-container").each(function(index, element){
   var p_id = $(element).attr("id");
   var p_name = $("#drag"+p_id + "> .process-title").text();
   var p_loc = $(element).attr("location");
-  $("#taskcontainer<?echo $appid?>").append('<tr t_id="'+p_id+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td class="tm-box-left""><span onClick="open_folder('+p_id+')">'+p_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
+  $("#taskcontainer<?echo $appid?>").append('<tr style="background:'+color<?echo $appid?>+';" t_id="'+p_id+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td class="tm-box-left""><span onClick="open_folder('+p_id+')">'+p_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
   temp_id = p_id;
 });
 
@@ -81,7 +82,12 @@ function task_check<?echo $appid;?>(){
   });
   if(new_id > temp_id){
     temp_id = new_id;
-    $("#taskcontainer<?echo $appid?>").append('<tr t_id="'+new_id+'" id="task'+new_id+'"><td>'+new_name+'</td><td>'+new_id+'</td><td class="tm-box-left"><span onClick="open_folder('+new_id+')">'+new_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+new_id+'); checkwindows();">x</div></td></tr>');
+		if(color<?echo $appid?> == '#f5f5f5'){
+			color<?echo $appid?> = '#e0e0e0';
+		}else{
+			color<?echo $appid?> = '#f5f5f5';
+		}
+    $("#taskcontainer<?echo $appid?>").append('<tr style="background:'+color<?echo $appid?>+'; t_id="'+new_id+'" id="task'+new_id+'"><td>'+new_name+'</td><td>'+new_id+'</td><td class="tm-box-left"><span onClick="open_folder('+new_id+')">'+new_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+new_id+'); checkwindows();">x</div></td></tr>');
   }
   $("#taskcontainer<?echo $appid?> > tr").each(function(index, element){
     var get_id = $(element).attr("t_id");
