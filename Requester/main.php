@@ -15,7 +15,7 @@ $appid = $_GET['appid'];
 
 ?>
 
-<div id="<?echo $appname.$appid;?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
+<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
 
 <style>
 
@@ -55,7 +55,7 @@ $appid = $_GET['appid'];
 <div style="text-align:left; font-size:24px; font-weight:900; color:#5896f5;">
 	URL
 </div>
-<input class="requset-input" style="width:92%;" type="text" value="" placeholder="URL">
+<input id="url-<?echo $appid?>" class="requset-input" style="width:92%;" type="text" value="" placeholder="URL">
 </div>
 
 <div class="requset-container">
@@ -73,9 +73,14 @@ $appid = $_GET['appid'];
 <div class="requset-button" onclick="AddField<?echo $appid?>()">Add</div>
 </div>
 
-
 <div class="requset-button" onclick="Request<?echo $appid?>()">Request</div>
 
+<div class="requset-container">
+<div style="text-align:left; font-size:24px; font-weight:900; color:#5896f5;">
+	Response
+</div>
+<pre id="response-container<?echo $appid?>" style="border:2px solid #607d8b; min-height:200px; white-space:pre-wrap; text-align:left; padding:10px; color:#2a2f31;" contenteditable="true"></pre>
+</div>
 <?php
 /*--------Include Libraries--------*/
 
@@ -113,18 +118,42 @@ function AddField<?echo $appid?>(){
 
 /*---Make Request---*/
 function Request<?echo $appid?>(){
+	var returnValue;
 	var keyCounter = 0;
-	var keyvalue<?echo $appid;?> = '';
+	var keyvalue<?echo $appid?> = {};
+	url = $("#url-<?echo $appid?>").val();
+
   $('.rq').each(function(){
 		keyCounter++;
-		if(this.value && $('.requset-input[k="value-'+keyCounter+'"]').val()){
-			keyvalue<?echo $appid;?> = keyvalue<?echo $appid;?> + this.value + ':' + $('.requset-input[k="value-'+keyCounter+'"]').val() + ',';
+		var key = $(this).val();
+		value = ''+$('.requset-input[k="value-'+keyCounter+'"]').val()+'';
+		if(key && value){
+			keyvalue<?echo $appid?>[''+key+''] = value;
 		}
+		delete value;
+		delete key;
   });
-	keyvalue<?echo $appid;?> = keyvalue<?echo $appid;?>.slice(0,-1);
-	if(keyvalue<?echo $appid;?>){
-		
+	if(keyvalue<?echo $appid?> && url){
+		$.ajax({
+			url : ''+url+'',
+			method : 'GET',
+			contentType : "application/json; charset=utf-8",
+			/*headers : {
+				'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8',
+				'X-Requested-With' : 'XMLHttpRequest'
+			},*/
+			data : keyvalue<?echo $appid?>,
+			dataType : 'JSONP',
+			async : false,
+			success : function(result){
+				$("#response-container<?echo $appid?>").html(JSON.stringify(result, undefined, 2));
+			},
+			error : function(httpReq, status, exception){
+				$("#response-container<?echo $appid?>").html(status + " " + exception + "<br>"+ JSON.stringify(httpReq, undefined, 2));
+			}
+		});
 	}
 }
+
 
 </script>
