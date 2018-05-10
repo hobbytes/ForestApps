@@ -15,7 +15,7 @@ $appid = $_GET['appid'];
 
 ?>
 
-<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
+<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:550px; width:800px; border-radius:0px 0px 5px 5px; overflow:auto;">
 
 <style>
 
@@ -52,10 +52,15 @@ $appid = $_GET['appid'];
 </style>
 
 <div class="requset-container">
-<div style="text-align:left; font-size:24px; font-weight:900; color:#5896f5;">
-	URL
-</div>
-<input id="url-<?echo $appid?>" class="requset-input" style="width:92%;" type="text" value="" placeholder="URL">
+	<div style="text-align:left; font-size:24px; font-weight:900; color:#5896f5;">
+		URL
+	</div>
+	<input id="url-<?echo $appid?>" class="requset-input" style="width:92%;" type="text" value="" placeholder="URL">
+	<label for="reqtype-<?echo $appid?>">Type: </label>
+	<select id="reqtype-<?echo $appid?>">
+		<option value="GET">GET</option>
+		<option value="POST">POST</option>
+	</select>
 </div>
 
 <div class="requset-container">
@@ -120,6 +125,7 @@ function AddField<?echo $appid?>(){
 function Request<?echo $appid?>(){
 	var returnValue;
 	var keyCounter = 0;
+	var requsetType = $("#reqtype-<?echo $appid?>").val();
 	var keyvalue<?echo $appid?> = {};
 	url = $("#url-<?echo $appid?>").val();
 
@@ -136,7 +142,7 @@ function Request<?echo $appid?>(){
 	if(keyvalue<?echo $appid?> && url){
 		$.ajax({
 			url : ''+url+'',
-			method : 'GET',
+			method : ''+requsetType+'',
 			contentType : "application/json; charset=utf-8",
 			/*headers : {
 				'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -155,5 +161,5 @@ function Request<?echo $appid?>(){
 	}
 }
 
-
+UpdateWindow("<?echo $appid?>","<?echo $appname?>");
 </script>
