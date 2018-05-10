@@ -68,7 +68,7 @@ else if(isset($openexplorer)){
 <link rel="stylesheet" href="<? echo $folder.'assets/libs/phpFileTree/styles/default/default.css?h='.md5(date('dmyhis'))?>">
 <link rel="stylesheet" href="<?echo $folder;?>assets/highlight/styles/atom-one-dark.css">
 <div style="width:98%; text-align:center; margin:0 auto; background-color:#292929; padding:10px;">
-  <div style="cursor:pointer; width:30px; text-align:left; " onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
+  <div style="display:none; cursor:pointer; width:30px; text-align:left; " onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
   	Файл
   	<div id="filemenu<?echo $appid;?>" style="display:none; position:absolute; z-index:9000; background:#fff; width:auto;">
   <ul id="mmenu<?echo $appid;?>">
@@ -103,8 +103,7 @@ else if(isset($openexplorer)){
     <td id="contentget<?echo $appid;?>" style="height:500px; width:97%; display:block;">
         <div class="hljs" onchange="hlupd<?echo $appid;?>()" contenteditable="true" style="display:block; border: 1px solid #3c3c3c;">
           <code>
-            <div style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $appid;?>">
-          <?
+            <pre style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $appid;?>"><?
           if($launch=='true'){
               $handle=fopen($filedir.$tempfile,"r+");
               $contents='';
@@ -137,7 +136,7 @@ else if(isset($openexplorer)){
             echo $content;
           }
           ?>
-        </div>
+        		</pre>
           </code>
         </div>
 </td>
@@ -174,7 +173,7 @@ function savefile<?echo $appid;?>(destination){
 }
 
 $(function(){
-  $("#mmenu<?echo $appid;?>").menu();
+  //$("#mmenu<?echo $appid;?>").menu();
 });
 
 function hlupd<?echo $appid;?>(){

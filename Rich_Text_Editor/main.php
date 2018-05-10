@@ -14,7 +14,7 @@ if(empty($rteloader)){
   $mode = '0';
 }
 ?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:hidden;">
+<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; min-width:300px; min-height:200px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:hidden;">
 <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css'>
 
 <?php
@@ -56,6 +56,8 @@ session_start();
 
 .toolbar {
   text-align: center;
+	width: 65%;
+	margin: auto;
 }
 
 .toolbar a,
@@ -63,11 +65,9 @@ session_start();
 .back-wrapper {
   border: 1px solid #AAA;
   background: #FFF;
-  font-family: 'Candal';
   border-radius: 1px;
   color: black;
   padding: 5px;
-  width: 1.5em;
   margin: -2px;
   margin-top: 10px;
   display: inline-block;
@@ -141,12 +141,12 @@ a.palette-item {
 <div class="toolbar">
 <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
 <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
-<div class="fore-wrapper"><i class='fa fa-font' style='color:#C96;'></i>
-  <div class="fore-palette" style="top:80px; left:30px;">
+<div class="fore-wrapper"><i class='fa fa-font' style='color:#2196f3;'></i>
+  <div class="fore-palette" style="top:80px; left:150px;">
   </div>
 </div>
-<div class="back-wrapper"><i class='fa fa-font' style='background:#C96;'></i>
-  <div class="back-palette" style="top:80px; left:60px;">
+<div class="back-wrapper"><i class='fa fa-font' style='background:#2196f3; color:#fff;'></i>
+  <div class="back-palette" style="top:80px; left:160px;">
   </div>
 </div>
 <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
@@ -169,24 +169,22 @@ a.palette-item {
 <a href="#" data-command='p'>P</a>
 <a href="#" data-command='subscript'><i class='fa fa-subscript'></i></a>
 <a href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
-<div onClick='save<?echo $appid;?>()' style="width: auto;" class="ui-forest-button ui-forest-accept ui-forest-center"><span>Save</span></div>
 </div>
-<div id='editor<?echo $appid;?>' class="editor" contenteditable>
-<?
-if(isset($rteloader)){
-  if($mode == '1'){
-  echo htmlentities(file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader));
-}else{
-  echo file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader);
-}
-}
-?>
-</div>
+	<div id='editor<?echo $appid;?>' class="editor" contenteditable><?
+		if(isset($rteloader)){
+  		if($mode == '1'){
+  		echo htmlentities(file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader));
+		}else{
+  		echo file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader);
+		}
+		}
+		?></div>
+		<div onClick='save<?echo $appid;?>()' style="width: auto;" class="ui-forest-button ui-forest-accept ui-forest-center"><span>Save</span></div>
 </div>
 </div>
 <script>
 /*--------Логика JS--------*/
-var colorPalette = ['000000', 'FF9966', '6699FF', '99FF66', 'CC0000', '00CC00', '0000CC', '333333', '0066FF', 'FFFFFF'];
+var colorPalette = ['000000', 'FFFFFF', '2196F3', 'F44336', '673AB7', '009688', 'FFEB3B', '4CAF50', 'E91E63', '795548'];
 var forePalette = $('.fore-palette');
 var backPalette = $('.back-palette');
 
