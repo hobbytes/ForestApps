@@ -71,7 +71,7 @@ StartContainer()
 | *string* | AuthorInfo  | Имя автора |
 | *array* | LibraryArray | Список подключаемых библиотек |
 | *string* | appName | Имя контейнера |
-| *string* | appID | Уникальный ID |
+| *string* | appID | Уникальный ID контейнера|
 | *string* | backgroundColor | Цвет приложения (по умолчанию *#F2F2F2*) |
 | *string* | fontColor | Цвет шрифта (по умолчанию *#000*) |
 | *string* | height | высота (по умолчанию *550px*) |
