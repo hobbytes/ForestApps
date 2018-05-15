@@ -1,26 +1,39 @@
 <?
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Pine Base IDE', '1.6', 'Forest Media', 'Pine Base IDE');
-}
-$appname  = $_GET['appname'];
-$appid  = $_GET['appid'];
-?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#1b1b1b; height:700px; max-height:95%; max-width:100%; width:800px; color:#f2f2f2; border-radius:0px 0px 5px 5px; overflow-y:auto; overflow-x:hidden;">
-<?php
-/*****Pine Base IDE*****/
-/*****Подключаем библиотеки*****/
+/* Pine Base IDE */
+$AppName  = $_GET['appname'];
+$AppID  = $_GET['appid'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Pine Base IDE';
+$AppContainer->SecondNameInfo = 'Pine Base IDE';
+$AppContainer->VersionInfo = '1.7';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Library List */
+$AppContainer->LibraryArray = Array('permissions','gui');
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->backgroundColor = '#1b1b1b';
+$AppContainer->fontColor = '#f2f2f2';
+$AppContainer->height = '700px';
+$AppContainer->width = '800px';
+$AppContainer->customStyle = 'overflow-y:auto; overflow-x:hidden; padding-top:0px;';
+$AppContainer->StartContainer();
+
+/*include third-party lib*/
 include 'assets/libs/phpFileTree/php_file_tree.php';
-include '../../core/library/permissions.php';
-include '../../core/library/gui.php';
-include '../../core/library/etc/security.php';
-$security	=	new security;
 $object = new gui;
 $newpermission = new PermissionRequest;
-$security->appprepare();
+
 //Инициализируем переменные
-$click  = $_GET['mobile'];
+$isMobile  = $_GET['mobile'];
 $launch = $_GET['launch'];
 $folder = $_GET['destination'];
 $filedir  = $_GET['filedir'];
@@ -31,7 +44,7 @@ if(empty($openexplorer)){
 }
 $savecon  = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['content']);
 /*****Ассоциируем файлы*****/
-$newpermission->fileassociate(array('foc','js','css','ini','fth','link'), $folder.'main.php', 'pbloader', $appname);
+$newpermission->fileassociate(array('foc','js','css','ini','fth','link'), $folder.'main.php', 'pbloader', $AppName);
 //Запускаем сессию
 session_start();
 //Логика
@@ -68,28 +81,28 @@ else if(isset($openexplorer)){
 <link rel="stylesheet" href="<? echo $folder.'assets/libs/phpFileTree/styles/default/default.css?h='.md5(date('dmyhis'))?>">
 <link rel="stylesheet" href="<?echo $folder;?>assets/highlight/styles/atom-one-dark.css">
 <div style="width:98%; text-align:center; margin:0 auto; background-color:#292929; padding:10px;">
-  <div style="display:none; cursor:pointer; width:30px; text-align:left; " onmouseover="document.getElementById('filemenu<?echo $appid;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $appid;?>').style.display='none';">
+  <div style="display:none; cursor:pointer; width:30px; text-align:left; " onmouseover="document.getElementById('filemenu<?echo $AppID;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $AppID;?>').style.display='none';">
   	Файл
-  	<div id="filemenu<?echo $appid;?>" style="display:none; position:absolute; z-index:9000; background:#fff; width:auto;">
-  <ul id="mmenu<?echo $appid;?>">
+  	<div id="filemenu<?echo $AppID;?>" style="display:none; position:absolute; z-index:9000; background:#fff; width:auto;">
+  <ul id="mmenu<?echo $AppID;?>">
     <li><div>Open file</div></li>
     <li><div>Create file</div></li>
-  	<li><div onclick="savefile<?echo $appid;?>($('#destionation<?echo $appid;?>.value()'))">Save</div></li>
+  	<li><div onclick="savefile<?echo $AppID;?>($('#destionation<?echo $AppID;?>.value()'))">Save</div></li>
   	<li><div>Save as..</div></li>
   </ul>
   </div>
   </div>
-  <div id="launchapp" onClick="launch<?echo $appid;?>()" class="ui-button ui-widget ui-corner-all">
+  <div id="launchapp" onClick="launch<?echo $AppID;?>()" class="ui-button ui-widget ui-corner-all">
     <span class="ui-icon ui-icon-play"></span>Run
   </div>
   <div class="ui-button ui-widget ui-corner-all">
     <span class="ui-icon ui-icon-stop"></span>Stop
   </div>
-  <div id="launchapp" onClick="savefile<?echo $appid;?>('<?echo $inputdir;?>')" class="ui-button ui-widget ui-corner-all">
+  <div id="launchapp" onClick="savefile<?echo $AppID;?>('<?echo $inputdir;?>')" class="ui-button ui-widget ui-corner-all">
     <span class="ui-icon ui-icon-disk"></span>Save
   </div>
   <div>
-    <input style="background-color:#403f3f; border:1px solid #a5a5a5;  font-size:15px; color:#fff; padding:5px;  width:70%;  margin:10px;" type="text" id="destionation<?echo $appid;?>" value="<?echo $inputdir;?>">
+    <input style="background-color:#403f3f; border:1px solid #a5a5a5;  font-size:15px; color:#fff; padding:5px;  width:70%;  margin:10px;" type="text" id="destionation<?echo $AppID;?>" value="<?echo $inputdir;?>">
   </div>
 </div>
 <table style="height:100%; display:block; color:#f2f2f2; border-spacing: 0;">
@@ -97,13 +110,13 @@ else if(isset($openexplorer)){
     <td id="dirtree" style="display:block; float:left;">
       <?
       $allowed_extensions = array("php", "js", "ini", "css", "foc");
-      echo php_file_tree($_SERVER['DOCUMENT_ROOT'], "javascript:loadfile$appid('[link]')",  $allowed_extensions);
+      echo php_file_tree($_SERVER['DOCUMENT_ROOT'], "javascript:loadfile$AppID('[link]')",  $allowed_extensions);
       ?>
     </td>
-    <td id="contentget<?echo $appid;?>" style="height:500px; width:97%; display:block;">
-        <div class="hljs" onchange="hlupd<?echo $appid;?>()" contenteditable="true" style="display:block; border: 1px solid #3c3c3c;">
+    <td id="contentget<?echo $AppID;?>" style="height:500px; display:block;">
+        <div class="hljs" onchange="hlupd<?echo $AppID;?>()" contenteditable="true" style="display:block; border: 1px solid #3c3c3c;">
           <code>
-            <pre style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $appid;?>"><?
+            <pre style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $AppID;?>"><?
           if($launch=='true'){
               $handle=fopen($filedir.$tempfile,"r+");
               $contents='';
@@ -142,22 +155,24 @@ else if(isset($openexplorer)){
 </td>
 </tr>
 </table>
-</div>
+<?
+$AppContainer->EndContainer();
+?>
 <script>
-function launch<?echo $appid;?>(){
-  var str = $("#contentget<?echo $appid;?>").text();
+function launch<?echo $AppID;?>(){
+  var str = $("#contentget<?echo $AppID;?>").text();
   str = str.replace(/<span class="hljs.*">([\s\S]+?)<\/span>/gim, "$i");
   str = str.replace(/^\s*/,'').replace(/\s*$/,'');
   //console.log(str);
-  $("#<?echo $appid;?>").load("<?echo $folder;?>main.php?launch=true&content="+escape(str)+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+  $("#<?echo $AppID;?>").load("<?echo $folder;?>main.php?launch=true&content="+escape(str)+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$isMobile.'&appname='.$AppName.'&destination='.$folder;?>")
 };
 
-function loadfile<?echo $appid;?>(file){
-  $("#<?echo $appid;?>").load("<?echo $folder;?>main.php?launch=open&filedir="+file+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")
+function loadfile<?echo $AppID;?>(file){
+  $("#<?echo $AppID;?>").load("<?echo $folder;?>main.php?launch=open&filedir="+file+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$isMobile.'&appname='.$AppName.'&destination='.$folder;?>")
 }
 
-function savefile<?echo $appid;?>(destination){
-  var str = $("#contentget<?echo $appid;?>").text();
+function savefile<?echo $AppID;?>(destination){
+  var str = $("#contentget<?echo $AppID;?>").text();
   str = str.replace(/<span class="hljs.*">([\s\S]+?)<\/span>/gim, "$i");
   str = str.replace(/^\s*/,'').replace(/\s*$/,'');
   $.ajax({
@@ -173,25 +188,25 @@ function savefile<?echo $appid;?>(destination){
 }
 
 $(function(){
-  //$("#mmenu<?echo $appid;?>").menu();
+  //$("#mmenu<?echo $AppID;?>").menu();
 });
 
-function hlupd<?echo $appid;?>(){
+function hlupd<?echo $AppID;?>(){
   $(document).ready(function()  {
-    var str = $("#content<?echo $appid;?>").text();
+    var str = $("#content<?echo $AppID;?>").text();
     str = str.replace(/^\s*/,'').replace(/\s*$/,'');
-    $("#content<?echo $appid;?>").text(str);
+    $("#content<?echo $AppID;?>").text(str);
     $('div code').each(function(i, block){
       hljs.highlightBlock(block);
     });
-    $( "#content<?echo $appid;?>" ).resizable({containment:"body",autoHide:true});
+    $( "#content<?echo $AppID;?>" ).resizable({containment:"body",autoHide:true});
   });
 };
 
 $(document).ready(function()  {
 $.getScript('<?echo $folder;?>assets/highlight/highlight.pack.js')
   .done(function( script, textStatus  ){
-    hlupd<?echo $appid;?>();
+    hlupd<?echo $AppID;?>();
     //console.log('highlight.js is load');
   });
 
@@ -211,5 +226,5 @@ $.getScript('<?echo $folder;?>assets/highlight/highlight.pack.js')
   }
 </style>
 <?
-unset($appid);
+unset($AppID);
 ?>
