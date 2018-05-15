@@ -33,16 +33,48 @@ makeprocess(destination,  key,  value,  name);
   </div>
 </div>
 ```
-При загрузки приложения передаются следующие данные: **appname** - название приложения, **appid** - уникальный ID, **destination** - путь до приложения, **mobile** - передает индетификатор устройства (если ПК, то передает "dblclick", в противном случае "click").
+При загрузки приложения передаются следующие данные: **appname** - название приложения, **appid** - уникальный ID, **destination** - путь до приложения, **mobile** - передает индетификатор устройства (если ПК, то передает "dblclick", в противном случае "click"). А так же передается пара **ключ=значение**, если их указали в функции *makeprocess()*. 
+
+Для работы приложения все эти данные необходимо хранить (а также передавать при обработки событий), вот как это делается:
+
+```PHP
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$isMobile = $_GET['mobile'];
+$Folder = $_GET['destination'];
+$getValue = $_GET['key']; // любой ключ который вы отправляли
+```
 
 Для обработки событий используется JQuery-функция **.load()**
 
 ```HTML
 <script>
 function EventFunction<?echo $AppID?>(){
-  $("#<?echo $AppID?>").load("<?echo $folder?>/main.php?id=<?echo rand(0,10000).'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>")
+  $("#<?echo $AppID?>").load("<?echo $folder?>/main.php?mobile=<?echo $isMobile.'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>&key1=value1&keyN=valueN")
   };
 </script>
 ```
 
-Для упрощения разработки приложения используется библиотека **[Mercury](https://github.com/hobbytes/ForestOS/tree/master/system/core/library/Mercury)**, которая поставляется вместе с ОС (начиная с версии 1.0.8.4).
+Пишем первое приложение
+--------------------------------------------
+Для упрощения разработки приложения используется библиотека **[Mercury](https://github.com/hobbytes/ForestOS/tree/master/system/core/library/Mercury.AppContainer.php)**, которая поставляется вместе с ОС (начиная с версии 1.0.8.4).
+
+На данный момент существуют два метода:
+
+StartContainer()
+--------------------------------------------
+| Тип | Аргумент | Описание |
+| ------ | ------ | ------ |
+| *string* | AppNameInfo | Публичное имя приложения |
+| *string* | SecondNameInfo | Второе публичное имя приложения (для локализации) |
+| *string* | VersionInfo | Версия приложения |
+| *string* | AuthorInfo  | Имя автора |
+| *array* | LibraryArray | Список подключаемых библиотек |
+| *string* | appName | Имя контейнера |
+| *string* | appID | Уникальный ID |
+| *string* | backgroundColor | Цвет приложения (по умолчанию *#F2F2F2*) |
+| *string* | fontColor | Цвет шрифта (по умолчанию *#000*) |
+| *string* | height | высота (по умолчанию *550px*) |
+| *string* | width | ширина (по умолчанию *800px*) |
+| *string* | customStyle | CSS (по умолчанию NULL) |
+| *boolean* | showError  | отображение ошибок (по умолчанию false) |
