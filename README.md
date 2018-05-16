@@ -79,8 +79,10 @@ StartContainer()
 
 ```PHP
 <?php
+
   $AppContainer = new AppContainer; // создаем новый объект
   $AppContainer->AppNameInfo = 'App Name';  // объявляем аргумент
+  
 ?>
 ```
 
@@ -107,7 +109,9 @@ Event(FunctionName, Argument = NULL, Folder, File, RequestData = array())
 
 ```PHP
 <?php
+
   $AppContainer->Event("TestFunction", 'element', 'system/apps/App_Name/', 'main', array('key' => '"+element.id+"'));
+
 ?>
 ```
 Этот метод вернет следующее:
