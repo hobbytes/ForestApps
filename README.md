@@ -38,11 +38,13 @@ makeprocess(destination,  key,  value,  name);
 Для работы приложения все эти данные необходимо хранить (а также передавать при обработки событий), вот как это делается:
 
 ```PHP
+<?php
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
 $isMobile = $_GET['mobile'];
 $Folder = $_GET['destination'];
 $getValue = $_GET['key']; // любой ключ который вы отправляли
+?>
 ```
 
 Для обработки событий используется JQuery-функция **.load()**
@@ -50,7 +52,7 @@ $getValue = $_GET['key']; // любой ключ который вы отпра�
 ```HTML
 <script>
 function EventFunction<?echo $AppID?>(){
-  $("#<?echo $AppID?>").load("<?echo $folder?>/main.php?mobile=<?echo $isMobile.'&destination='.$Folder.'&appname='.$AppName.'&appid='.$AppID?>&key1=value1&keyN=valueN")
+  $("#"+AppID+"").load(Folder+"/main.php?mobile="+isMobile+"&destination="+Folder+"&appname="+AppName+"&appid="+AppID+"&key1=value1&keyN=valueN")
   };
 </script>
 ```
@@ -86,4 +88,63 @@ EndContainer()
 Аргументы отсутствуют, метод закрывает предыдущий метод, а также вызывает JS-функцию для перерисовки окна:
 ```JS
 UpdateWindow(AppID,AppName);
+```
+
+Рассмотрим простой пример
+--------------------------------------------
+
+```PHP
+<?php
+
+  /*--------Get App Name and App ID--------*/
+  $AppName = $_GET['appname'];
+  $AppID = $_GET['appid'];
+  
+  /*--------Require Mercury library--------*/
+  require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+  
+  /* Make new container */
+  $AppContainer = new AppContainer;
+  
+  /* App Info */
+  $AppContainer->AppNameInfo = 'App Name'; // app name information @string
+  $AppContainer->SecondNameInfo = 'Second Name'; // second app name information @string
+  $AppContainer->VersionInfo = '1.0';  // app version @string
+  $AppContainer->AuthorInfo = 'Author'; // app version @string
+  
+  /* Library List */
+  $AppContainer->LibraryArray = Array(); // get libraries @array *not necessary
+  
+  /* Container Info */
+  $AppContainer->appName = $AppName; // app container name @string
+  $AppContainer->appID = $AppID; //  app container ID @integer
+  $AppContainer->backgroundColor = '#f2f2f2'; // custom background-color *not necessary
+  $AppContainer->fontColor = '#000'; // custom font color *not necessary
+  $AppContainer->height = '500px';  // app container height @string *not necessary
+  $AppContainer->width = '800px'; // app container width @string *not necessary
+  $AppContainer->customStyle = ''; // custom CSS style @string *not necessary
+  $AppContainer->showError = false; // error display @boolean *not necessary
+  
+  /* start app container */
+  $AppContainer->StartContainer();
+  
+  /*
+  $isMobile - click or touch event,
+  $folder - application directory
+  */
+  
+  $isMobile = $_GET['mobile'];
+  $folder = $_GET['destination'];
+  
+  /* print Hello World! */
+  echo 'Hello World!';
+  
+  /* end app container */
+  $AppContainer->EndContainer();
+  
+?>
+
+<script>
+/*--------JS Logic--------*/
+</script>
 ```
