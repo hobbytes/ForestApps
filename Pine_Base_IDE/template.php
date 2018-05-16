@@ -12,7 +12,7 @@ require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php
 $AppContainer = new AppContainer;
 
 /* App Info */
-$AppContainer->AppNameInfo = 'App name'; // app name information @string
+$AppContainer->AppNameInfo = 'App Name'; // app name information @string
 $AppContainer->SecondNameInfo = 'Second Name'; // second app name information @string
 $AppContainer->VersionInfo = '1.0';  // app version @string
 $AppContainer->AuthorInfo = 'Author'; // app version @string
