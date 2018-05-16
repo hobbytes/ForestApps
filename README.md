@@ -49,26 +49,16 @@ makeprocess(destination,  key,  value,  name);
 ?>
 ```
 
-Для обработки событий используется JQuery-функция **.load()**
-
-```HTML
-<script>
-  
-function EventFunction<?echo $AppID?>(){
-  $("#"+AppID+"").load(Folder+"/main.php?mobile="+isMobile+"&destination="+Folder+"&appname="+AppName+"&appid="+AppID+"&key1=value1&keyN=valueN")
-  };
-  
-</script>
-```
-
 Пишем первое приложение
 --------------------------------------------
 Для упрощения разработки приложения используется библиотека **[Mercury](https://github.com/hobbytes/ForestOS/tree/master/system/core/library/Mercury.AppContainer.php)**, которая поставляется вместе с ОС (начиная с версии 1.0.8.4).
 
-На данный момент существуют два метода:
+На данный момент существуют три метода:
 
 StartContainer()
 --------------------------------------------
+Этот метод упрощает создание контейнера. Аргументы, где в описании есть строка "*по умолчанию*" - не обязательны. 
+
 | Тип | Аргумент | Описание |
 | ------ | ------ | ------ |
 | *string* | AppNameInfo | Публичное имя приложения |
@@ -85,13 +75,46 @@ StartContainer()
 | *string* | customStyle | CSS (по умолчанию NULL) |
 | *boolean* | showError  | отображение ошибок (по умолчанию false) |
 
-Этот метод упрощает создание контейнера. Аргументы, где в описании есть строка "*по умолчанию*" - не обязательны
+Аргументы необходимо объявлять заранее, например так:
+
+```PHP
+<?php
+  $AppContainer = new AppContainer; // создаем новый объект
+  $AppContainer->AppNameInfo = 'App Name';  // объявляем аргумент
+?>
+```
 
 EndContainer()
 --------------------------------------------
 Аргументы отсутствуют, метод закрывает предыдущий метод, а также вызывает JS-функцию для перерисовки окна:
 ```JS
 UpdateWindow(AppID,AppName);
+```
+
+Event(FunctionName, Argument = NULL, Folder, File, RequestData = array())
+--------------------------------------------
+Данный метод позволяет создать новое событие (JS-функцию). Все вспомогательные данные (AppName, AppID) передаются автоматически. 
+
+| Тип | Аргумент | Описание |
+| ------ | ------ | ------ |
+| *string* | FunctionName | Имя функции |
+| *string* | Argument | Аргумент функции |
+| *string* | Folder | Путь до приложения |
+| *string* | File  | Имя исполняемого файла без расширения |
+| *array* | RequestData | Запрашиваемые данные ("key1" => "value1", "keyN" => "valueN")  |
+
+Аргументы для данного метода задаются сразу, например:
+
+```PHP
+<?php
+  $AppContainer->Event("TestFunction", 'element', 'system/apps/App_Name/', 'main', array('key' => '"+element.id+"'));
+?>
+```
+Этот метод вернет следующее:
+```JS
+function TestFunction1(element){
+      $("#1").load("system/apps/App_Name/main.php?id=2704&destination=system/apps/App_Name/&appname=App_Name&appid=1&key="+element.id)
+    };
 ```
 
 Рассмотрим простой пример
