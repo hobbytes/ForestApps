@@ -39,11 +39,13 @@ makeprocess(destination,  key,  value,  name);
 
 ```PHP
 <?php
-$AppName = $_GET['appname'];
-$AppID = $_GET['appid'];
-$isMobile = $_GET['mobile'];
-$Folder = $_GET['destination'];
-$getValue = $_GET['key']; // любой ключ который вы отправляли
+
+  $AppName = $_GET['appname'];
+  $AppID = $_GET['appid'];
+  $isMobile = $_GET['mobile'];
+  $Folder = $_GET['destination'];
+  $getValue = $_GET['key']; // любой ключ который вы отправляли
+
 ?>
 ```
 
@@ -51,9 +53,11 @@ $getValue = $_GET['key']; // любой ключ который вы отпра�
 
 ```HTML
 <script>
+  
 function EventFunction<?echo $AppID?>(){
   $("#"+AppID+"").load(Folder+"/main.php?mobile="+isMobile+"&destination="+Folder+"&appname="+AppName+"&appid="+AppID+"&key1=value1&keyN=valueN")
   };
+  
 </script>
 ```
 
