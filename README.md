@@ -53,6 +53,8 @@ makeprocess(destination,  key,  value,  name);
 --------------------------------------------
 Для упрощения разработки приложения используется библиотека **[Mercury](https://github.com/hobbytes/ForestOS/tree/master/system/core/library/Mercury.AppContainer.php)**, которая поставляется вместе с ОС (начиная с версии 1.0.8.4).
 
+<img src="http://forest.hobbytes.com/media/os/Documentation/Mercury_Logo.png" width="256">
+
 На данный момент существуют три метода:
 
 StartContainer()
