@@ -151,8 +151,8 @@ function TestFunction1(element){
   $AppContainer->appID = $AppID; //  app container ID @integer
   $AppContainer->backgroundColor = '#f2f2f2'; // custom background-color *not necessary
   $AppContainer->fontColor = '#000'; // custom font color *not necessary
-  $AppContainer->height = '500px';  // app container height @string *not necessary
-  $AppContainer->width = '800px'; // app container width @string *not necessary
+  $AppContainer->height = '400px';  // app container height @string *not necessary
+  $AppContainer->width = '400px'; // app container width @string *not necessary
   $AppContainer->customStyle = ''; // custom CSS style @string *not necessary
   $AppContainer->showError = false; // error display @boolean *not necessary
   
@@ -170,6 +170,9 @@ function TestFunction1(element){
   /* print Hello World! */
   echo 'Hello World!';
   
+  /* draw button */
+  echo '<div class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
+  
   /* end app container */
   $AppContainer->EndContainer();
   
@@ -179,3 +182,7 @@ function TestFunction1(element){
 /*--------JS Logic--------*/
 </script>
 ```
+
+Результат:
+
+<img src="http://forest.hobbytes.com/media/os/Documentation/test_app.png" width="512">
