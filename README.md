@@ -76,6 +76,7 @@ StartContainer()
 | *string* | width | ширина (по умолчанию *800px*) |
 | *string* | customStyle | CSS (по умолчанию NULL) |
 | *boolean* | showError  | отображение ошибок (по умолчанию false) |
+| *boolean* | showStatistics  | выводит статистику для контейнера: время и размер (по умолчанию false) |
 
 Аргументы необходимо объявлять заранее, например так:
 
@@ -151,12 +152,8 @@ function TestFunction1(element){
   /* Container Info */
   $AppContainer->appName = $AppName; // app container name @string
   $AppContainer->appID = $AppID; //  app container ID @integer
-  $AppContainer->backgroundColor = '#f2f2f2'; // custom background-color *not necessary
-  $AppContainer->fontColor = '#000'; // custom font color *not necessary
   $AppContainer->height = '400px';  // app container height @string *not necessary
   $AppContainer->width = '400px'; // app container width @string *not necessary
-  $AppContainer->customStyle = ''; // custom CSS style @string *not necessary
-  $AppContainer->showError = false; // error display @boolean *not necessary
   
   /* start app container */
   $AppContainer->StartContainer();
