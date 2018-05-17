@@ -72,12 +72,12 @@ StartContainer()
 | *string* | appID | Уникальный ID контейнера|
 | *string* | backgroundColor | Цвет приложения (по умолчанию *#F2F2F2*) |
 | *string* | fontColor | Цвет шрифта (по умолчанию *#000*) |
-| *string* | height | высота (по умолчанию *550px*) |
-| *string* | width | ширина (по умолчанию *800px*) |
+| *string* | height | Высота (по умолчанию *550px*) |
+| *string* | width | Ширина (по умолчанию *800px*) |
 | *string* | customStyle | CSS (по умолчанию NULL) |
-| *string* | isMobile | ПК или мобильное устройство (по умолчанию NULL) |
-| *boolean* | showError  | отображение ошибок (по умолчанию false) |
-| *boolean* | showStatistics  | выводит статистику для контейнера: время и размер (по умолчанию false) |
+| *string* | isMobile | Необязательный аргумент, хранит значение "click/dblclick" в зависимости от устройства (по умолчанию NULL) |
+| *boolean* | showError  | Отображение ошибок (по умолчанию false) |
+| *boolean* | showStatistics  | Выводит статистику для контейнера: время и размер (по умолчанию false) |
 
 Аргументы необходимо объявлять заранее, например так:
 
