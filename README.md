@@ -51,7 +51,7 @@ makeprocess(destination,  key,  value,  name);
 
 Пишем первое приложение
 --------------------------------------------
-Для упрощения разработки приложения используется библиотека **[Mercury](https://github.com/hobbytes/ForestOS/tree/master/system/core/library/Mercury.AppContainer.php)**, которая поставляется вместе с ОС (начиная с версии 1.0.8.4).
+Для упрощения разработки приложений используется библиотека **[Mercury](https://github.com/hobbytes/ForestOS/tree/master/system/core/library/Mercury.AppContainer.php)**, которая поставляется вместе с ОС (начиная с версии 1.0.8.4).
 
 <img src="http://forest.hobbytes.com/media/os/Documentation/Mercury_Logo.png" width="256">
 
@@ -75,6 +75,7 @@ StartContainer()
 | *string* | height | высота (по умолчанию *550px*) |
 | *string* | width | ширина (по умолчанию *800px*) |
 | *string* | customStyle | CSS (по умолчанию NULL) |
+| *string* | isMobile | ПК или мобильное устройство (по умолчанию NULL) |
 | *boolean* | showError  | отображение ошибок (по умолчанию false) |
 | *boolean* | showStatistics  | выводит статистику для контейнера: время и размер (по умолчанию false) |
 
@@ -103,10 +104,12 @@ Event(FunctionName, Argument = NULL, Folder, File, RequestData = array())
 | Тип | Аргумент | Описание |
 | ------ | ------ | ------ |
 | *string* | FunctionName | Имя функции |
-| *string* | Argument | Аргумент функции |
+| *string* | Argument | Аргумент функции (по умолчанию NULL) |
 | *string* | Folder | Путь до приложения |
 | *string* | File  | Имя исполняемого файла без расширения |
 | *array* | RequestData | Запрашиваемые данные ("key1" => "value1", "keyN" => "valueN")  |
+| *string* | CustomFunction  | Произвольная JS-функция (по умолчанию NULL) |
+| *string* | CustomContainer   | Произвольное имя контейнера (по умолчанию NULL) |
 
 Аргументы для данного метода задаются сразу, например:
 
