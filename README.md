@@ -97,7 +97,7 @@ EndContainer()
 UpdateWindow(AppID,AppName);
 ```
 
-Event(FunctionName, Argument = NULL, Folder, File, RequestData = array())
+Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), CustomFunction = NULL, CustomContainer = NULL)
 --------------------------------------------
 Данный метод позволяет создать новое событие (JS-функцию). Все вспомогательные данные (AppName, AppID) передаются автоматически. 
 
