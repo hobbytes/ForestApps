@@ -109,6 +109,7 @@ Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), Custom
 | *string* | File  | Имя исполняемого файла без расширения |
 | *array* | RequestData | Запрашиваемые данные ("key1" => "value1", "keyN" => "valueN")  |
 | *string* | CustomFunction  | Произвольная JS-функция (по умолчанию NULL) |
+| *integer* | CustomFunctionMode  | Вставить функцию в начале (0) или в конце (1) (по умолчанию 1) |
 | *string* | CustomContainer   | Произвольное имя контейнера (по умолчанию NULL) |
 
 Аргументы для данного метода задаются сразу, например:
@@ -116,14 +117,24 @@ Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), Custom
 ```PHP
 <?php
 
-  $AppContainer->Event("TestFunction", 'element', 'system/apps/App_Name/', 'main', array('key' => '"+element.id+"'));
+  $AppContainer->Event(
+   "TestFunction", 
+   'element', 
+   'system/apps/App_Name/', 
+   'main', 
+   array('key' => '"+element.id+"'),
+   '"+alert(\'Hello World!\')+"',
+   1
+  );
 
 ?>
 ```
 Этот метод вернет следующее:
 ```JS
+/* function TestFunction1 */
 function TestFunction1(element){
       $("#1").load("system/apps/App_Name/main.php?id=2704&destination=system/apps/App_Name/&appname=App_Name&appid=1&key="+element.id)
+      alert('Hello World!');
     };
 ```
 
