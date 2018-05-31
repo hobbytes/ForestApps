@@ -26,7 +26,7 @@ makeprocess(destination,  key,  value,  name);
 <div id="appID">
   <div id="dragID">
   </div>
-  <div id="18" location="system/apps/App_Name/main.php">
+  <div id="1" location="system/apps/App_Name/main.php">
     <div id="App_NameID">
      <!--сюда загружается приложение-->
     </div>
