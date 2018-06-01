@@ -33,7 +33,7 @@ makeprocess(destination,  key,  value,  name);
   </div>
 </div>
 ```
-При загрузки приложения передаются следующие данные: **appname** - название приложения, **appid** - уникальный ID, **destination** - путь до приложения, **mobile** - передает индетификатор устройства (если ПК, то передает "dblclick", в противном случае "click"). А так же передается пара **ключ=значение**, если их указали в функции *makeprocess()*. 
+При загрузки приложения передаются следующие данные: **appname** - название приложения, **appid** - уникальный ID, **destination** - путь до приложения, **mobile** - передает индетификатор устройства (true/false). А так же передается пара **ключ=значение**, если их указали в функции *makeprocess()*. 
 
 Для работы приложения все эти данные необходимо хранить (а также передавать при обработки событий), вот как это делается:
 
@@ -75,7 +75,7 @@ StartContainer()
 | *string* | height | Высота (по умолчанию *550px*) |
 | *string* | width | Ширина (по умолчанию *800px*) |
 | *string* | customStyle | CSS (по умолчанию NULL) |
-| *string* | isMobile | Необязательный аргумент, хранит значение "click/dblclick" в зависимости от устройства (по умолчанию NULL) |
+| *string* | isMobile | Необязательный аргумент, хранит значение "true/false" в зависимости от устройства (по умолчанию NULL) |
 | *boolean* | showError  | Отображение ошибок (по умолчанию false) |
 | *boolean* | showStatistics  | Выводит статистику для контейнера: время и размер (по умолчанию false) |
 
@@ -173,7 +173,7 @@ function TestFunction1(element){
   $AppContainer->StartContainer();
   
   /*
-  $isMobile - click or touch event,
+  $isMobile - true or false event,
   $folder - application directory
   */
   
