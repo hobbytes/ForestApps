@@ -1,24 +1,33 @@
 <?
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Task Manager', '1.0', 'Forest Media', 'Диспетчер задач');
-}
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
-<?php
-/*--------Подключаем библиотеки--------*/
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
+/* Task Manager */
+
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Task Manager';
+$AppContainer->SecondNameInfo = 'Диспетчер задач';
+$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->height = '300px';
+$AppContainer->width = '600px';
+$AppContainer->customStyle = 'padding-top:0px;';
+$AppContainer->StartContainer();
+
+/*--------get lang--------*/
 $language  = parse_ini_file('app.lang');
-/*--------Запускаем сессию--------*/
-session_start();
-/*--------Проверяем безопасность--------*/
-$security	=	new security;
-$security->appprepare();
-$click=$_GET['mobile'];
-$folder=$_GET['destination'];
+
 /*--------Логика--------*/
 ?>
 <style>
@@ -47,53 +56,60 @@ $folder=$_GET['destination'];
 </style>
 <div>
   <table border='1' cellpadding="7" style="border-collapse: collapse; border:1px solid #d4d4d4; width:100%; text-align: center;">
-    <tbody id="process_manager<?echo $appid?>">
-      <tr id="process_titles<?echo $appid?>" style="color:#f2f2f2; background-color:#3a3a3a;">
+    <tbody id="process_manager<?echo $AppID?>">
+      <tr id="process_titles<?echo $AppID?>" style="color:#f2f2f2; background-color:#3a3a3a;">
         <td><?echo $language[$_SESSION['locale'].'_name_title']?></td>
         <td><?echo $language['id_title']?></td>
+        <td><?echo $language[$_SESSION['locale'].'_applength']?></td>
         <td><?echo $language[$_SESSION['locale'].'_loc_title']?></td>
       </tr>
-      <tbody id="taskcontainer<?echo $appid?>">
+      <tbody id="taskcontainer<?echo $AppID?>">
       </div>
     </tbody>
   </table>
-</div>
-</div>
+	<?
+	$AppContainer->EndContainer();
+	?>
 <script>
-clearInterval(timer<?echo $appid;?>);
+clearInterval(timer<?echo $AppID;?>);
 var temp_id = 0;
 var new_id  = 0;
 var new_name = '';
 var new_loc = '';
-var color<?echo $appid?> = '#f5f5f5';
+var color<?echo $AppID?> = '#f5f5f5';
 $(".process-container").each(function(index, element){
-  var p_id = $(element).attr("id");
-  var p_name = $("#drag"+p_id + "> .process-title").text();
-  var p_loc = $(element).attr("location");
-  $("#taskcontainer<?echo $appid?>").append('<tr style="background:'+color<?echo $appid?>+';" t_id="'+p_id+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td class="tm-box-left""><span onClick="open_folder('+p_id+')">'+p_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
+  let p_id = $(element).attr("id");
+  let p_name = $("#drag"+p_id + "> .process-title").text();
+  let p_loc = $(element).attr("location");
+	let _applength = $("#app" + p_id).attr("applength-" + p_id);
+	let p_applength = (_applength / 1024).toPrecision(3) + " KB";
+  $("#taskcontainer<?echo $AppID?>").append('<tr style="background:'+color<?echo $AppID?>+';" t_id="'+p_id+'" t_applength="'+_applength+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td>'+p_applength+'</td><td class="tm-box-left""><span onClick="open_folder('+p_id+')">'+p_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
   temp_id = p_id;
 });
 
-function task_check<?echo $appid;?>(){
+function task_check<?echo $AppID;?>(){
   $(".process-container").each(function(index, element){
     new_id = $(element).attr("id");
     new_name = $("#drag"+new_id + "> .process-title").text();
     new_loc = $(element).attr("location");
+		_applength = $("#app" + new_id).attr("applength-" + new_id);
+		new_applength = (_applength / 1024).toPrecision(3) + " KB";
   });
   if(new_id > temp_id){
     temp_id = new_id;
-		if(color<?echo $appid?> == '#f5f5f5'){
-			color<?echo $appid?> = '#e0e0e0';
+		if(color<?echo $AppID?> == '#f5f5f5'){
+			color<?echo $AppID?> = '#e0e0e0';
 		}else{
-			color<?echo $appid?> = '#f5f5f5';
+			color<?echo $AppID?> = '#f5f5f5';
 		}
-    $("#taskcontainer<?echo $appid?>").append('<tr style="background:'+color<?echo $appid?>+'; t_id="'+new_id+'" id="task'+new_id+'"><td>'+new_name+'</td><td>'+new_id+'</td><td class="tm-box-left"><span onClick="open_folder('+new_id+')">'+new_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+new_id+'); checkwindows();">x</div></td></tr>');
+    $("#taskcontainer<?echo $AppID?>").append('<tr style="background:'+color<?echo $AppID?>+'; t_id="'+new_id+'" t_applength="'+_applength+'" id="task'+new_id+'"><td>'+new_name+'</td><td>'+new_id+'</td><td>'+new_applength+'</td><td class="tm-box-left"><span onClick="open_folder('+new_id+')">'+new_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+new_id+'); checkwindows();">x</div></td></tr>');
   }
-  $("#taskcontainer<?echo $appid?> > tr").each(function(index, element){
+  $("#taskcontainer<?echo $AppID?> > tr").each(function(index, element){
     var get_id = $(element).attr("t_id");
     if(!$("#process" + get_id).length){
       $("#task"+get_id).remove();
     }
+
   });
 }
 
@@ -109,14 +125,14 @@ folder = '<?echo $_SERVER['DOCUMENT_ROOT']?>/'+folder+'';
 makeprocess('<?echo $_SERVER['DOCUMENT_ROOT'].'/system/apps/Explorer/main.php'?>',folder,'dir','<?echo $language[$_SESSION['locale'].'_explorer_title']?>');
 }
 
-var timer<?echo $appid;?> = setInterval(function(){
-  if($("#<?echo $appname.$appid;?>").length){
-    task_check<?echo $appid;?>();
+var timer<?echo $AppID;?> = setInterval(function(){
+  if($("#<?echo $AppName.$AppID;?>").length){
+    task_check<?echo $AppID;?>();
 }else{
-  clearInterval(timer<?echo $appid;?>);
+  clearInterval(timer<?echo $AppID;?>);
 }
 },500);
 </script>
 <?
-unset($appid);
+unset($AppID);
 ?>

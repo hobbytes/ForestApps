@@ -1,9 +1,11 @@
 [TM]
 ru_name_title = 'Имя'
+ru_applength = 'Трафик'
 ru_loc_title = 'Расположение'
 ru_explorer_title = 'Проводник'
 
 en_name_title = 'Name'
+en_applength = 'Traffic'
 en_loc_title = 'Location'
 en_explorer_title = 'Explorer'
 
