@@ -1,33 +1,35 @@
 <?
-/*--------Получаем App Name и App ID--------*/
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Remote Lab', '1.0', 'Forest Media', 'Remote Lab');
-}
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-?>
-<div id="<?echo $appname.$appid?>" style="background-color:#e9eef1; height:100%; min-height:600px width:100%; border-radius:0px 0px 5px 5px; overflow:hidden; overflow-y:auto;">
-<?php
-/*--------Подключаем библиотеки--------*/
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/filesystem.php';
-/*--------Запускаем сессию--------*/
-session_start();
-/*--------Проверяем безопасность--------*/
-$security	=	new security;
-$security->appprepare();
+/* Web Picture */
+
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Remote Lab';
+$AppContainer->SecondNameInfo = 'Remote Lab';
+$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('filesystem', 'bd');
+$AppContainer->height = '100%';
+$AppContainer->width = '100%';
+$AppContainer->customStyle = 'padding-top:0px; overflow-y:auto;';
+$AppContainer->StartContainer();
 
 $fileaction = new fileaction;
 $bd = new readbd;
 $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
 
 $key = $getdata;//get key
-
-$click	=	$_GET['mobile'];
-$folder	=	$_GET['destination'];
 
 /*--------App Logic--------*/
 $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/Remote_Lab/';
@@ -37,10 +39,10 @@ if(!is_dir($dir)){ // check folder
 }
 
 ?>
-<link rel="stylesheet" href="<?echo $folder.$fileaction->filehash('assets/style.css','false')?>">
-<script src="<?echo $folder.$fileaction->filehash('assets/Chart/Chart.min.js','false')?>"></script>
+
+<link rel="stylesheet" href="<?echo $Folder.$fileaction->filehash('assets/style.css','false')?>">
 <div style="min-width:600px; width:100%; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
-	<div id="applabel<?echo $appid?>" onclick="back<?echo $appid?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600;">
+	<div id="applabel<?echo $AppID?>" onclick="back<?echo $AppID?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600;">
 		Remote Lab
 	</div>
 </div>
@@ -60,7 +62,7 @@ if(!empty($_GET['addunit'])){ //	check new unit
 	if(!is_dir($NewUnitFolder)){
 		mkdir($NewUnitFolder);// make folder
 		$nameUnit = $_GET['addunit'];
-		$FileContent = "[main]\nname='$nameUnit'\ntoken='$token'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
+		$FileContent = "[main]\nname='$nameUnit'\ntoken='$token'\ntype='line'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
 		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
 		$selectUnit = $_token;
 	}else{
@@ -69,17 +71,20 @@ if(!empty($_GET['addunit'])){ //	check new unit
 }
 
 /* Save Unit */
-if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep'])){
+if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep']) && isset($_GET['chartType'])){
 
 	/* prepare data */
 	$_name = $_GET['name'];
 	$_step = intval($_GET['step']);
 	$_cstep = intval($_GET['cstep']);
+	$_type = $_GET['chartType'];
+
 	if($_cstep > $_step){
 		$_step = '0';
 		$_cstep = '0';
 	}
-	$newData = array("name='$_name'", "step='$_step'", "cstep='$_cstep'");
+
+	$newData = array("name='$_name'", "step='$_step'", "cstep='$_cstep'", "type='$_type'");
 
 	/* get temp data */
 	$configFile = $unitFolder.'/'.$selectUnit.'/config.foc';
@@ -87,7 +92,8 @@ if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep'])){
 	$TepmName = $configTemp['name'];
 	$TepmStep = $configTemp['step'];
 	$TepmCStep = $configTemp['cstep'];
-	$oldData = array("name='$TepmName'", "step='$TepmStep'", "cstep='$TepmCStep'");
+	$TepmCStep = $configTemp['type'];
+	$oldData = array("name='$TepmName'", "step='$TepmStep'", "cstep='$TepmCStep'", "type='$TepmCStep'");
 
 	/* get default config file for replacement */
 	$ReplaceConfig = file_get_contents($configFile);
@@ -172,7 +178,7 @@ foreach($b as $test){
 
 	$_date = new DateTime();//prerpare for Request URL
 	$timestamp = $_date->getTimestamp();
-	$RequestURL = $_SERVER['HTTP_HOST'].'/'.$folder.'hub.php?token='.$unitName.'&user='.$_SESSION['loginuser'].'&#38timestamp='.$timestamp.'&{data=value}';
+	$RequestURL = $_SERVER['HTTP_HOST'].'/'.$Folder.'hub.php?token='.$unitName.'&user='.$_SESSION['loginuser'].'&#38timestamp='.$timestamp.'&{data=value}';
 
 	echo '
 	<div>
@@ -181,7 +187,7 @@ foreach($b as $test){
 			Info
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
-			<div style="text-align:left;">Name: <span id="name'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['name'].'</span></div><br>
+			<div style="text-align:left;">Name: <span id="name'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['name'].'</span></div><br>
 			<div style="text-align:left;">Intput data:<div style="display:inline-table; margin-bottom:10px;">
 			';
 			foreach ($input_array as $data){
@@ -190,15 +196,22 @@ foreach($b as $test){
 			echo '
 			</div>
 			</div>
-				<div style="text-align:left;">Step: <span id="step'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
-				<div style="text-align:left;">Current step: <span id="cstep'.$appid.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
+				<div style="text-align:left;">Chart Type:
+					<select id="chartType'.$AppID.'" class="lab-unit-tag lab-unit-edit" style="cursor:default;">
+						<option value="line">Line</option>
+						<option value="bar">Bar</option>
+						<option value="radar">Radar</option>
+					</select>
+				</div><br>
+				<div style="text-align:left;">Step: <span id="step'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
+				<div style="text-align:left;">Current step: <span id="cstep'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
 				<div style="text-align:left;">Last connection: <span class="lab-unit-tag">'.$lastConnection.'</span></div>
 		</div><br>
 		<div style="text-align:left;">Request URL: <div class="lab-unit-tag" style="width:270px; font-size:10px; cursor:text;" contenteditable="true">'.$RequestURL.'</div></div>
-		<div class="lab-unit-button mode-blue" onclick="saveunit'.$appid.'()">
+		<div class="lab-unit-button mode-blue" onclick="saveunit'.$AppID.'()">
 			Save
 		</div>
-		<div class="lab-unit-button mode-red" onclick="deleteunit'.$appid.'()">
+		<div class="lab-unit-button mode-red" onclick="deleteunit'.$AppID.'()">
 			Delete Unit
 		</div>
 	</div>
@@ -208,7 +221,7 @@ foreach($b as $test){
 			Charts
 		</div>
 		<div style="width:90%; max-width:100%; min-width:500px;">
-			<canvas id="chart'.$appid.'">
+			<canvas id="chart'.$AppID.'">
 			</canvas>
 		</div>
 	</div>
@@ -258,7 +271,7 @@ foreach($b as $test){
 	?>
 	<script>
 		var config = {
-			type: 'line',
+			type: '<?echo $config['type']?>',
 			data: {
 				labels: [<?echo ltrim($labels,',')?>],
 				datasets: [<?echo $series?>]
@@ -297,11 +310,12 @@ foreach($b as $test){
 		};
 
 
-			var ctx = document.getElementById('chart<?echo $appid?>').getContext('2d');
+			var ctx = document.getElementById('chart<?echo $AppID?>').getContext('2d');
 			window.myLine = new Chart(ctx, config);
-			var applabel = $("#applabel<?echo $appid?>").text();
-			$("#applabel<?echo $appid?>").text("<"+applabel);
-			$("#applabel<?echo $appid?>").addClass('lab-unit-app-button');
+			var applabel = $("#applabel<?echo $AppID?>").text();
+			$("#applabel<?echo $AppID?>").text("<"+applabel);
+			$("#applabel<?echo $AppID?>").addClass('lab-unit-app-button');
+			$("#chartType<?echo $AppID?> option[value=<?echo $config['type']?>]").attr('selected', 'selected');
 	</script>
 	<?
 }else{
@@ -311,8 +325,8 @@ foreach($b as $test){
 	<div class="lab-unit-label">
 		New Unit
 	</div>
-	<input id="newunit<?echo $appid?>" type="text" placeholder="Unit Name">
-	<div class="lab-unit-button" onclick="addunit<?echo $appid?>()">
+	<input id="newunit<?echo $AppID?>" type="text" placeholder="Unit Name">
+	<div class="lab-unit-button" onclick="addunit<?echo $AppID?>()">
 		Create
 	</div>
 	<?
@@ -328,7 +342,7 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 	$name = $config['name']; //get name
 	$token = $security->__decode($config['token'], $key); //get token
 	echo '
-	<div class="lab-unit" id="'.$token.'" onclick="selectunit'.$appid.'(this)">
+	<div class="lab-unit" id="'.$token.'" onclick="selectunit'.$AppID.'(this)">
 		<div class="lab-unit-label">
 			'.$name.'
 		</div>
@@ -339,18 +353,77 @@ foreach (glob($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].
 	';
 }
 }
+
+$AppContainer->EndContainer();
 ?>
-</div>
 <script>
-/*--------Логика JS--------*/
-function back<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-function addunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?addunit="+escape($("#newunit<?echo $appid?>").val())+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-function saveunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?name="+escape($("#name<?echo $appid?>").text())+"&step="+escape($("#step<?echo $appid?>").text())+"&cstep="+escape($("#cstep<?echo $appid?>").text())+"&selectunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-function selectunit<?echo $appid?>(el){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?selectunit="+el.id+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
-function deleteunit<?echo $appid?>(){$("#<?echo $appid?>").load("<?echo $folder;?>/main.php?deleteunit=<?echo $unitName?>&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>")};
+/*--------JS--------*/
+
+$(document).ready(function()  {
+	$.getScript("<?echo $Folder.$fileaction->filehash('assets/Chart/Chart.min.js','false')?>");
+});
+
+<?
+// back button
+$AppContainer->Event(
+	"back",
+	NULL,
+	$Folder,
+	'main',
+	NULL
+);
+
+// add unit
+$AppContainer->Event(
+	"addunit",
+	NULL,
+	$Folder,
+	'main',
+	array(
+		'addunit' => '"+escape($("#newunit'.$AppID.'").val())+"'
+	)
+);
+
+// save unit
+$AppContainer->Event(
+	"saveunit",
+	NULL,
+	$Folder,
+	'main',
+	array(
+		'name' => '"+escape($("#name'.$AppID.'").text())+"',
+		'step' => '"+escape($("#step'.$AppID.'").text())+"',
+		'cstep' => '"+escape($("#cstep'.$AppID.'").text())+"',
+		'chartType' => '"+escape($("#chartType'.$AppID.'").val())+"',
+		'selectunit' => $unitName
+	)
+);
+
+// add unit
+$AppContainer->Event(
+	"selectunit",
+	"el",
+	$Folder,
+	'main',
+	array(
+		'selectunit' => '"+el.id+"'
+	)
+);
+
+// add unit
+$AppContainer->Event(
+	"deleteunit",
+	NULL,
+	$Folder,
+	'main',
+	array(
+		'deleteunit' => $unitName
+	)
+);
+?>
 
 $(".resizeunit").resizable();
 </script>
 <?
-unset($appid);
+unset($AppID);
 ?>
