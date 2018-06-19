@@ -1,111 +1,125 @@
 <?
-/*--------Get App Name and App ID--------*/
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Web Picture', '1.0', 'Forest Media', 'Web Picture');
-}
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
-<?php
-/*--------Include Libraries--------*/
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/filesystem.php';
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/permissions.php';
-/*--------Run Session--------*/
-session_start();
-/*--------Check Security--------*/
-$security	=	new security;
-$security->appprepare();
+/* Web Picture */
+
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Web Picture';
+$AppContainer->SecondNameInfo = 'Web Picture';
+$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('filesystem', 'permissions');
+$AppContainer->height = '100%';
+$AppContainer->width = '100%';
+$AppContainer->customStyle = 'padding-top:0px;';
+$AppContainer->StartContainer();
+
 $fileaction = new fileaction;
 $newpermission = new PermissionRequest;
-/*
-$click - click or touch action
-$folder - folder var
-*/
-$click=$_GET['mobile'];
-$folder=$_GET['destination'];
-/*--------PHP Logic--------*/
+
+$Folder = $_GET['destination'];
+
 $user = $_SESSION['loginuser'];
+
 $downloadDir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/documents/images';
 
-$newpermission->fileassociate(array('w2p'), $folder.'main.php', 'webpicloader', $appname);
+if(!file_exists($downloadDir)){
+	mkdir($downloadDir, 0777, true);
+}
+
+$newpermission->fileassociate(array('w2p'), $Folder.'main.php', 'webpicloader', $AppName);
+
 if(isset($_GET['webpicloader'])){
 	$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].$_GET['webpicloader']);
 	$name = pathinfo($_SERVER['DOCUMENT_ROOT'].$_GET['webpicloader'])['filename'];
 }else{
 	$data = '<div style="width:200px; height:200px;">&#13;&#10;</div>';
 }
+
 ?>
-<script src="<?echo $folder.$fileaction->filehash('assets/html2canvas/html2canvas.min.js','false')?>"></script>
 
 <div style="display:flex; padding:13px; background:#2f2e38; color:#fff; border-bottom: 5px solid #534f61">
-	<div style="width:150px; border:3px solid #534f61; margin:4px 10px;" id="scale-display<?echo $appid?>">
-		<div id="scale-handle<?echo $appid?>" style="width: auto; min-width:20px; text-align:center; background:#534f61; border:2px solid #706a86; color:#fff;" class="ui-slider-handle"></div>
+	<div style="width:150px; border:3px solid #534f61; margin:4px 10px;" id="scale-display<?echo $AppID?>">
+		<div id="scale-handle<?echo $AppID?>" style="width: auto; min-width:20px; text-align:center; background:#534f61; border:2px solid #706a86; color:#fff;" class="ui-slider-handle"></div>
 	</div>
 	<div style="width:100%;">
-		<div id="colorpalette1_<?echo $appid?>" onclick="setcolor<?echo $appid?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#1d80d0; float:left; background-color:#fff; border:3px solid; margin:0 5px;">
+		<div id="colorpalette1_<?echo $AppID?>" onclick="setcolor<?echo $AppID?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#1d80d0; float:left; background-color:#fff; border:3px solid; margin:0 5px;">
 		</div>
-		<div id="colorpalette2_<?echo $appid?>" onclick="setcolor<?echo $appid?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#534f62; float:left; background-color:#1f1f1f; border:3px solid; margin:0 5px;">
+		<div id="colorpalette2_<?echo $AppID?>" onclick="setcolor<?echo $AppID?>(this)" class="colorpalette ui-forest-blink" style="border-radius:15px; width:20px; height:20px; color:#534f62; float:left; background-color:#1f1f1f; border:3px solid; margin:0 5px;">
 		</div>
-		<div id="hidepanel<?echo $appid?>" onclick="HideRightPanel<?echo $appid?>()" style="color:#1d80d0; border:3px solid; width:40px; height:30px; float:right;" class="ui-forest-blink">
+		<div id="hidepanel<?echo $AppID?>" onclick="HideRightPanel<?echo $AppID?>()" style="color:#1d80d0; border:3px solid; width:40px; height:30px; float:right;" class="ui-forest-blink">
 			<div style="border-left:3px solid; width:34%; float: right; height:100%;">
 			</div>
 		</div>
 	</div>
 </div>
 
-<div id="workplace-container<?echo $appid?>" style="min-width:700px; min-height:500px; height:91%; transition:all 0.2s ease;">
-	<div id="code-pre-container<?echo $appid?>" style="height:100%; min-height:500px; float:right; background-color:#22212b; width:49%; border-left:4px solid #534f61;">
-		<textarea id="code-container<?echo $appid?>" style="height:70%; width:100%; min-height:350px; background:#2f2e38; border:3px solid #534f61; color:#fff; padding:10px; border-left:none;  border-top:none;"><?echo $data;?></textarea>
+<div id="workplace-container<?echo $AppID?>" style="min-width:700px; min-height:500px; height:91%; transition:all 0.2s ease;">
+	<div id="code-pre-container<?echo $AppID?>" style="height:100%; min-height:500px; float:right; background-color:#22212b; width:49%; border-left:4px solid #534f61;">
+		<textarea id="code-container<?echo $AppID?>" style="height:70%; width:100%; min-height:350px; background:#2f2e38; border:3px solid #534f61; color:#fff; padding:10px; border-left:none;  border-top:none;"><?echo $data;?></textarea>
 		<div style="text-align:center; padding:10px;">
-			<input id="imgname<?echo $appid?>" style="font-size:17px; background:#2f2e38; border:2px solid #534f61; padding:5px; color:#fff;" type="text" value="<?echo $name?>" placeholder="Image Name">
-			<select id="selectext<?echo $appid?>" style="font-size:17px; padding:4px; background:#2f2e38; border:2px solid #534f61; color:#fff;">
+			<input id="imgname<?echo $AppID?>" style="font-size:17px; background:#2f2e38; border:2px solid #534f61; padding:5px; color:#fff;" type="text" value="<?echo $name?>" placeholder="Image Name">
+			<select id="selectext<?echo $AppID?>" style="font-size:17px; padding:4px; background:#2f2e38; border:2px solid #534f61; color:#fff;">
 				<option value="png">png</option>
 				<option value="jpg">jpg</option>
 			  <option value="bmp">bmp</option>
 			</select>
 		</div>
-		<div id="saveimg<?echo $appid?>" class="ui-forest-button ui-forest-accept ui-forest-center" style="width:80%;">Save</div>
-    <div id="saveraw<?echo $appid?>" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">Save RAW</div>
+		<div id="saveimg<?echo $AppID?>" class="ui-forest-button ui-forest-accept ui-forest-center" style="width:80%;">Save</div>
+    <div id="saveraw<?echo $AppID?>" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;">Save RAW</div>
 	</div>
-	<div id="image-container<?echo $appid?>" style="width:100%; height:100%;">
-	<div id="image-render<?echo $appid?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); cursor:default; background-color:transparent; word-break:break-word; overflow:hidden;">
+	<div id="image-container<?echo $AppID?>" style="width:100%; height:100%;">
+	<div id="image-render<?echo $AppID?>" style="position:absolute; top:25%; left:25%; transform: translateX(-50%); cursor:default; background-color:transparent; word-break:break-word; overflow:hidden;">
 	</div>
 </div>
 </div>
-</div>
+<?
+$AppContainer->EndContainer();
+?>
 <script>
 /*--------JS Logic--------*/
 
+$(document).ready(function()  {
+	$.getScript("<?echo $Folder.$fileaction->filehash('assets/html2canvas/html2canvas.min.js','false')?>");
+});
+
 /* Set color */
-function setcolor<?echo $appid?>(element){
+function setcolor<?echo $AppID?>(element){
 	$('.colorpalette').css('color','534f62');
 	$('#'+element.id+'').css('color','1d80d0');
 	getColor = $('#'+element.id+'').css('background-color');
-	$('#workplace-container<?echo $appid?>').css('background-color',''+getColor+'');
+	$('#workplace-container<?echo $AppID?>').css('background-color',''+getColor+'');
 }
 
 /* Hide Right Panel */
 var mode = '0';
-function HideRightPanel<?echo $appid?>(){
+function HideRightPanel<?echo $AppID?>(){
 	if (mode == '0'){
-		$("#hidepanel<?echo $appid?>").css('color','#7e7890');
-		$('#code-pre-container<?echo $appid?>').hide('slide',{direction:"right"},500);
+		$("#hidepanel<?echo $AppID?>").css('color','#7e7890');
+		$('#code-pre-container<?echo $AppID?>').hide('slide',{direction:"right"},500);
 			mode = '1';
 	}else{
-		$("#hidepanel<?echo $appid?>").css('color','#1d80d0');
-		$('#code-pre-container<?echo $appid?>').show('slide',{direction:"right"},500);
+		$("#hidepanel<?echo $AppID?>").css('color','#1d80d0');
+		$('#code-pre-container<?echo $AppID?>').show('slide',{direction:"right"},500);
 		mode = '0';
 	}
 }
 
 /* Slider */
-scaleHandler = $("#scale-handle<?echo $appid?>");
+scaleHandler = $("#scale-handle<?echo $AppID?>");
 var scaleValue = '1';
-$("#scale-display<?echo $appid?>").slider({
+$("#scale-display<?echo $AppID?>").slider({
 	value: scaleValue,
 	min: 0.1,
 	max: 2,
@@ -116,27 +130,27 @@ $("#scale-display<?echo $appid?>").slider({
 	slide: function(event, ui){
 		scaleHandler.text(ui.value);
 		scaleValue = ui.value;
-		$('#image-render<?echo $appid?>').css('transform','scale('+scaleValue+')');
+		$('#image-render<?echo $AppID?>').css('transform','scale('+scaleValue+')');
 	}
 });
 
 /* Update */
-$($('#code-container<?echo $appid?>').val()).prependTo('#image-render<?echo $appid?>');
-$('#image-render<?echo $appid?>').draggable({snap:"#image-container<?echo $appid?>"});
-$('#code-container<?echo $appid?>').bind('input propertychange', function(){
-	$('#image-render<?echo $appid?>').empty();
-	$($('#code-container<?echo $appid?>').val()).prependTo('#image-render<?echo $appid?>');
+$($('#code-container<?echo $AppID?>').val()).prependTo('#image-render<?echo $AppID?>');
+$('#image-render<?echo $AppID?>').draggable({snap:"#image-container<?echo $AppID?>"});
+$('#code-container<?echo $AppID?>').bind('input propertychange', function(){
+	$('#image-render<?echo $AppID?>').empty();
+	$($('#code-container<?echo $AppID?>').val()).prependTo('#image-render<?echo $AppID?>');
 });
 
 /* Save */
 $(function() {
-    $("#saveimg<?echo $appid?>").click(function() {
-			$('#image-render<?echo $appid?>').css('transform','scale(1)');
-        html2canvas($("#image-render<?echo $appid?>").children().get(0), {backgroundColor:'rgba(0,0,0,0)', logging:false, async:true, allowTaint:true}).then(function(canvas){
-					var url = "<?echo $folder;?>saveImage";
-					var name = $("#imgname<?echo $appid?>").val();
+    $("#saveimg<?echo $AppID?>").click(function() {
+			$('#image-render<?echo $AppID?>').css('transform','scale(1)');
+        html2canvas($("#image-render<?echo $AppID?>").children().get(0), {backgroundColor:'rgba(0,0,0,0)', logging:false, async:true, allowTaint:true}).then(function(canvas){
+					var url = "<?echo $Folder;?>saveImage";
+					var name = $("#imgname<?echo $AppID?>").val();
 					var user = "<?echo $user?>";
-					var ext = $("#selectext<?echo $appid?>").val();
+					var ext = $("#selectext<?echo $AppID?>").val();
 					var imgData = canvas.toDataURL('image/'+ext+'');
 					$.ajax({
 						type: "POST",
@@ -150,15 +164,15 @@ $(function() {
 						}
 					});
 
-					$('#image-render<?echo $appid?>').css('transform','scale('+scaleValue+')');
+					$('#image-render<?echo $AppID?>').css('transform','scale('+scaleValue+')');
 					makeprocess("system/apps/Explorer/main.php" , "<?echo $downloadDir?>", "dir", "Explorer");
 				})
     });
 
-		$("#saveraw<?echo $appid?>").click(function() {
-					var imgData = $('#code-container<?echo $appid?>').val();
-					var url = "<?echo $folder;?>saveImage";
-					var name = $("#imgname<?echo $appid?>").val();
+		$("#saveraw<?echo $AppID?>").click(function() {
+					var imgData = $('#code-container<?echo $AppID?>').val();
+					var url = "<?echo $Folder;?>saveImage";
+					var name = $("#imgname<?echo $AppID?>").val();
 					var user = "<?echo $user?>";
 					$.ajax({
 						type: "POST",

@@ -7,7 +7,6 @@ $Folder = $_GET['destination'];
 
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
 
-
 /* Make new container */
 $AppContainer = new AppContainer;
 
