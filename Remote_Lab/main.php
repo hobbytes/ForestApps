@@ -1,5 +1,5 @@
 <?
-/* Web Picture */
+/* Remote Lab */
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
@@ -22,7 +22,7 @@ $AppContainer->appID = $AppID;
 $AppContainer->LibraryArray = array('filesystem', 'bd');
 $AppContainer->height = '100%';
 $AppContainer->width = '100%';
-$AppContainer->customStyle = 'padding-top:0px; overflow-y:auto;';
+$AppContainer->customStyle = 'padding-top:0px; height:100%;';
 $AppContainer->StartContainer();
 
 $fileaction = new fileaction;
@@ -41,7 +41,7 @@ if(!is_dir($dir)){ // check folder
 ?>
 
 <link rel="stylesheet" href="<?echo $Folder.$fileaction->filehash('assets/style.css','false')?>">
-<div style="min-width:600px; width:100%; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
+<div style="min-width:600px; width:auto; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
 	<div id="applabel<?echo $AppID?>" onclick="back<?echo $AppID?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600;">
 		Remote Lab
 	</div>

@@ -1,27 +1,30 @@
 <?
-/*--------Получаем App Name и App ID--------*/
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('VK Social', '1.1', 'Forest Media', 'VK Social');
-}
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#e2e2e2; height:100%; width:100%; border-radius:0px 0px 5px 5px; overflow:auto;">
-<?php
-/*--------Подключаем библиотеки--------*/
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/etc/security.php';
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/bd.php';
-require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/gui.php';
-//$language  = parse_ini_file('app.lang');
-/*--------Запускаем сессию--------*/
-session_start();
-/*--------Проверяем безопасность--------*/
-$security	=	new security;
-$security->appprepare();
-$click=$_GET['mobile'];
-$folder=$_GET['destination'];
+/* VK Social */
+
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'VK Social';
+$AppContainer->SecondNameInfo = 'VK Social';
+$AppContainer->VersionInfo = '1.1.1';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('gui', 'bd');
+$AppContainer->height = '100%';
+$AppContainer->width = '100%';
+$AppContainer->customStyle = 'padding-top:0px; height:100%;';
+$AppContainer->StartContainer();
+
 $settingsbd = new readbd;
 $gui = new gui;
 
@@ -48,6 +51,7 @@ $json = json_decode($get_json,TRUE);
 }
 .name-container{
   color: #8e8e8e;
+	padding: 5px 0;
 }
 .in-container{
   text-transform: uppercase;
@@ -81,11 +85,25 @@ $json = json_decode($get_json,TRUE);
   color:#8e8e8e;
   font-size: 12px;
 }
+.vk-user<?echo $AppID?>{
+	padding:10px 0;
+}
 </style>
 <script>
-function add_domain<?echo $appid?>(){
-  $("#<?echo $appid?>").load("<?echo $folder?>main.php?id=<?echo rand(0,10000).'&destination='.$folder.'&appname='.$appname.'&appid='.$appid?>&domain="+$('#<?echo $appid?>domain').val());
-}
+
+<?
+// add domain
+$AppContainer->Event(
+	"add_domain",
+	"el",
+	$Folder,
+	'main',
+	array(
+		'domain' => '"+$("#'.$AppID.'domain").val()+"'
+	)
+);
+?>
+
 </script>
 <div style="width:100%; height:auto">
   <?
@@ -96,8 +114,8 @@ function add_domain<?echo $appid?>(){
     }
     echo '<div style="padding:10px; background-color:#5f86c4; color:#fff;">
     <div style="display:flex; margin:12px 0;">
-    <input id="'.$appid.'domain" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 150px; padding: 5px;" value="'.$get_domain.'" type="text" name="'.$appid.'domain">
-    <div onClick="add_domain'.$appid.'()" class="ui-forest-button ui-forest-accept" style="margin: 0 10px;">Analyze</div>
+    <input id="'.$AppID.'domain" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 150px; padding: 5px;" value="'.$get_domain.'" type="text" name="'.$AppID.'domain">
+    <div onClick="add_domain'.$AppID.'()" class="ui-forest-button ui-forest-accept" style="margin: 0 10px;">Analyze</div>
     </div>
   '.$json['first_name'].' '.$json['last_name'].'
   <div style="color:#d6d6d6; font-size:13px;">'.$online.'</div>
@@ -112,10 +130,10 @@ function add_domain<?echo $appid?>(){
       }
     }
 
-    function inBlock($lablel, $value){
+    function inBlock($lablel, $value, $customClass = NULL){
       echo '<div class="in-container">
       '.$lablel.'
-      <div class="in-value">
+      <div class="in-value '.$customClass.'">
       '.$value.'
       </div></div>';
     }
@@ -126,6 +144,13 @@ function add_domain<?echo $appid?>(){
     if(date('md', $btimestamp) > date('md')){
       $age--;
     }
+
+		//make beauty date
+		$bdate = new DateTime($json['bdate']);
+		$bdate = $bdate->format('d.m.y');
+		if($bdate == date('d.m.y')){
+			$bdate = 'неизвестно';
+		}
 
     //gender
     $get_sex = $json['sex'];
@@ -189,10 +214,10 @@ function add_domain<?echo $appid?>(){
     echo '<img src="'.$json['small_photo'].'" style="padding:10px; border-radius:60px; width:100px; height:100px; object-fit: cover;" class="ui-forest-blink" onClick="makeprocess(\'system/apps/Image_Viewer/main.php\',\''.$json['large_photo'].'\',\'photoviewload\', \'Image_Viewer\')">';
     dataContainer('Имя', $json['first_name'].' '.$json['last_name']);
     dataContainer('id', $json['id'].' | '.$json['domain']);
-    dataContainer('Дата рождения', $json['bdate'] . ' ('.$age.')');
+    dataContainer('Дата рождения', $bdate . ' ('.$age.')');
     dataContainer('Пол', $gender);
     dataContainer('Отношения', $relation);
-    dataContainer('Верность', $fidelity);
+    dataContainer('Верность партнеру', $fidelity);
     dataContainer('Город', $json['country'].', '.$json['home_town']);
     dataContainer('Интересы', $json['interests']);
     echo '</div>';
@@ -211,7 +236,7 @@ function add_domain<?echo $appid?>(){
     {
       for ($i = 0; $i < count($key); $i++) {
         if(!empty($key[$i]['id'])){
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$AppName.'\')"> analyze </span></div><br>';
         }
       }
     }
@@ -220,45 +245,72 @@ function add_domain<?echo $appid?>(){
     echo '<div style="margin:10px 0;"><div class="s-container"><div class="name-container">Друзья</div>';
 
     inBlock('Всего друзей',  $json['count']);
+    inBlock('В сети',  0, 'onlineCount'.$AppID);
     inBlock('Мужчин',  $json['sexCount']['m']);
     inBlock('Женщин',  $json['sexCount']['w']);
     inBlock('Неизвестно',  $json['sexCount']['u']);
 
-    echo '<div id="showallfriends'.$appid.'" class="ui-forest-blink" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
-    echo '<div id="allfriends'.$appid.'" style="display:none; padding: 7px;">';
+    echo '<div id="showallfriends'.$AppID.'" class="ui-forest-blink" style="cursor:pointer; text-align: center; margin: 5px; padding:10px; border: 2px solid #5f86c4; background: #abc3ea; color: #1f375f;">Показать всех друзей</div>';
+    echo '<div id="allfriends'.$AppID.'" style="display:none; padding: 7px;">';
+		echo '<div onClick="ShowHideOnline'.$AppID.'()" class="ui-forest-button ui-forest-accept show-button'.$AppID.'" style="margin: 10px 0px;">Показать/Скрыть онлайн</div>';
 
+		$onlineCount = 0;
     foreach ($json['friends'] as $key)
     {
       for ($i = 0; $i < count($key); $i++) {
         if(!empty($key[$i]['id'])){
           if($key[$i]['online'] == 1){
             $online = ' <span style="color: #f44336;">[online]</span>';
+						$onlineTag = 'vk-online'.$AppID;
+						$onlineCount++;
           }else{
-            $online = '';
-          }
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$appname.'\')"> analyze </span></div><br>';
+						$online = '';
+						$onlineTag = '';
+					}
+
+          echo '<div class="vk-user'.$AppID.' '.$onlineTag.'">'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$AppName.'\')"> analyze </span></div>';
         }
       }
     }
-    echo '</div></div></div><br><br>';
+    echo '
+		</div>
+		</div>
+		</div>';
   }
 
-  ?>
-</div>
+echo '</div>';
+$AppContainer->EndContainer();
 
-</div>
+?>
 <script>
-$("#showallfriends<?echo $appid?>").click(function(){
-  if($("#allfriends<?echo $appid?>").is( ":hidden" )){
-    $("#showallfriends<?echo $appid?>").text('Скрыть всех друзей');
-    $("#allfriends<?echo $appid?>").slideDown("fast");
+$(".onlineCount<?echo $AppID?>").html('<?echo $onlineCount?>');
+
+let show<?echo $AppID?> = false;
+
+function ShowHideOnline<?echo $AppID?>(){
+	if(!show<?echo $AppID?>){
+		$('.vk-user<?echo $AppID?>').css('display','none');
+		$('.vk-online<?echo $AppID?>').css('display','block');
+		$('.show-button<?echo $AppID?>').switchClass('ui-forest-accept', 'ui-forest-cancel', 500);
+		show<?echo $AppID?> = true;
+	}else{
+		$('.show-button<?echo $AppID?>').switchClass('ui-forest-cancel', 'ui-forest-accept', 500);
+		$('.vk-user<?echo $AppID?>').css('display','block');
+		show<?echo $AppID?> = false;
+	}
+}
+
+$("#showallfriends<?echo $AppID?>").click(function(){
+  if($("#allfriends<?echo $AppID?>").is( ":hidden" )){
+    $("#showallfriends<?echo $AppID?>").text('Скрыть всех друзей');
+    $("#allfriends<?echo $AppID?>").slideDown("fast");
   }else{
-    $("#showallfriends<?echo $appid?>").text('Показать всех друзей');
-    $("#allfriends<?echo $appid?>").slideUp("fast");
+    $("#showallfriends<?echo $AppID?>").text('Показать всех друзей');
+    $("#allfriends<?echo $AppID?>").slideUp("fast");
 }
 });
-UpdateWindow("<?echo $appid?>","<?echo $appname?>");
+UpdateWindow("<?echo $AppID?>","<?echo $AppName?>");
 </script>
 <?
-unset($appid);
+unset($AppID);
 ?>
