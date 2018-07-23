@@ -20,9 +20,9 @@ $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
 $AppContainer->LibraryArray = array('filesystem', 'bd');
-$AppContainer->height = '100%';
+$AppContainer->height = 'auto 100%';
 $AppContainer->width = '100%';
-$AppContainer->customStyle = 'padding-top:0px; height:100%;';
+$AppContainer->customStyle = 'padding-top: 0px;';
 $AppContainer->StartContainer();
 
 $fileaction = new fileaction;
@@ -116,12 +116,13 @@ if(isset($selectUnit)){ //	check new unit
 	$config = parse_ini_file($configFile);
 	$input_array = explode(',',$config['labels']);
 	$labels = '';
+
 	$count = 0;
 	$a = array();
 	foreach ($hub as $value => $key){
 		array_push($a,$key);
 		$count++;
-		$ts = gmdate("d.m.y, H:i",$key['timestamp']);//convert unix to date
+		$ts = date("d.m.y, H:i",$key['timestamp']);//convert unix to date
 		$labels = $labels.','."'$ts'";//get labels
 	}
 
@@ -150,8 +151,8 @@ if(isset($selectUnit)){ //	check new unit
 	array_push($minValues,array($keys => min($b[$count_][$keys])));
 	array_push($maxValues,array($keys => max($b[$count_][$keys])));
 	$count_++;
-
 }
+
 
 /*get series*/
 $Count = 0; //set zero for counter
@@ -178,7 +179,7 @@ foreach($b as $test){
 
 	$_date = new DateTime();//prerpare for Request URL
 	$timestamp = $_date->getTimestamp();
-	$RequestURL = $_SERVER['HTTP_HOST'].'/'.$Folder.'hub.php?token='.$unitName.'&user='.$_SESSION['loginuser'].'&#38timestamp='.$timestamp.'&{data=value}';
+	$RequestURL = 'http://'.$_SERVER['HTTP_HOST'].'/'.$Folder.'hub.php?token='.$unitName.'&user='.$_SESSION['loginuser'].'&#38timestamp='.$timestamp.'&{key1=value1&keyN=valueN}';
 
 	echo '
 	<div>
