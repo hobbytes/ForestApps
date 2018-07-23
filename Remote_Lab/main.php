@@ -183,7 +183,11 @@ foreach($b as $test){
 
 	echo '
 	<div>
-	<div class="lab-unit resizeunit" style="width:auto;">
+	<div class="lab-unit resizeunit" id="info-unit'.$AppID.'" style="width:auto;">
+		<div>
+			<div class="unit-fullsize-button" onClick="changesize'.$AppID.'(\'info-unit'.$AppID.'\')">
+			</div>
+		</div>
 		<div class="lab-unit-label">
 			Info
 		</div>
@@ -217,7 +221,11 @@ foreach($b as $test){
 		</div>
 	</div>
 
-	<div class="lab-unit resizeunit" style="width:auto;">
+	<div class="lab-unit resizeunit" style="width:auto;" id="chart-unit'.$AppID.'">
+		<div>
+			<div class="unit-fullsize-button" onClick="changesize'.$AppID.'(\'chart-unit'.$AppID.'\')">
+			</div>
+		</div>
 		<div class="lab-unit-label">
 			Charts
 		</div>
@@ -227,7 +235,11 @@ foreach($b as $test){
 		</div>
 	</div>
 
-	<div class="lab-unit resizeunit" style="width:auto;">
+	<div class="lab-unit resizeunit" id="stat-unit'.$AppID.'" style="width:auto;">
+		<div>
+			<div class="unit-fullsize-button" onClick="changesize'.$AppID.'(\'stat-unit'.$AppID.'\')">
+			</div>
+		</div>
 		<div class="lab-unit-label">
 			Statistics
 		</div>
@@ -259,7 +271,11 @@ foreach($b as $test){
 	echo '</div>
 	</div>
 
-	<div class="lab-unit resizeunit" style="width:auto;">
+	<div class="lab-unit resizeunit" id="raw-unit'.$AppID.'" style="width:auto;">
+		<div>
+			<div class="unit-fullsize-button" onClick="changesize'.$AppID.'(\'raw-unit'.$AppID.'\')">
+			</div>
+		</div>
 		<div class="lab-unit-label">
 			RAW Data
 		</div>
@@ -422,6 +438,16 @@ $AppContainer->Event(
 	)
 );
 ?>
+
+//changesize function
+function changesize<?echo $AppID?>(element){
+	element = "#"+element;
+	if($(element).hasClass('unit-fullsize')){
+		$(element).removeClass('unit-fullsize');
+	}else{
+		$(element).addClass('unit-fullsize');
+	}
+}
 
 $(".resizeunit").resizable();
 </script>
