@@ -129,21 +129,40 @@ $folder=$_GET['destination'];
   background:#94c2ed;
   float:left;
 }
-</style>
-<div style="width:100%; height:100%; min-height:400px; min-width:600px;">
-  <div id="users<?echo $appid?>" style="min-height:442px; background: #444753; color:#fff; width:30%; float:left; height:100%; overflow:auto; overflow-x:hidden;">
-    <?
-    foreach ($contacts_file[$_SESSION['loginuser']] as $key => $value){
+.wp_menu{
+	font-weight: 900;
+	font-size: 32px;
+	margin: 0 10px;
+	cursor: pointer;
+	color:#fff;
+}
 
-      echo $$contacts_file[$_SESSION['loginuser']][$key];
-      echo '<div id="wp_'.$key.'" onclick="wp_load'.$appid.'('."'wp_sel_user'".',this.id)" class="wp_contacts ui-forest">'.$key.'</div>';
-    }
-    ?>
-    <input id="wp_newcontact<?echo $appid?>" style="margin:10px; width:90%; padding:10px; background:#ececec; border:none;" type="text" placeholder="<? echo $wp_lang['add_label'];?>"/>
-    <div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;"><? echo $wp_lang['add_button'];?></div>
-  </div>
-  <div id="messagebox<?echo $appid?>" style="min-height:400px; background: #ececec; width:70%; height:100%; float:right;">
-    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;"><?echo $wp_lang['chat_label'].': <b>'.$wp_sel_user.'</b><span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'(false)">'.$wp_lang['clear_button'].'</span>';?></div>
+.wp_menu:hover{
+	color:#ff7070;
+}
+</style>
+<div id="wp-blocks<?echo $appid?>" style="display:grid; grid-template-columns:31% 69%; width:100%; height:100%; min-height:400px; min-width:600px;">
+  <div id="users<?echo $appid?>" style="min-height:442px; background: #444753; color:#fff; float:left; height:100%; overflow:auto; overflow-x:hidden;">
+		<div id="showmenu<?echo $appid?>" onClick="showmenu<?echo $appid?>()" class="ui-forest-blink wp_menu">=</div>
+		<div id="wp-left-block<?echo $appid?>">
+			<?
+    	foreach ($contacts_file[$_SESSION['loginuser']] as $key => $value){
+
+      	echo $$contacts_file[$_SESSION['loginuser']][$key];
+      	echo '<div id="wp_'.$key.'" onclick="wp_load'.$appid.'('."'wp_sel_user'".',this.id)" class="wp_contacts ui-forest">'.$key.'</div>';
+    	}
+    	?>
+    	<input id="wp_newcontact<?echo $appid?>" style="margin:10px; width:90%; padding:10px; background:#ececec; border:none;" type="text" placeholder="<? echo $wp_lang['add_label'];?>"/>
+    	<div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;"><? echo $wp_lang['add_button'];?></div>
+		</div>
+	</div>
+  <div id="messagebox<?echo $appid?>" style="min-height:400px; background: #ececec; height:100%; float:right;">
+    <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;">
+			<?echo $wp_lang['chat_label'].': <b>'.$wp_sel_user.'</b>
+			<span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'(false)">
+			'.$wp_lang['clear_button'].'
+			</span>';?>
+		</div>
     <div id="messages<?echo $appid?>" style="min-height:300px; word-break: break-word; padding:5px; height:70%; overflow:auto; overflow-x:hidden;">
       <?
       foreach ($history_file[$wp_sel_user] as $key => $value){
@@ -188,6 +207,17 @@ $folder=$_GET['destination'];
 </div>
 <script>
 /*--------Логика JS--------*/
+
+function showmenu<?echo $appid?>(){
+	if($("#wp-left-block<?echo $appid?>").css("display") == "none"){
+		$("#wp-left-block<?echo $appid?>").css("display","block");
+		$("#wp-blocks<?echo $appid?>").css("grid-template-columns","31% 69%");
+	}else{
+		$("#wp-left-block<?echo $appid?>").css("display","none");
+		$("#wp-blocks<?echo $appid?>").css("grid-template-columns","7% 93%");
+	}
+}
+
 function wp_load<?echo $appid;?>(key,value){
   clearInterval(timerId<?echo $appid;?>);
   $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
