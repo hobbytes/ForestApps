@@ -76,6 +76,7 @@ StartContainer()
 | *string* | width | Ширина (по умолчанию *800px*) |
 | *string* | customStyle | CSS (по умолчанию NULL) |
 | *string* | isMobile | Необязательный аргумент, хранит значение "true/false" в зависимости от устройства (по умолчанию NULL) |
+| *boolean* | securityMode  | Этот режим не позволяет запускать приложение, если пользователь не в системе (по умолчанию true) |
 | *boolean* | showError  | Отображение ошибок (по умолчанию false) |
 | *boolean* | showStatistics  | Выводит статистику для контейнера: время и размер (по умолчанию false) |
 
