@@ -208,7 +208,7 @@ function TestFunction1(element){
   echo 'Hello World!';
   
   /* draw button */
-  echo '<div class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
+  echo '<div onClick="test<?echo $AppID?>()" class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
   
   /* end app container */
   $AppContainer->EndContainer();
@@ -217,6 +217,27 @@ function TestFunction1(element){
 
 <script>
 /*--------JS Logic--------*/
+
+//пример события при сворачивании окна
+function hideApp<?echo $AppID?>(){
+  alert('this app is hide!');
+}
+
+<?
+
+//пример Event, который при нажатии кнопки передает get-запрос $_GET['key] значение 'value'
+$AppContainer->Event(
+  "test",
+  "Null",
+  $Folder,
+  'main',
+  array(
+    'key' => 'value'
+  )
+);
+
+?>
+
 </script>
 ```
 
