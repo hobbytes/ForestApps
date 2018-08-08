@@ -202,13 +202,13 @@ function TestFunction1(element){
   */
   
   $isMobile = $_GET['mobile'];
-  $folder = $_GET['destination'];
+  $Folder = $_GET['destination'];
   
   /* print Hello World! */
   echo 'Hello World!';
   
   /* draw button */
-  echo '<div onClick="test<?echo $AppID?>()" class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
+  echo '<div onClick="'.test$AppID().'" class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
   
   /* end app container */
   $AppContainer->EndContainer();
@@ -230,7 +230,7 @@ $AppContainer->Event(
   "test",
   "Null",
   $Folder,
-  'main',
+  "main",
   array(
     'key' => 'value'
   )
