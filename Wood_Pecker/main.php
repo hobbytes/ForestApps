@@ -1,26 +1,34 @@
 <?
-/*--------Получаем App Name и App ID--------*/
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Wood Pecker', '1.5', 'Forest Media', 'Wood Pecker');
-}
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#444753; height:540px; width:600px; border-radius:0px 0px 5px 5px; overflow:hidden;">
-<?php
-/*--------Подключаем библиотеки--------*/
-include '../../core/library/etc/security.php';
-include '../../core/library/bd.php';
-include '../../core/library/gui.php';
+/* Wood Pecker */
+
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Wood Pecker';
+$AppContainer->SecondNameInfo = 'Wood Pecker';
+$AppContainer->VersionInfo = '1.5.1';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->isMobile = $_GET['mobile'];
+$AppContainer->LibraryArray = array('bd', 'gui');
+$AppContainer->height = '540px';
+$AppContainer->width = '600px';
+$AppContainer->customStyle = 'padding-top:0px; overflow:unset';
+$AppContainer->StartContainer();
+
 $wp_bd = new readbd;
 $wp_gui = new gui;
-/*--------Запускаем сессию--------*/
-session_start();
-/*--------Проверяем безопасность--------*/
-$security	=	new security;
-$security->appprepare();
+
 /*--------Загружаем файл локализации--------*/
 $cl = $_SESSION['locale'];
 $wp_lang  = parse_ini_file('lang/'.$cl.'.lang');
@@ -70,7 +78,7 @@ $contacts_file = parse_ini_file($doc_dir.'/'.$chat_dir.'/contacts.foc',TRUE);
 $chat_file_mod = md5(date("d.m.y, H:i:s.",filemtime($chat_file)));
 
 $click=$_GET['mobile'];
-$folder=$_GET['destination'];
+$Folder=$_GET['destination'];
 /*--------Логика--------*/
 ?>
 <style>
@@ -141,29 +149,30 @@ $folder=$_GET['destination'];
 	color:#ff7070;
 }
 </style>
-<div id="wp-blocks<?echo $appid?>" style="display:grid; grid-template-columns:31% 69%; width:100%; height:100%; min-height:400px; min-width:600px;">
-  <div id="users<?echo $appid?>" style="min-height:442px; background: #444753; color:#fff; float:left; height:100%; overflow:auto; overflow-x:hidden;">
-		<div id="showmenu<?echo $appid?>" onClick="showmenu<?echo $appid?>()" class="ui-forest-blink wp_menu">=</div>
-		<div id="wp-left-block<?echo $appid?>">
+<div id="wp-blocks<?echo $AppID?>" style="display:grid; grid-template-columns:31% 69%; width:100%; height:100%; min-height:400px; min-width:600px;">
+  <div id="users<?echo $AppID?>" style="min-height:442px; background: #444753; color:#fff; float:left; height:100%; overflow:auto; overflow-x:hidden;">
+		<div id="showmenu<?echo $AppID?>" onClick="showmenu<?echo $AppID?>()" class="ui-forest-blink wp_menu">=</div>
+		<div id="wp-left-block<?echo $AppID?>">
 			<?
     	foreach ($contacts_file[$_SESSION['loginuser']] as $key => $value){
 
       	echo $$contacts_file[$_SESSION['loginuser']][$key];
-      	echo '<div id="wp_'.$key.'" onclick="wp_load'.$appid.'('."'wp_sel_user'".',this.id)" class="wp_contacts ui-forest">'.$key.'</div>';
+      	echo '<div id="wp_'.$key.'" onclick="wp_load'.$AppID.'('."'wp_sel_user'".',this.id)" class="wp_contacts ui-forest">'.$key.'</div>';
     	}
     	?>
-    	<input id="wp_newcontact<?echo $appid?>" style="margin:10px; width:90%; padding:10px; background:#ececec; border:none;" type="text" placeholder="<? echo $wp_lang['add_label'];?>"/>
-    	<div id="wp_addcontactbtn<?echo $appid?>" onclick="wp_add<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;"><? echo $wp_lang['add_button'];?></div>
+    	<input id="wp_newcontact<?echo $AppID?>" style="margin:10px; width:90%; padding:10px; background:#ececec; border:none;" type="text" placeholder="<? echo $wp_lang['add_label'];?>"/>
+    	<div id="wp_addcontactbtn<?echo $AppID?>" onclick="wp_add<?echo $AppID?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-cancel ui-forest-center" style="width:80%;"><? echo $wp_lang['add_button'];?></div>
 		</div>
 	</div>
-  <div id="messagebox<?echo $appid?>" style="min-height:400px; background: #ececec; height:100%; float:right;">
+  <div id="messagebox<?echo $AppID?>" style="min-height:400px; background: #ececec; float:right;">
     <div style="background:#dcdcdc; padding:3px; text-align:center; border-bottom:1px solid #ccc; color:#4c4b4b; box-shadow: 1px 1px 4px #ccc; font-variant:all-petite-caps;">
 			<?echo $wp_lang['chat_label'].': <b>'.$wp_sel_user.'</b>
-			<span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$appid.'(false)">
+			<span class="ui-forest" style="float:right; padding: 1px 5px; cursor: pointer; color: #f3f3f3; background:#fe6f6f; font-size:13px;"  onclick="wp_clear'.$AppID.'(false)">
 			'.$wp_lang['clear_button'].'
 			</span>';?>
 		</div>
-    <div id="messages<?echo $appid?>" style="min-height:300px; word-break: break-word; padding:5px; height:70%; overflow:auto; overflow-x:hidden;">
+		<div style="height:100%; display:grid; grid-template-rows:72% 81%;">
+    <div id="messages<?echo $AppID?>" style="min-height:300px; word-break: break-word; padding:5px; overflow:auto; overflow-x:hidden;">
       <?
       foreach ($history_file[$wp_sel_user] as $key => $value){
         $date = str_replace (array('msg','own','own_','msg_'),'',$key);
@@ -171,7 +180,7 @@ $folder=$_GET['destination'];
         $date = str_replace(array('d_','_','_t'),array('','.',''),stristr(stristr($date,'_t',true),'d_'));
         if(!eregi('own',$key)){
           if($history_file[$wp_sel_user][$key] == md5('new_request'.$chat_file_name.$wp_sel_user)){
-            $other_message = $wp_lang['message_request'].'<div id="" onclick="wp_clear'.$appid.'(true)"" class="ui-forest-button ui-forest-accept ui-forest-center">'.$wp_lang['add_button'].'</div>';
+            $other_message = $wp_lang['message_request'].'<div id="" onclick="wp_clear'.$AppID.'(true)"" class="ui-forest-button ui-forest-accept ui-forest-center">'.$wp_lang['add_button'].'</div>';
           }else{
             $other_message = $history_file[$wp_sel_user][$key];
           }
@@ -198,43 +207,53 @@ $folder=$_GET['destination'];
       }
       ?>
     </div>
-  <div id="sendbox<?echo $appid?>" style="min-height:100px; height:30%; border-top:1px solid #bbb; background: #e0e0e0;">
-    <div id="sendinput<?echo $appid?>" style="-webkit-user-modify: read-write; width:85%; height:50px; overflow:auto; overflow-x:hidden; word-break:break-word; background:#fff; margin:5px auto; padding:10px;"></div>
-    <div id="sendbutton_wp<?echo $appid?>" onclick="wp_send<?echo $appid?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-accept ui-forest-center"><?echo $wp_lang['send_button']?></div>
+  <div id="sendbox<?echo $AppID?>" style="min-height:100px; height:30%; border-top:1px solid #bbb; background: #e0e0e0;">
+    <div id="sendinput<?echo $AppID?>" style="-webkit-user-modify: read-write; width:85%; height:50px; overflow:auto; overflow-x:hidden; word-break:break-word; background:#fff; margin:5px auto; padding:10px;"></div>
+    <div id="sendbutton_wp<?echo $AppID?>" onclick="wp_send<?echo $AppID?>('<?echo $wp_sel_user?>')" class="ui-forest-button ui-forest-accept ui-forest-center"><?echo $wp_lang['send_button']?></div>
 </div>
   </div>
 </div>
 </div>
+
+<?
+
+$AppContainer->EndContainer();
+
+?>
+
 <script>
 /*--------Логика JS--------*/
 
-function showmenu<?echo $appid?>(){
-	if($("#wp-left-block<?echo $appid?>").css("display") == "none"){
-		$("#wp-left-block<?echo $appid?>").css("display","block");
-		$("#wp-blocks<?echo $appid?>").css("grid-template-columns","31% 69%");
+function showmenu<?echo $AppID?>(){
+	if($("#wp-left-block<?echo $AppID?>").css("display") == "none"){
+		$("#wp-left-block<?echo $AppID?>").css("display","block");
+		$("#wp-blocks<?echo $AppID?>").css("grid-template-columns","31% 69%");
 	}else{
-		$("#wp-left-block<?echo $appid?>").css("display","none");
-		$("#wp-blocks<?echo $appid?>").css("grid-template-columns","7% 93%");
+		$("#wp-left-block<?echo $AppID?>").css("display","none");
+		$("#wp-blocks<?echo $AppID?>").css("grid-template-columns","7% 93%");
 	}
 }
 
-function wp_load<?echo $appid;?>(key,value){
-  clearInterval(timerId<?echo $appid;?>);
-  $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>")
+showmenu<?echo $AppID?>();
+
+function wp_load<?echo $AppID;?>(key,value){
+  clearInterval(timerId<?echo $AppID;?>);
+  $("#<?echo $AppID;?>").load("<?echo $Folder?>/main.php?"+key+"="+value+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&dir='.realpath($entry).'&destination='.$Folder;?>")
 };
 
+
 $("#wp_<?echo $wp_sel_user?>").css('background','#6a98fd');
-function wp_send<?echo $appid;?>(value, n_msg){
+function wp_send<?echo $AppID;?>(value, n_msg){
   if(value){
     var msg_content = '';
     if(n_msg){
       msg_content = n_msg;
     }else{
-      msg_content = $("#sendinput<?echo $appid?>").text();
+      msg_content = $("#sendinput<?echo $AppID?>").text();
     }
     $.ajax({
       type: "POST",
-      url: "<?echo $folder;?>sender",
+      url: "<?echo $Folder;?>sender",
       data: {
          sm:msg_content,
          tu:value,
@@ -244,21 +263,21 @@ function wp_send<?echo $appid;?>(value, n_msg){
         status_send = data.replace(/^\s*/,'').replace(/\s*$/,'');
         if (status_send == 'true'){
           wp_newmessage(msg_content,'_own','_own');
-          $("#sendinput<?echo $appid?>").html('');
+          $("#sendinput<?echo $AppID?>").html('');
         }else{
           wp_newmessage('#error: <?echo $wp_lang['message_error'];?>','_error','_own');
-          $("#sendinput<?echo $appid?>").html('');
+          $("#sendinput<?echo $AppID?>").html('');
         }
       }
     });
   }
 };
 
-function wp_clear<?echo $appid;?>(accept){
+function wp_clear<?echo $AppID;?>(accept){
   var wp_su = "<?echo $wp_sel_user?>";
     $.ajax({
       type: "POST",
-      url: "<?echo $folder;?>clear",
+      url: "<?echo $Folder;?>clear",
       data: {
          cf:"<?echo $chat_file?>",
          su:wp_su,
@@ -267,11 +286,11 @@ function wp_clear<?echo $appid;?>(accept){
       success: function(data){
         status_clear = data.replace(/^\s*/,'').replace(/\s*$/,'');
         if (status_clear == 'true'){
-          $("#messages<?echo $appid?>").html('');
+          $("#messages<?echo $AppID?>").html('');
           if(accept==false){
             $("#wp_"+wp_su+"").remove();
           }else{
-            wp_send<?echo $appid;?>("<?echo $wp_sel_user?>", "<?echo $wp_lang['message_request_accpet']?>");
+            wp_send<?echo $AppID?>("<?echo $wp_sel_user?>", "<?echo $wp_lang['message_request_accpet']?>");
           }
         }
       }
@@ -285,24 +304,24 @@ function wp_newmessage(message_content,type,owner){
   var message = $("<div/>").addClass("wp_msg_bubble wp_msg_bubble" + type).html(message_content);
   var messagebox = $("<div/>").addClass("wp_msgbubble wp_msgbubble" + owner).html(message);
   messagebox.prepend(messageinfo);
-  $("#messages<?echo $appid?>").prepend(messagebox);
+  $("#messages<?echo $AppID?>").prepend(messagebox);
 }
 
-function wp_add<?echo $appid;?>(){
-  var new_c = $("#wp_newcontact<?echo $appid;?>").val();
+function wp_add<?echo $AppID?>(){
+  var new_c = $("#wp_newcontact<?echo $AppID?>").val();
   if(new_c){
-    clearInterval(timerId<?echo $appid;?>);
-    $("#<?echo $appid;?>").load("<?echo $folder;?>/main.php?new_contact="+new_c+"&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&dir='.realpath($entry).'&destination='.$folder;?>");
+    clearInterval(timerId<?echo $AppID?>);
+    $("#<?echo $AppID?>").load("<?echo $Folder?>/main.php?new_contact="+new_c+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&dir='.realpath($entry).'&destination='.$Folder;?>");
   }
 };
 
-function wp_checker<?echo $appid;?>(){
+function wp_checker<?echo $AppID?>(){
   var wp_user = "<?echo $wp_sel_user?>";
   var wp_cfm = "<?echo $chat_file_mod?>";
   if(wp_user!=''){
     $.ajax({
       type: "POST",
-      url: "<?echo $folder;?>checker",
+      url: "<?echo $Folder?>checker",
       data: {
          su:wp_user,
          cfm:wp_cfm
@@ -310,8 +329,8 @@ function wp_checker<?echo $appid;?>(){
       success: function(data){
         status = data.replace(/^\s*/,'').replace(/\s*$/,'');
         if (status == 'y'){
-          clearInterval(timerId<?echo $appid;?>);
-          wp_load<?echo $appid;?>('wp_sel_user','<?echo $wp_sel_user?>');
+          clearInterval(timerId<?echo $AppID?>);
+          wp_load<?echo $AppID?>('wp_sel_user','<?echo $wp_sel_user?>');
         }
       }
     }).done(function(o) {
@@ -319,14 +338,19 @@ function wp_checker<?echo $appid;?>(){
   }
 }
 
-var timerId<?echo $appid;?> = setInterval(function(){
-  if($("#<?echo $appname.$appid;?>").length){
-    wp_checker<?echo $appid;?>();
+var timerId<?echo $AppID?> = setInterval(function(){
+  if($("#<?echo $AppName.$AppID?>").length){
+    wp_checker<?echo $AppID?>();
 }else{
-  clearInterval(timerId<?echo $appid;?>);
+  clearInterval(timerId<?echo $AppID?>);
 }
 },8000);
+
+function closeApp<?echo $AppID?>(){
+	clearInterval(timerId<?echo $AppID?>);
+}
+
 </script>
 <?
-unset($appid);//Очищаем переменную $appid
+unset($AppID);//Очищаем переменную $AppID
 ?>
