@@ -98,6 +98,29 @@ EndContainer()
 UpdateWindow(AppID,AppName);
 ```
 
+События в приложении
+--------------------------------------------
+С помощью этих функций можно отслеживать состояние вашего приложения. 
+
+| Название функции | Описание |
+| ------ |------ |
+| *closeApp* | событие происходит при нажатии кнопки "закрыть приложение" |
+| *hideApp* | событие происходит при нажатии кнопки "свернуть приложение" |
+| *reloadApp* | событие происходит при нажатии кнопки "перезагрузить приложение" |
+| *activeApp* | событие происходит если приложение в активном состоянии |
+| *resizeApp* | событие происходит при изменении размера окна приложения |
+| *moveApp* | событие происходит если окно приложения перемещается |
+| *windowFullScreenApp* | событие происходит если окно приложения развернуто на весь экран |
+| *windowNormalScreenApp* | событие происходит если окно приложения переходит из состояния Full Screen => Normal Screen |
+
+Эти функции должны вызываться с идентификатором приложения **AppID**, например:
+
+```JS
+function closeApp<?echo $AppID?>(){
+  alert('this app is close!');
+}
+```
+
 Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), CustomFunction = NULL, CustomContainer = NULL)
 --------------------------------------------
 Данный метод позволяет создать новое событие (JS-функцию). Все вспомогательные данные (AppName, AppID) передаются автоматически. 
@@ -179,13 +202,13 @@ function TestFunction1(element){
   */
   
   $isMobile = $_GET['mobile'];
-  $folder = $_GET['destination'];
+  $Folder = $_GET['destination'];
   
   /* print Hello World! */
   echo 'Hello World!';
   
   /* draw button */
-  echo '<div class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
+  echo '<div onClick="'.test$AppID().'" class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
   
   /* end app container */
   $AppContainer->EndContainer();
@@ -194,6 +217,27 @@ function TestFunction1(element){
 
 <script>
 /*--------JS Logic--------*/
+
+//пример события при сворачивании окна
+function hideApp<?echo $AppID?>(){
+  alert('this app is hide!');
+}
+
+<?
+
+//пример Event, который при нажатии кнопки передает get-запрос $_GET['key] значение 'value'
+$AppContainer->Event(
+  "test",
+  "Null",
+  $Folder,
+  "main",
+  array(
+    'key' => 'value'
+  )
+);
+
+?>
+
 </script>
 ```
 
