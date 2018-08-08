@@ -380,6 +380,12 @@ $(document).ready(function()  {
 	$.getScript("<?echo $Folder.$fileaction->filehash('assets/Chart/Chart.min.js','false')?>");
 });
 
+
+function closeApp<?echo $AppID?>(){
+	$('.trash_c').remove();
+}
+
+
 <?
 // back button
 $AppContainer->Event(
