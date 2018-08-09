@@ -1,45 +1,47 @@
 <?
-/*--------Получаем App Name и App ID--------*/
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Rich Text Editor', '1.2', 'codepen.io', 'Rich Text Editor');
-}
-$appname  = $_GET['appname'];
-$appid  = $_GET['appid'];
-$rteloader = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
+/*Rich Text Editor*/
+
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Rich Text Editor';
+$AppContainer->SecondNameInfo = 'Rich Text Editor';
+$AppContainer->VersionInfo = '1.0.2';
+$AppContainer->AuthorInfo = 'codepen.io';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('gui', 'permissions');
+$AppContainer->height = '100%';
+$AppContainer->width = '100%';
+$AppContainer->customStyle = 'min-width:300px; min-height:200px; overflow:hidden;';
+$AppContainer->StartContainer();
+
+$rteloader = str_replace($_SERVER['DOCUMENT_ROOT'], '', $_GET['defaultloader']);
 $mode = '1';
 if(empty($rteloader)){
   $rteloader  = $_GET['rteloader'];
   $mode = '0';
 }
 ?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#f2f2f2; min-width:300px; min-height:200px; padding-top:10px; border-radius:0px 0px 5px 5px; overflow:hidden;">
+
 <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css'>
 
 <?php
-/*--------Подключаем библиотеки--------*/
-include '../../core/library/etc/security.php';
-include '../../core/library/permissions.php';
-include '../../core/library/gui.php';
-/*--------Проверяем безопасность--------*/
-$security	=	new security;
-$security->appprepare();
-/*
-Инициализируем переменные
-$click - переменная используется для определения действия (клик или прикосновение)
-$folder - переменная хранит место запуска программы
-*/
-$click=$_GET['mobile'];
-$folder=$_GET['destination'];
 
 /*--------Делаем запрос--------*/
 $newpermission = new PermissionRequest;
 $object = new gui;
-$newpermission->fileassociate(array('txt','md'), $folder.'main.php', 'rteloader', $appname);
-/*--------Запускаем сессию--------*/
-session_start();
-/*--------Логика--------*/
+$newpermission->fileassociate(array('txt','md'), $Folder.'main.php', 'rteloader', $AppName);
+
 ?>
 <style>
 .editor {
@@ -54,10 +56,15 @@ session_start();
   white-space: pre-wrap;
 }
 
+
 .toolbar {
   text-align: center;
 	width: 65%;
 	margin: auto;
+}
+
+#editor<?echo $AppID?> a{
+	color: #f44336;
 }
 
 .toolbar a,
@@ -91,9 +98,10 @@ a[data-command='undo'],.fore-wrapper,a[data-command='justifyLeft'],a[data-comman
 
 a.palette-item {
   height: 1em;
-  border-radius: 3px;
   margin: 2px 1px;
   width: 1em;
+	border: none;
+	box-shadow: none;
 }
 
 .fore-palette,
@@ -138,15 +146,15 @@ a.palette-item {
 </style>
 <link href='https://fonts.googleapis.com/css?family=Dosis|Candal' rel='stylesheet' type='text/css'>
 <div>
-<div class="toolbar">
+<div id="toolbar<?echo $AppID?>" class="toolbar">
 <a href="#" data-command='undo'><i class='fa fa-undo'></i></a>
 <a href="#" data-command='redo'><i class='fa fa-repeat'></i></a>
 <div class="fore-wrapper"><i class='fa fa-font' style='color:#2196f3;'></i>
-  <div class="fore-palette" style="top:80px; left:150px;">
+  <div class="fore-palette" style="top:80px; left:100px;">
   </div>
 </div>
 <div class="back-wrapper"><i class='fa fa-font' style='background:#2196f3; color:#fff;'></i>
-  <div class="back-palette" style="top:80px; left:160px;">
+  <div class="back-palette" style="top:80px; left:120px;">
   </div>
 </div>
 <a href="#" data-command='bold'><i class='fa fa-bold'></i></a>
@@ -170,7 +178,8 @@ a.palette-item {
 <a href="#" data-command='subscript'><i class='fa fa-subscript'></i></a>
 <a href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
 </div>
-	<div id='editor<?echo $appid;?>' class="editor" contenteditable><?
+<div id="editorContainer<?echo $AppID?>" style="display:grid; grid-template-rows: 57% 30%; height:100%;">
+	<div id='editor<?echo $AppID?>' class="editor" contenteditable="true"><?
 		if(isset($rteloader)){
   		if($mode == '1'){
   		echo htmlentities(file_get_contents($_SERVER['DOCUMENT_ROOT'].$rteloader));
@@ -179,9 +188,17 @@ a.palette-item {
 		}
 		}
 		?></div>
-		<div onClick='save<?echo $appid;?>()' style="width: auto;" class="ui-forest-button ui-forest-accept ui-forest-center"><span>Save</span></div>
+		<div>
+			<div onClick='save<?echo $AppID?>()' style="width: auto;" class="ui-forest-button ui-forest-accept ui-forest-left"><span>Save</span></div>
+			<div id="changeModeButton<?echo $AppID?>" onClick='changemode<?echo $AppID?>()' style="width: auto;" class="ui-forest-button ui-forest-cancel ui-forest-left">View as a Document</div>
+		</div>
 </div>
 </div>
+
+<?
+$AppContainer->EndContainer();
+?>
+
 <script>
 /*--------Логика JS--------*/
 var colorPalette = ['000000', 'FFFFFF', '2196F3', 'F44336', '673AB7', '009688', 'FFEB3B', '4CAF50', 'E91E63', '795548'];
@@ -202,29 +219,51 @@ $('.toolbar a').click(function(e) {
     document.execCommand($(this).data('command'), false, $(this).data('value'));
   }
     if (command == 'createlink' || command == 'insertimage') {
-  url = prompt('Enter the link here: ','http:\/\/'); document.execCommand($(this).data('command'), false, url);
-  }
-  else document.execCommand($(this).data('command'), false, null);
+			url = prompt('Enter the link here: ','http:\/\/');
+			document.execCommand($(this).data('command'), false, url);
+	}
+	else document.execCommand($(this).data('command'), false, null);
 });
 
-function save<?echo $appid;?>(){
+function changemode<?echo $AppID;?>(){
+	if($("#editor<?echo $AppID?>").attr('contenteditable') == 'true'){
+		$("#editor<?echo $AppID?>").attr('contenteditable', 'false');
+		$("#changeModeButton<?echo $AppID?>").removeClass('ui-forest-cancel');
+		$("#changeModeButton<?echo $AppID?>").addClass('ui-forest-accept');
+		$("#changeModeButton<?echo $AppID?>").text('Edit Document');
+		$("#toolbar<?echo $AppID?>").hide('slide', {direction:"up"}, 300, function(){
+			$("#editorContainer<?echo $AppID?>").css('grid-template-rows','87% 30%');
+		});
+		$("#editor<?echo $AppID?>").css('box-shadow','none');
+	}else{
+		$("#editor<?echo $AppID?>").attr('contenteditable', 'true');
+		$("#changeModeButton<?echo $AppID?>").removeClass('ui-forest-accept');
+		$("#changeModeButton<?echo $AppID?>").addClass('ui-forest-cancel');
+		$("#changeModeButton<?echo $AppID?>").text('View as a Document');
+		$("#toolbar<?echo $AppID?>").show('slide', {direction:"up"}, 300);
+		$("#editorContainer<?echo $AppID?>").css('grid-template-rows','57% 30%');
+		$("#editor<?echo $AppID?>").css('box-shadow','0 0 2px #ccc');
+	}
+}
+
+function save<?echo $AppID;?>(){
   var folder = "<? echo $rteloader ?>";
   if(folder != null){
     <?
     if($mode == '0'){
     ?>
-    var str = $("#editor<?echo $appid;?>").html();
+    var str = $("#editor<?echo $AppID?>").html();
     <?
   }
     else{
     ?>
-    var str = $("#editor<?echo $appid;?>").text();
+    var str = $("#editor<?echo $AppID?>").text();
     <?
     }
     ?>
     $.ajax({
       type: "POST",
-      url: "<?echo $folder;?>savecontent",
+      url: "<?echo $Folder?>savecontent",
       data: {
          content: str,
          folder: "<?echo $_SERVER['DOCUMENT_ROOT']?>"+folder
@@ -234,8 +273,5 @@ function save<?echo $appid;?>(){
   }
 }
 
-UpdateWindow("<?echo $appid?>","<?echo $appname?>");
+
 </script>
-<?
-unset($appid);//Очищаем переменную $appid
-?>
