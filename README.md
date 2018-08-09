@@ -105,8 +105,9 @@ UpdateWindow(AppID,AppName);
 | Название функции | Описание |
 | ------ |------ |
 | *closeApp* | событие происходит при нажатии кнопки "закрыть приложение" |
-| *hideApp* | событие происходит при нажатии кнопки "свернуть приложение" |
 | *reloadApp* | событие происходит при нажатии кнопки "перезагрузить приложение" |
+| *hideApp* | событие происходит если окно сворачивается |
+| *showApp* | полная противоположность событию hideApp |
 | *activeApp* | событие происходит если приложение в активном состоянии |
 | *resizeApp* | событие происходит при изменении размера окна приложения |
 | *moveApp* | событие происходит если окно приложения перемещается |
@@ -208,7 +209,7 @@ function TestFunction1(element){
   echo 'Hello World!';
   
   /* draw button */
-  echo '<div onClick="'.test$AppID().'" class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
+  echo '<div onClick="test'.$AppID.'()" class="ui-forest-button ui-forest-accept ui-forest-center">Button</div>';
   
   /* end app container */
   $AppContainer->EndContainer();
@@ -228,7 +229,7 @@ function hideApp<?echo $AppID?>(){
 //пример Event, который при нажатии кнопки передает get-запрос $_GET['key] значение 'value'
 $AppContainer->Event(
   "test",
-  "Null",
+  NULL,
   $Folder,
   "main",
   array(
