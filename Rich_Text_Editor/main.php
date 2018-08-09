@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Rich Text Editor';
 $AppContainer->SecondNameInfo = 'Rich Text Editor';
-$AppContainer->VersionInfo = '1.0.2';
+$AppContainer->VersionInfo = '1.3.1';
 $AppContainer->AuthorInfo = 'codepen.io';
 
 /* Container Info */
