@@ -1,36 +1,47 @@
 <?
-if($_GET['getinfo'] == 'true'){
-	include '../../core/library/etc/appinfo.php';
-	$appinfo = new AppInfo;
-	$appinfo->setInfo('Image Viewer', '1.0', 'Forest Media', 'Image Viewer');
-}
-$appname=$_GET['appname'];
-$appid=$_GET['appid'];
-?>
-<div id="<?echo $appname.$appid;?>" style="background-color:#ebebeb; height:100%; color:#f2f2f2; width:100%; border-radius:0px 0px 5px 5px; overflow:hidden;">
-<?php
 /*Image Viewer*/
 
-//Подключаем библиотеки
-include '../../core/library/filesystem.php';
-include '../../core/library/gui.php';
-include '../../core/library/permissions.php';
-include '../../core/library/etc/security.php';
-//Инициализируем переменные
+$AppName = $_GET['appname'];
+$AppID = $_GET['appid'];
+$Folder = $_GET['destination'];
+
+require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
+
+/* Make new container */
+$AppContainer = new AppContainer;
+
+/* App Info */
+$AppContainer->AppNameInfo = 'Image Viewer';
+$AppContainer->SecondNameInfo = 'Просмотр изображений';
+$AppContainer->VersionInfo = '1.1';
+$AppContainer->AuthorInfo = 'Forest Media';
+
+/* Container Info */
+$AppContainer->appName = $AppName;
+$AppContainer->appID = $AppID;
+$AppContainer->LibraryArray = array('filesystem', 'gui', 'permissions');
+$AppContainer->backgroundColor = '#ebebeb';
+$AppContainer->fontColor = '#f2f2f2';
+$AppContainer->height = '100%';
+$AppContainer->width = '100%';
+$AppContainer->customStyle = 'padding-top:0px; overflow:auto; min-width:300px; min-height:200px; ';
+$AppContainer->StartContainer();
+
+
 $hash = new fileaction;
 $object = new gui;
 $newpermission = new PermissionRequest;
 $security	=	new security;
 $click=$_GET['mobile'];
-$folder=$_GET['destination'];
-$security->appprepare();
+$Folder=$_GET['destination'];
+
 $_dest = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
 if(empty($_dest)){
   $_dest = $_GET['photoviewload'];
 }
 $dest = $hash->filehash('../../..'.$_dest,'false');
 //Ассоциируем файлы
-$newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $folder.'main.php', 'photoviewload', $appname);
+$newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $Folder.'main.php', 'photoviewload', $AppName);
 
 if($dest  ==  ''){
   $dest = $_dest;
@@ -64,34 +75,30 @@ if($_GET['download'] == 'true'){
 ?>
 
 <style>
-<?echo '#'.$appname.$appid;?> {
+<?echo '#'.$AppName.$AppID;?> {
   background-color: #3e3d40;
   transition: background-color 0.3s ease-out;
   overflow-y: hidden;
 }
-<?echo '#'.$appname.$appid;?>.zoom {
+<?echo '#'.$AppName.$AppID;?>.zoom {
   background-color: #262626;
 }
 
-<?echo ".photo".$appid;?> {
-  background: url<?echo $photo;?> center center/cover no-repeat;
-  width: 100%;
-  height: 100%;
-  min-width: 450px;
-  min-height: 450px;
+<?echo ".photo".$AppID;?> {
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   margin: auto;
   transition: all 0.2s ease-out;
-  transform: scale(0.5);
+  transform: scale(1);
+  width:100%;
 }
-<?echo ".photo".$appid;?>:hover {
+<?echo ".photo".$AppID;?>:hover {
   box-shadow:rgba(16, 16, 22, 0.2) 0px 0px 1px 1px;
 }
 
-<?echo ".button".$appid;?> {
+<?echo ".button".$AppID;?> {
   width: 30px;
   height: 30px;
   background-color: #000000;
@@ -104,64 +111,65 @@ if($_GET['download'] == 'true'){
   cursor: pointer;
   opacity: 0.5;
 }
-<?echo ".button".$appid;?>:hover {
+<?echo ".button".$AppID;?>:hover {
   opacity: 1;
 }
-<?echo ".button".$appid;?> i.material-icons {
+<?echo ".button".$AppID;?> i.material-icons {
   color: #fff;
   padding: 3px 3px;
   user-select: none;
 }
 
-<?echo ".zoom".$appid;?><?echo " .button".$appid;?>  {
+<?echo ".zoom".$AppID;?><?echo " .button".$AppID;?>  {
   right: 20px;
 }
 
-<?echo ".zoom-in".$appid;?> {
+<?echo ".zoom-in".$AppID;?> {
   margin-top: 15px;
 }
 
-<?echo ".zoom-out".$appid;?> {
+<?echo ".zoom-out".$AppID;?> {
   margin-top: -20px;
 }
 </style>
-
-<div id="photo<?echo $appname.$appid?>" class="photo<?echo $appid?>"></div>
-<div class="button<?echo $appid?> zoom-in<?echo $appid?>"><i class="material-icons">-</i></div>
-<div class="button<?echo $appid?> zoom-out<?echo $appid?>"><i class="material-icons">+</i></div>
+<div style="width:100%; height:100%;">
+	<img src="<?echo $photo;?>" id="photo<?echo $AppName.$AppID?>" class="photo<?echo $AppID?>">
+</div>
+<div class="button<?echo $AppID?> zoom-in<?echo $AppID?>"><i class="material-icons">-</i></div>
+<div class="button<?echo $AppID?> zoom-out<?echo $AppID?>"><i class="material-icons">+</i></div>
 <?
 if(empty($isLocal)){
   ?>
-  <div class="ui-forest-blink" id="downloadImage<?echo $appid?>" style="background:rgba(0,0,0,0.82); text-align:center; position:absolute; top:88%; left:46%; padding:0 20px; color:#8BC34A; font-size:30px; font-weight:900;">&#11015;</div>
+  <div class="ui-forest-blink" id="downloadImage<?echo $AppID?>" style="background:rgba(0,0,0,0.82); text-align:center; position:absolute; top:88%; left:46%; padding:0 20px; color:#8BC34A; font-size:30px; font-weight:900;">&#11015;</div>
   <?
 }
+$AppContainer->EndContainer();
 ?>
-</div>
 <script>
-var zoom = 0.5;
+var zoom = 1;
 $(document).ready(function(){
 
-  $('.zoom-in<?echo $appid?>').click(function(){
-    zoom-=0.5;
-    var k = parseFloat(0.5+zoom/7);
-    $('.photo<?echo $appid?>').css('transform','scale('+k+')');
+  $('.zoom-in<?echo $AppID?>').click(function(){
+    zoom-=1;
+    var k = parseFloat(1+zoom/7);
+    $('.photo<?echo $AppID?>').css('transform','scale('+k+')');
   });
-  $('.zoom-out<?echo $appid?>').click(function(){
-    zoom+=0.5;
-    var k = parseFloat(0.5+zoom/7);
-    $('.photo<?echo $appid?>').css('transform','scale('+k+')');
+  $('.zoom-out<?echo $AppID?>').click(function(){
+    zoom+=1;
+    var k = parseFloat(1+zoom/7);
+    $('.photo<?echo $AppID?>').css('transform','scale('+k+')');
   });
 });
 
 /*download image*/
-$('#downloadImage<?echo $appid?>').click(function(){
-  $("#<?echo $appid?>").load("<?echo $folder;?>main.php?photoviewload=<?echo $dest?>&download=true&id=<?echo rand(0,10000).'&appid='.$appid.'&mobile='.$click.'&appname='.$appname.'&destination='.$folder;?>");
+$('#downloadImage<?echo $AppID?>').click(function(){
+  $("#<?echo $AppID?>").load("<?echo $Folder;?>main.php?photoviewload=<?echo $dest?>&download=true&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$Folder;?>");
 });
 
 $( function() {
-  $( "#photo<?echo $appname.$appid;?>" ).draggable();
+  $( "#photo<?echo $AppName.$AppID;?>" ).draggable();
 });
 </script>
 <?
-unset($appid);
+unset($AppID);
 ?>
