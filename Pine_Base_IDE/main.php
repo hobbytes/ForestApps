@@ -35,16 +35,18 @@ $newpermission = new PermissionRequest;
 //Инициализируем переменные
 $isMobile  = $_GET['mobile'];
 $launch = $_GET['launch'];
-$folder = $_GET['destination'];
+$Folder = $_GET['destination'];
 $filedir  = $_GET['filedir'];
 
 $openexplorer = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
 if(empty($openexplorer)){
   $openexplorer  = $_GET['pbloader'];
 }
+
 $savecon  = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))',$_GET['content']);
+
 /*****Ассоциируем файлы*****/
-$newpermission->fileassociate(array('foc','js','css','ini','fth','link'), $folder.'main.php', 'pbloader', $AppName);
+$newpermission->fileassociate(array('foc','js','css','ini','fth','link'), $Folder.'main.php', 'pbloader', $AppName);
 //Запускаем сессию
 session_start();
 //Логика
@@ -61,9 +63,9 @@ if($launch  ==  'true'){
 }else{
 }
   ?>
-  <script>makeprocess('<?echo $folder.$filedir.$tempfile.'&destination='.$folder.'temp/'?>','','','<?echo $tempfile?>');</script>
+  <script>makeprocess('<?echo $Folder.$filedir.$tempfile.'&destination='.$Folder.'temp/'?>','','','<?echo $tempfile?>');</script>
   <?
-  $inputdir = $folder.$filedir.$tempfile;
+  $inputdir = $Folder.$filedir.$tempfile;
 }
 else if($launch  ===  'open' || isset($filedir)){
   $tempfile = $filedir;
@@ -78,8 +80,8 @@ else if(isset($openexplorer)){
 }
 
 ?>
-<link rel="stylesheet" href="<? echo $folder.'assets/libs/phpFileTree/styles/default/default.css?h='.md5(date('dmyhis'))?>">
-<link rel="stylesheet" href="<?echo $folder;?>assets/highlight/styles/atom-one-dark.css">
+<link rel="stylesheet" href="<? echo $Folder.'assets/libs/phpFileTree/styles/default/default.css?h='.md5(date('dmyhis'))?>">
+<link rel="stylesheet" href="<?echo $Folder;?>assets/highlight/styles/atom-one-dark.css">
 <div style="width:98%; text-align:center; margin:0 auto; background-color:#292929; padding:10px;">
   <div style="display:none; cursor:pointer; width:30px; text-align:left; " onmouseover="document.getElementById('filemenu<?echo $AppID;?>').style.display='block';" onmouseout="document.getElementById('filemenu<?echo $AppID;?>').style.display='none';">
   	Файл
@@ -105,18 +107,17 @@ else if(isset($openexplorer)){
     <input style="background-color:#403f3f; border:1px solid #a5a5a5;  font-size:15px; color:#fff; padding:5px;  width:70%;  margin:10px;" type="text" id="destionation<?echo $AppID;?>" value="<?echo $inputdir;?>">
   </div>
 </div>
-<table style="height:100%; display:block; color:#f2f2f2; border-spacing: 0;">
-  <tr>
-    <td id="dirtree" style="display:block; float:left;">
+<div style="display:grid; grid-template-columns: 17% 81%; height:100%; color:#f2f2f2; border-spacing: 0;">
+    <div id="dirtree" style="display:block; float:left;">
       <?
       $allowed_extensions = array("php", "js", "ini", "css", "foc");
       echo php_file_tree($_SERVER['DOCUMENT_ROOT'], "javascript:loadfile$AppID('[link]')",  $allowed_extensions);
       ?>
-    </td>
-    <td id="contentget<?echo $AppID;?>" style="height:500px; display:block;">
+    </div>
+    <div id="contentget<?echo $AppID;?>" style="height:500px; display:block;">
         <div class="hljs" onchange="hlupd<?echo $AppID;?>()" contenteditable="true" style="display:block; border: 1px solid #3c3c3c;">
           <code>
-            <pre style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $AppID;?>"><?
+            <div style="white-space:pre-wrap; max-width:800px; min-width:600px;" id="content<?echo $AppID;?>"><?
           if($launch=='true'){
               $handle=fopen($filedir.$tempfile,"r+");
               $contents='';
@@ -149,35 +150,34 @@ else if(isset($openexplorer)){
             echo $content;
           }
           ?>
-        		</pre>
-          </code>
         </div>
-</td>
-</tr>
-</table>
+          </code>
+            </div>
+</div>
+</div>
 <?
 $AppContainer->EndContainer();
 ?>
 <script>
-function launch<?echo $AppID;?>(){
-  var str = $("#contentget<?echo $AppID;?>").text();
-  str = str.replace(/<span class="hljs.*">([\s\S]+?)<\/span>/gim, "$i");
-  str = str.replace(/^\s*/,'').replace(/\s*$/,'');
-  //console.log(str);
-  $("#<?echo $AppID;?>").load("<?echo $folder;?>main.php?launch=true&content="+escape(str)+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$isMobile.'&appname='.$AppName.'&destination='.$folder;?>")
+function launch<?echo $AppID?>(){
+  var str = $("#contentget<?echo $AppID?>").text();
+  //str = str.replace(/<span class="hljs.*">([\s\S]+?)<\/span>/gim, "$i");
+  //str = str.replace(/^\s*/,'').replace(/\s*$/,'');
+  console.log(str);
+  //$("#<?echo $AppID?>").load("<?echo $Folder?>main.php?launch=true&content="+encodeURIComponent(str)+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$isMobile.'&appname='.$AppName.'&destination='.$Folder;?>")
 };
 
-function loadfile<?echo $AppID;?>(file){
-  $("#<?echo $AppID;?>").load("<?echo $folder;?>main.php?launch=open&filedir="+file+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$isMobile.'&appname='.$AppName.'&destination='.$folder;?>")
+function loadfile<?echo $AppID?>(file){
+  $("#<?echo $AppID?>").load("<?echo $Folder?>main.php?launch=open&filedir="+file+"&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$isMobile.'&appname='.$AppName.'&destination='.$Folder;?>")
 }
 
 function savefile<?echo $AppID;?>(destination){
-  var str = $("#contentget<?echo $AppID;?>").text();
+  var str = $("#contentget<?echo $AppID?>").text();
   str = str.replace(/<span class="hljs.*">([\s\S]+?)<\/span>/gim, "$i");
-  str = str.replace(/^\s*/,'').replace(/\s*$/,'');
+  //str = str.replace(/^\s*/,'').replace(/\s*$/,'');
   $.ajax({
     type: "POST",
-    url: "<?echo $folder;?>savecontent",
+    url: "<?echo $Folder?>savecontent",
     data: {
        content:str,
        folder:destination
@@ -194,23 +194,23 @@ $(function(){
 function hlupd<?echo $AppID;?>(){
   $(document).ready(function()  {
     var str = $("#content<?echo $AppID;?>").text();
-    str = str.replace(/^\s*/,'').replace(/\s*$/,'');
-    $("#content<?echo $AppID;?>").text(str);
+    //str = str.replace(/^\s*/,'').replace(/\s*$/,'');
+    //$("#content<?echo $AppID;?>").text(str);
     $('div code').each(function(i, block){
-      hljs.highlightBlock(block);
+      //hljs.highlightBlock(block);
     });
     $( "#content<?echo $AppID;?>" ).resizable({containment:"body",autoHide:true});
   });
 };
 
 $(document).ready(function()  {
-$.getScript('<?echo $folder;?>assets/highlight/highlight.pack.js')
+$.getScript('<?echo $Folder;?>assets/highlight/highlight.pack.js')
   .done(function( script, textStatus  ){
     hlupd<?echo $AppID;?>();
     //console.log('highlight.js is load');
   });
 
-  $.getScript('<?echo $folder;?>assets/libs/phpFileTree/php_file_tree.js')
+  $.getScript('<?echo $Folder;?>assets/libs/phpFileTree/php_file_tree.js')
     .done(function( script, textStatus  ){
       //console.log('php_file_tree.js is load');
     });
