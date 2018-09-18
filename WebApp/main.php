@@ -45,8 +45,8 @@ if(isset($_GET['defaultloader'])){
 	$json = json_decode(file_get_contents($file), true);
 }
 
-if(isset($_GET['foxloader'])){
-	$file = $_GET['foxloader'];
+if(isset($_GET['webapploader'])){
+	$file = $_GET['webapploader'];
 
 	$json = json_decode(file_get_contents('http://'.$_SERVER['SERVER_NAME'].$file), true);
 }
@@ -64,10 +64,11 @@ if(!empty($file)){
 		$file = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
 	}else{
 		$file = str_replace('manifest.json', '', $file);
-		foreach (glob($file.'*.html') as $filenames)
+		foreach (glob($_SERVER['DOCUMENT_ROOT'].$file.'*.html') as $filenames)
     {
 			$file = $filenames;
 		}
+
 		$file = $faction->filehash($file, 'false');
 		$file = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
 	}
