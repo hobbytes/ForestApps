@@ -20,7 +20,7 @@ $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
 $AppContainer->LibraryArray = array('gui', 'permissions', 'filesystem');
-$AppContainer->height = '100%';
+$AppContainer->height = '50vh';
 $AppContainer->width = '100%';
 $AppContainer->customStyle = 'padding-top:0px;';
 $AppContainer->StartContainer();
@@ -37,6 +37,9 @@ $user = $_SESSION['loginuser'];
 
 $file = NULL;
 
+$lang  = parse_ini_file('lang/main.lang');
+$cl = $_SESSION['locale'];
+
 if(isset($_GET['defaultloader'])){
 	$file = $_GET['defaultloader'];
 	$json = json_decode(file_get_contents($file), true);
@@ -44,6 +47,7 @@ if(isset($_GET['defaultloader'])){
 
 if(isset($_GET['foxloader'])){
 	$file = $_GET['foxloader'];
+
 	$json = json_decode(file_get_contents('http://'.$_SERVER['SERVER_NAME'].$file), true);
 }
 
@@ -59,6 +63,8 @@ if(!empty($file)){
 
 	$dir = 'http://'.$_SERVER['SERVER_NAME'].$file;
 	echo '<iframe id="frame'.$AppID.'" class="app-cointainer'.$AppID.'" style="border: 0; width: inherit; height: inherit; display:block;" src="'.$dir.'"></iframe>';
+}else{
+	echo '<div style="width:600px; padding:10px; margin:0 auto;">'.$lang[$cl.'_help'].'</div>';
 }
 
 $AppContainer->EndContainer();

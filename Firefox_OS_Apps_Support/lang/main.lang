@@ -1,0 +1,5 @@
+[FOX]
+ru_help = "Скачайте любое приложение отсюда: <a href="https://storage.googleapis.com/fxos-marketplace/index.html" target="_blank">https://storage.googleapis.com/fxos-marketplace/index.html</a>, распакуйте в папку и запустите файл manifest.webapp"
+
+
+en_help = "Download any application from here: <a href="https://storage.googleapis.com/fxos-marketplace/index.html" target="_blank"> https://storage.googleapis.com/fxos-marketplace/index. html </a>, unzip to a folder and run the file manifest.webapp"
