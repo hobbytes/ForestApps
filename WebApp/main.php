@@ -1,5 +1,5 @@
 <?
-/* Web Picture */
+/* Web App */
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
@@ -11,8 +11,8 @@ require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php
 $AppContainer = new AppContainer;
 
 /* App Info */
-$AppContainer->AppNameInfo = 'Firefox OS - Apps Support';
-$AppContainer->SecondNameInfo = 'Firefox OS - Apps Support';
+$AppContainer->AppNameInfo = 'WebApp';
+$AppContainer->SecondNameInfo = 'WebApp';
 $AppContainer->VersionInfo = '0.1';
 $AppContainer->AuthorInfo = 'Forest Media';
 
@@ -29,7 +29,7 @@ $AppContainer->StartContainer();
 $faction = new fileaction;
 $newpermission = new PermissionRequest;
 $object = new gui;
-$newpermission->fileassociate(array('webapp'), $Folder.'main.php', 'foxloader', $AppName);
+$newpermission->fileassociate(array('webapp', 'json'), $Folder.'main.php', 'webapploader', $AppName);
 
 $Folder = $_GET['destination'];
 
@@ -56,12 +56,24 @@ if(isset($_GET['foxloader'])){
 
 
 if(!empty($file)){
-	$launch_path = $json['launch_path'];
-	$file = str_replace('manifest.webapp', '', $file).$launch_path;
-	$file = $faction->filehash($_SERVER['DOCUMENT_ROOT'].$file, 'false');
-	$file = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
+
+	if(!preg_match('%manifest.json%',$file)){
+		$launch_path = $json['launch_path'];
+		$file = str_replace('manifest.webapp', '', $file).$launch_path;
+		$file = $faction->filehash($_SERVER['DOCUMENT_ROOT'].$file, 'false');
+		$file = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
+	}else{
+		$file = str_replace('manifest.json', '', $file);
+		foreach (glob($file.'*.html') as $filenames)
+    {
+			$file = $filenames;
+		}
+		$file = $faction->filehash($file, 'false');
+		$file = str_replace($_SERVER['DOCUMENT_ROOT'], '', $file);
+	}
 
 	$dir = 'http://'.$_SERVER['SERVER_NAME'].$file;
+
 	echo '<iframe id="frame'.$AppID.'" class="app-cointainer'.$AppID.'" style="border: 0; width: inherit; height: inherit; display:block;" src="'.$dir.'"></iframe>';
 }else{
 	echo '<div style="width:600px; padding:10px; margin:0 auto;">'.$lang[$cl.'_help'].'</div>';
