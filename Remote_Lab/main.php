@@ -20,7 +20,7 @@ $AppContainer->AuthorInfo = 'Forest Media';
 $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
 $AppContainer->LibraryArray = array('filesystem', 'bd');
-$AppContainer->height = 'auto 100%';
+$AppContainer->height = '50vh';
 $AppContainer->width = '100%';
 $AppContainer->customStyle = 'padding-top: 0px;';
 $AppContainer->StartContainer();
@@ -55,10 +55,15 @@ if(!empty($_GET['addunit'])){ //	check new unit
 		mkdir($unitFolder);
 	}
 
-	$_token = md5($unitName.date('dmyhis'));// generate token
+	if(isset($_GET['customname'])){
+		$_token = $_GET['customname'];
+	}else{
+		$_token = md5($unitName.date('dmyhis'));// generate token
+	}
+
 	$token = $security->__encode($_token, $key);
 	$TwinUnitError = '';// error flag for new unit block
-	$NewUnitFolder = $unitFolder.'/'.md5($unitName.date('dmyhis'));
+	$NewUnitFolder = $unitFolder.'/'.$_token;
 	if(!is_dir($NewUnitFolder)){
 		mkdir($NewUnitFolder);// make folder
 		$nameUnit = $_GET['addunit'];

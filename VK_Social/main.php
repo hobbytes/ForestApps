@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'VK Social';
 $AppContainer->SecondNameInfo = 'VK Social';
-$AppContainer->VersionInfo = '1.1.1';
+$AppContainer->VersionInfo = '1.1.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Container Info */
@@ -30,17 +30,17 @@ $gui = new gui;
 
 /*--------Логика--------*/
 
-$settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"]);
-$fuid = $getdata;
-$settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"]);
-$password = $getdata;
+
+$fuid = $settingsbd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"], true);
+$password = $settingsbd->readglobal2("password","forestusers","login",$_SESSION["loginuser"], true);
 $d_root = $_SERVER['DOCUMENT_ROOT'];
 $token = md5($fuid.$d_root.$password);
 $hash = md5(date('d.m.y h:i:s'));
 $get_domain = $_GET['domain'];
 
-$get_json = file_get_contents('http://forest.hobbytes.com/media/os/modules/social.php?token='.$token.'&id='.$get_domain.'&h='.$hash);
-$json = json_decode($get_json,TRUE);
+$data = http_build_query(array('token' => $token, 'id' => $get_domain, 'h' => $hash));
+$get_json = file_get_contents('http://forest.hobbytes.com/media/os/modules/social.php?'.$data);
+$json = json_decode($get_json, TRUE);
 
 ?>
 <style>
@@ -85,10 +85,21 @@ $json = json_decode($get_json,TRUE);
   color:#8e8e8e;
   font-size: 12px;
 }
+
 .vk-user<?echo $AppID?>{
 	padding:10px 0;
 }
+
+.following-vk{
+  padding: 5px;
+  font-weight: 900;
+  color: #171717;
+  font-variant: all-petite-caps;
+  font-size: 18px;
+  float:left;
+}
 </style>
+
 <script>
 
 <?
@@ -102,7 +113,49 @@ $AppContainer->Event(
 		'domain' => '"+$("#'.$AppID.'domain").val()+"'
 	)
 );
+
 ?>
+
+function ShowSettings<?echo $AppID?>(){
+  if($("#settings<?echo $AppID?>").is( ":hidden" )){
+    $("#settings<?echo $AppID?>").slideDown("fast");
+  }else{
+    $("#settings<?echo $AppID?>").slideUp("fast");
+  }
+}
+
+function AddFollow<?echo $AppID?>(){
+
+
+
+  hashCode = "<?echo substr($token, -13)?>"+$('#follow<?echo $AppID?>').val();
+  nameunit = $('#follow<?echo $AppID?>').val();
+
+  $.ajax({
+    type: "GET",
+    url: "http://forest.hobbytes.com/media/os/modules/vk/AddNew",
+    data: {
+       rl:"<?echo 'http://'.$_SERVER['SERVER_NAME'].'/system/apps/Remote_Lab/hub.php?user='.$_SESSION['loginuser'].'&token='?>"+hashCode,
+       id:$('#follow<?echo $AppID?>').val(),
+       token:"<?echo $token?>"
+    },
+    success: function(data){
+      status = data.replace(/^\s*/,'').replace(/\s*$/,'');
+      $("#errorid<?echo $AppID?>").html(decodeURIComponent(status));
+      if(!status){
+        $('#followlist<?echo $AppID?>').html($('#followlist<?echo $AppID?>').html()+'<div style="display: flex; margin: 10px 0;" id="user<?echo $AppID?>'+$('#follow<?echo $AppID?>').val()+'"><div class="following-vk">'+$('#follow<?echo $AppID?>').val()+'</div><div onClick="DeleteFollow<?echo $AppID?>(\''+$("#follow<?echo $AppID?>").val()+'\')" class="ui-forest-button ui-forest-cancel" style="float:left;">Удалить</div></div>');
+        $('#follow<?echo $AppID?>').val('');
+        makeprocess('system/apps/Remote_Lab/main.php', "vk-"+nameunit+'&customname='+hashCode, 'addunit',  'Remote_Lab');
+      }
+    }
+  });
+}
+
+function DeleteFollow<?echo $AppID?>(userfollow){
+  $("#user<?echo $AppID?>"+userfollow).remove();
+}
+
+
 
 </script>
 <div style="width:100%; height:auto">
@@ -112,17 +165,54 @@ $AppContainer->Event(
     }elseif($json['online']  ==  1){
       $online = 'онлайн';
     }
-    echo '<div style="padding:10px; background-color:#5f86c4; color:#fff;">
-    <div style="display:flex; margin:12px 0;">
-    <input id="'.$AppID.'domain" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 150px; padding: 5px;" value="'.$get_domain.'" type="text" name="'.$AppID.'domain">
-    <div onClick="add_domain'.$AppID.'()" class="ui-forest-button ui-forest-accept" style="margin: 0 10px;">Analyze</div>
+    echo '<div style="padding:10px; background-color:#5f86c4; color:#fff; display: grid; grid-template-columns: 50% 50%;">
+    <div>
+      '.$json['first_name'].' '.$json['last_name'].'
+      <div style="color:#d6d6d6; font-size:13px;">'.$online.'</div>
     </div>
-  '.$json['first_name'].' '.$json['last_name'].'
-  <div style="color:#d6d6d6; font-size:13px;">'.$online.'</div>
-  </div>';
+    <div style="margin: 12px 0; text-align: right;">
+    <input id="'.$AppID.'domain" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 190px; padding: 5px;" value="'.$get_domain.'" type="text" name="'.$AppID.'domain" placeholder="введите id или ник">
+    <div onClick="ShowSettings'.$AppID.'()" class="ui-forest-button ui-forest-accept" style="float: right;">=</div>
+    <div onClick="add_domain'.$AppID.'()" class="ui-forest-button ui-forest-accept" style="margin: 0 10px; float: right;">Поиск</div>
+    </div>
+    </div>';
+
+    //settings
+    echo '<div id="settings'.$AppID.'" style="width: 80%; height: 60%; position: fixed; background: #fdfdfd; border: 1px solid #dedede; margin: 5% auto; left: 0; right: 0; overflow-y: auto; border-radius: 4px; display: none; box-shadow: 1px 1px 4px rgba(0,0,0,0.5); padding: 20px;">';
+
+    echo '<div style="font-size: 40px; font-weight: 600; color: #5f86c4; padding: 17px 0;">Добавить</div>';
+
+    if(!is_file($_SERVER['DOCUMENT_ROOT'].'/system/apps/Remote_Lab/main.php')){
+      echo '<div style="padding: 10px 0; color: #b7423a;"> Чтобы отслеживать пользователя, необходима программа <b>"Remote Lab"</b>. Ее можно скачать в магазине приложений. </div>';
+    }
+
+    echo '<div style="display: table;"><input id="follow'.$AppID.'" style="border:1px solid #ccc; font-size:20px; border-radius:5px; width: 190px; padding: 5px; float: left;" value="'.$get_domain.'" type="text" name="'.$AppID.'domain" placeholder="введите id или ник">';
+    echo '<div onClick="AddFollow'.$AppID.'()" class="ui-forest-button ui-forest-accept" style="float: left; margin: 0 10px;">Отслеживать</div>';
+    echo '<div style="float: right; padding: 10px 0;" id="errorid'.$AppID.'"></div></div>';
+
+    echo '<div style="font-size: 40px; font-weight: 600; color: #5f86c4; padding: 17px 0; margin-top: 17px;">Список отслеживаемых</div>';
+
+    echo '<div id="followlist'.$AppID.'" style="width: 98%; background: #e4e4e4; padding: 5px; border: 1px solid #ccc;">';
+    $data_ = http_build_query(array('token' => $token, 'id' => '1'));
+    $get_json_list = file_get_contents('http://forest.hobbytes.com/media/os/modules/vk/GetList.php?'.$data_);
+    $json_list = json_decode($get_json_list, TRUE);
+
+    foreach($json_list as $key){
+      echo '<div style="display: flex; margin: 10px 0;" id="user'.$AppID.$key.'"><div class="following-vk">'.$key.'</div><div onClick="DeleteFollow'.$AppID.'(\''.$key.'\')" class="ui-forest-button ui-forest-cancel" style="float:left;">Удалить</div></div>';
+    }
+
+    echo '</div>';
+
+    echo '<div style="padding: 40px 0; color: #a2a2a2;">'.$AppContainer->AppNameInfo.' version '.$AppContainer->VersionInfo.'</div>';
+
+    echo '</div>';
 
   if(!empty($json['error'])){
-    die($gui->errorLayot($json['error']));
+    if(empty($get_domain)){
+      die();
+    }else{
+      die($gui->errorLayot($json['error']));
+    }
   }else{
     function dataContainer($name, $data){
       if(!empty($data)){
@@ -236,7 +326,7 @@ $AppContainer->Event(
     {
       for ($i = 0; $i < count($key); $i++) {
         if(!empty($key[$i]['id'])){
-          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$AppName.'\')"> analyze </span></div><br>';
+          echo '<div>'.$key[$i]['first_name'].' '.$key[$i]['last_name'].'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$AppName.'\')"> выбрать </span></div><br>';
         }
       }
     }
@@ -268,7 +358,7 @@ $AppContainer->Event(
 						$onlineTag = '';
 					}
 
-          echo '<div class="vk-user'.$AppID.' '.$onlineTag.'">'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$AppName.'\')"> analyze </span></div>';
+          echo '<div class="vk-user'.$AppID.' '.$onlineTag.'">'.$key[$i]['first_name'].' '.$key[$i]['last_name'].$online.'<span class="a-button ui-forest-blink" onClick="makeprocess(\'system/apps/VK_Social/main.php\',\''.$key[$i]['id'].'\',\'domain\', \''.$AppName.'\')"> выбрать </span></div>';
         }
       }
     }
