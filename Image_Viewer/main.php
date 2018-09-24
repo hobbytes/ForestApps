@@ -61,8 +61,8 @@ if($_GET['download'] == 'true'){
   if(!is_dir($downloadDir)){
     mkdir($downloadDir);
   }
-  $ch=curl_init($dest);
-  $fp=fopen($downloadDir.'/'.basename($dest),'wb');
+  $ch = curl_init($dest);
+  $fp = fopen($downloadDir.'/'.basename($dest),'wb');
   curl_setopt($ch, CURLOPT_FILE,$fp);
   curl_setopt($ch, CURLOPT_HEADER,0);
   curl_exec($ch);
@@ -77,8 +77,13 @@ if($_GET['download'] == 'true'){
     </script>
     <?
   }else{
+    if(is_file($photo)){
+      $_photo = $photo;
+    }else{
+      $_photo = $downloadDir.'/'.basename($dest);
+    }
     $wall_link = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
-    if(copy($downloadDir.'/'.basename($dest), $wall_link)){
+    if(copy($_photo, $wall_link)){
       $wall = $hash->filehash($wall_link);
       $wall = str_replace($_SERVER['DOCUMENT_ROOT'], '', $wall);
       ?>
