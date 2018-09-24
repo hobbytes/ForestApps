@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Image Viewer';
 $AppContainer->SecondNameInfo = 'Просмотр изображений';
-$AppContainer->VersionInfo = '1.1';
+$AppContainer->VersionInfo = '1.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Container Info */
@@ -39,14 +39,18 @@ $_dest = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
 if(empty($_dest)){
   $_dest = $_GET['photoviewload'];
 }
-$dest = $hash->filehash('../../..'.$_dest,'false');
+
+$result = explode('?', $_dest);
+$_dest = $result[0];
+
+$dest = $hash->filehash('../../..'.$_dest, 'false');
 //Ассоциируем файлы
 $newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $Folder.'main.php', 'photoviewload', $AppName);
 
 if($dest  ==  ''){
   $dest = $_dest;
 }
-$photo='('.$dest.')';
+$photo = $dest;
 
 /*local file?*/
 $isLocal = realpath((dirname($dest)));
@@ -65,12 +69,26 @@ if($_GET['download'] == 'true'){
   curl_close($ch);
   fclose($fp);
   if(is_file($downloadDir.'/'.basename($dest))){
+    if(!isset($_GET['setwall'])){
+
     ?>
     <script>
       makeprocess("system/apps/Explorer/main.php" , "<?echo $downloadDir?>", "dir", "Explorer");
     </script>
     <?
+  }else{
+    $wall_link = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
+    if(copy($downloadDir.'/'.basename($dest), $wall_link)){
+      $wall = $hash->filehash($wall_link);
+      $wall = str_replace($_SERVER['DOCUMENT_ROOT'], '', $wall);
+      ?>
+      <script>
+      $("#background-wall").attr("src", "<?echo $wall?>");
+      </script>
+    <?
   }
+  }
+}
 }
 ?>
 
@@ -131,16 +149,21 @@ if($_GET['download'] == 'true'){
 <?echo ".zoom-out".$AppID;?> {
   margin-top: -20px;
 }
+
+<?echo ".setwall".$AppID;?> {
+  margin-top: 50px;
+}
 </style>
 <div style="width:100%; height:100%;">
 	<img src="<?echo $photo;?>" id="photo<?echo $AppName.$AppID?>" class="photo<?echo $AppID?>">
 </div>
 <div class="button<?echo $AppID?> zoom-in<?echo $AppID?>"><i class="material-icons">-</i></div>
 <div class="button<?echo $AppID?> zoom-out<?echo $AppID?>"><i class="material-icons">+</i></div>
+<div class="button<?echo $AppID?> setwall<?echo $AppID?>"><span class="material-icons">wall</span></div>
 <?
 if(empty($isLocal)){
   ?>
-  <div class="ui-forest-blink" id="downloadImage<?echo $AppID?>" style="background:rgba(0,0,0,0.82); text-align:center; position:absolute; top:88%; left:46%; padding:0 20px; color:#8BC34A; font-size:30px; font-weight:900;">&#11015;</div>
+  <div class="ui-forest-blink" id="downloadImage<?echo $AppID?>" style="background:rgba(243,243,243,0.9); text-align:center; position:absolute; top:88%; left:46%; padding:0 20px; color:#8BC34A; font-size:30px; font-weight:900; border-radius:7px; border:2px solid #afafaf;">&#11015;</div>
   <?
 }
 $AppContainer->EndContainer();
@@ -164,6 +187,11 @@ $(document).ready(function(){
 /*download image*/
 $('#downloadImage<?echo $AppID?>').click(function(){
   $("#<?echo $AppID?>").load("<?echo $Folder;?>main.php?photoviewload=<?echo $dest?>&download=true&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$Folder;?>");
+});
+
+/*set wall*/
+$('.setwall<?echo $AppID?>').click(function(){
+  $("#<?echo $AppID?>").load("<?echo $Folder;?>main.php?photoviewload=<?echo $dest?>&setwall=true&download=true&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$Folder;?>");
 });
 
 $( function() {

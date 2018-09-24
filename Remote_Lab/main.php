@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Remote Lab';
 $AppContainer->SecondNameInfo = 'Remote Lab';
-$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->VersionInfo = '1.0.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Container Info */
