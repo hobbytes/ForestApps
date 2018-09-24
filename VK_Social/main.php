@@ -126,8 +126,6 @@ function ShowSettings<?echo $AppID?>(){
 
 function AddFollow<?echo $AppID?>(){
 
-
-
   hashCode = "<?echo substr($token, -13)?>"+$('#follow<?echo $AppID?>').val();
   nameunit = $('#follow<?echo $AppID?>').val();
 
@@ -145,14 +143,26 @@ function AddFollow<?echo $AppID?>(){
       if(!status){
         $('#followlist<?echo $AppID?>').html($('#followlist<?echo $AppID?>').html()+'<div style="display: flex; margin: 10px 0;" id="user<?echo $AppID?>'+$('#follow<?echo $AppID?>').val()+'"><div class="following-vk">'+$('#follow<?echo $AppID?>').val()+'</div><div onClick="DeleteFollow<?echo $AppID?>(\''+$("#follow<?echo $AppID?>").val()+'\')" class="ui-forest-button ui-forest-cancel" style="float:left;">Удалить</div></div>');
         $('#follow<?echo $AppID?>').val('');
-        makeprocess('system/apps/Remote_Lab/main.php', "vk-"+nameunit+'&customname='+hashCode, 'addunit',  'Remote_Lab');
+        data = {customname:hashCode};
+        makeprocess('system/apps/Remote_Lab/main.php', "vk-"+nameunit, 'addunit',  'Remote_Lab', JSON.stringify(data));
       }
     }
   });
 }
 
 function DeleteFollow<?echo $AppID?>(userfollow){
-  $("#user<?echo $AppID?>"+userfollow).remove();
+
+  $.ajax({
+    type: "GET",
+    url: "http://forest.hobbytes.com/media/os/modules/vk/DeleteUser",
+    data: {
+       id:userfollow,
+       token:"<?echo $token?>"
+    },
+    success: function(data){
+      $("#user<?echo $AppID?>"+userfollow).remove();
+    }
+  });
 }
 
 

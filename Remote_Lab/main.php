@@ -55,8 +55,8 @@ if(!empty($_GET['addunit'])){ //	check new unit
 		mkdir($unitFolder);
 	}
 
-	if(isset($_GET['customname'])){
-		$_token = $_GET['customname'];
+	if(isset($_POST['customname'])){
+		$_token = $_POST['customname'];
 	}else{
 		$_token = md5($unitName.date('dmyhis'));// generate token
 	}
