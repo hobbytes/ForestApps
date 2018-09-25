@@ -125,6 +125,52 @@ function closeApp<?echo $AppID?>(){
 }
 ```
 
+ExecuteFunctionRequest(ObjectName, FunctionName, FunctionArgument = null)
+--------------------------------------------
+Этот метод выводит PopUp окно и если все в порядке, то выполняет JS-функцию
+
+| Тип | Аргумент | Описание |
+| ------ | ------ | ------ |
+| *object* | ObjectName | Объект, который делает запрос |
+| *string* | FunctionName | Название функции |
+| *string* | FunctionArgument | Аргумент функции (по умолчанию null) |
+
+| Атрибут | Описание |
+| ------ |------ |
+| description | Заголовок сообщения |
+| messageBody | Сообщение |
+| okButton | Название кнопки принятия |
+| cancelButton | Название кнопки отказа |
+
+**Как это работает**
+
+1. Сначала сделаем саму кнопку
+```HTML
+<div id="eraseButton<?echo $AppID?>" description="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest<?echo $AppID?>(this, 'EraseData<?echo $AppID?>')">
+  Erase Data
+</div>
+```
+
+2. Создадим функцию, которая должна выполниться
+```JS
+function EraseData<?echo $AppID?>(){
+  alert('EraseData!');
+}
+```
+
+3. Вызываем PHP-функцию ExecuteFunctionRequest()
+
+```PHP
+<?php
+ $AppContainer->ExecuteFunctionRequest();
+?>
+```
+
+Вот что получаем:
+
+<img src="http://forest.hobbytes.com/media/os/Documentation/EFT.png" width="256">
+
+
 Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), CustomFunction = NULL, CustomContainer = NULL)
 --------------------------------------------
 Данный метод позволяет создать новое событие (JS-функцию). Все вспомогательные данные (AppName, AppID) передаются автоматически. 
