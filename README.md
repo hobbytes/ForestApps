@@ -135,21 +135,21 @@ ExecuteFunctionRequest(ObjectName, FunctionName, FunctionArgument = null)
 | *string* | FunctionName | Название функции |
 | *string* | FunctionArgument | Аргумент функции (по умолчанию null) |
 
-| Атрибут | Описание |
-| ------ |------ |
-| description | Заголовок сообщения |
-| messageBody | Сообщение |
-| okButton | Название кнопки принятия |
-| cancelButton | Название кнопки отказа |
-
 **Как это работает**
 
 1. Сначала сделаем саму кнопку
 ```HTML
-<div id="eraseButton<?echo $AppID?>" description="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest<?echo $AppID?>(this, 'EraseData<?echo $AppID?>')">
+<div id="eraseButton<?echo $AppID?>" messageTitle="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest<?echo $AppID?>(this, 'EraseData<?echo $AppID?>')">
   Erase Data
 </div>
 ```
+
+| Атрибут | Описание |
+| ------ |------ |
+| messageTitle | Заголовок сообщения |
+| messageBody | Сообщение |
+| okButton | Название кнопки принятия |
+| cancelButton | Название кнопки отказа |
 
 2. Создадим функцию, которая должна выполниться
 ```JS
@@ -168,7 +168,7 @@ function EraseData<?echo $AppID?>(){
 
 Вот что получаем:
 
-<img src="http://forest.hobbytes.com/media/os/Documentation/EFT.png" width="256">
+<img src="http://forest.hobbytes.com/media/os/Documentation/EFR.png" width="256">
 
 
 Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), CustomFunction = NULL, CustomContainer = NULL)
