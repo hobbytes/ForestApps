@@ -114,6 +114,8 @@ $AppContainer->Event(
 	)
 );
 
+$AppContainer->ExecuteFunctionRequest();
+
 ?>
 
 function ShowSettings<?echo $AppID?>(){
@@ -206,9 +208,10 @@ function DeleteFollow<?echo $AppID?>(userfollow){
     $data_ = http_build_query(array('token' => $token, 'id' => '1'));
     $get_json_list = file_get_contents('http://forest.hobbytes.com/media/os/modules/vk/GetList.php?'.$data_);
     $json_list = json_decode($get_json_list, TRUE);
-
+    $i = 0;
     foreach($json_list as $key){
-      echo '<div style="display: flex; margin: 10px 0;" id="user'.$AppID.$key.'"><div class="following-vk">'.$key.'</div><div onClick="DeleteFollow'.$AppID.'(\''.$key.'\')" class="ui-forest-button ui-forest-cancel" style="float:left;">Удалить</div></div>';
+      echo '<div style="display: flex; margin: 10px 0;" id="user'.$AppID.$key.'"><div class="following-vk">'.$key.'</div><div id="DeleteButton'.$AppID.'" messageTitle="Удалить из отслеживаемых?" messageBody="Вы уверены что хотите удалить пользователя из списка отслеживаемых?" okButton="Удалить" cancelButton="Отмена" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteFollow'.$AppID.'\', \''.$key.'\')" class="ui-forest-button ui-forest-cancel" style="float:left;">Удалить</div></div>';
+      $i++;
     }
 
     echo '</div>';
@@ -383,6 +386,7 @@ $AppContainer->EndContainer();
 
 ?>
 <script>
+
 $(".onlineCount<?echo $AppID?>").html('<?echo $onlineCount?>');
 
 let show<?echo $AppID?> = false;
