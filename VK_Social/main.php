@@ -126,7 +126,7 @@ function ShowSettings<?echo $AppID?>(){
 
 function AddFollow<?echo $AppID?>(){
 
-  hashCode = "<?echo substr($token, -13)?>"+$('#follow<?echo $AppID?>').val();
+  hashCode = "<?echo substr($token, -13)?>vksocial-"+$('#follow<?echo $AppID?>').val();
   nameunit = $('#follow<?echo $AppID?>').val();
 
   $.ajax({

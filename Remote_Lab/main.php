@@ -49,14 +49,26 @@ if(!is_dir($dir)){ // check folder
 <?
 $selectUnit = $_GET['selectunit'];
 
+/* Erase Data */
+if(isset($_GET['eraseunit'])){
+	unlink($unitFolder.'/'.$_GET['eraseunit'].'/hub.foc');
+	$selectUnit = $_GET['eraseunit'];
+}
+
 if(!empty($_GET['addunit'])){ //	check new unit
 	$unitName = $_GET['addunit'];// Unit Name
 	if(!is_dir($unitFolder)){ // check folder
 		mkdir($unitFolder);
 	}
 
+	$vk_social = NULL;
+
 	if(isset($_POST['customname'])){
 		$_token = $_POST['customname'];
+		if(preg_match('%vksocial%', $_token)){
+			$vk_id = str_replace('vksocial-', '', stristr($_token, 'vksocial-'));
+			$vk_social = "vksocial='$vk_id'\n";
+		}
 	}else{
 		$_token = md5($unitName.date('dmyhis'));// generate token
 	}
@@ -67,7 +79,7 @@ if(!empty($_GET['addunit'])){ //	check new unit
 	if(!is_dir($NewUnitFolder)){
 		mkdir($NewUnitFolder);// make folder
 		$nameUnit = $_GET['addunit'];
-		$FileContent = "[main]\nname='$nameUnit'\ntoken='$token'\ntype='line'\nstep='0'\ncstep='0'\nlabels=''\n";// config.foc content
+		$FileContent = "[main]\nname='$nameUnit'\ntoken='$token'\ntype='line'\nstep='0'\ncstep='0'\nlabels=''\n$vk_social";// config.foc content
 		file_put_contents($NewUnitFolder.'/'.'config.foc',$FileContent);// make config.foc
 		$selectUnit = $_token;
 	}else{
@@ -108,8 +120,19 @@ if(isset($_GET['name']) && isset($_GET['step']) && isset($_GET['cstep']) && isse
 
 /* Delete Unit */
 if(isset($_GET['deleteunit'])){
+
+	$configFile = parse_ini_file($unitFolder.'/'.$_GET['deleteunit'].'/config.foc');
+	if(!empty($configFile['vksocial'])){
+		$fuid = $bd->readglobal2("fuid","forestusers","login",$_SESSION["loginuser"], true);
+		$password = $bd->readglobal2("password","forestusers","login",$_SESSION["loginuser"], true);
+		$d_root = $_SERVER['DOCUMENT_ROOT'];
+		$token = md5($fuid.$d_root.$password);
+		$data = http_build_query(array('token' => $token, 'id' => $configFile['vksocial']));
+		$check = file_get_contents('http://forest.hobbytes.com/media/os/modules/vk/DeleteUser.php?'.$data);
+	}
 	$fileaction->deleteDir($unitFolder.'/'.$_GET['deleteunit']);
 }
+
 
 /* Load Unit */
 if(isset($selectUnit)){ //	check new unit
@@ -221,7 +244,10 @@ foreach($b as $test){
 		<div class="lab-unit-button mode-blue" onclick="saveunit'.$AppID.'()">
 			Save
 		</div>
-		<div class="lab-unit-button mode-red" onclick="deleteunit'.$AppID.'()">
+		<div id="eraseButton'.$AppID.'" class="lab-unit-button mode-red" style="background:#808080" description="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'EraseData'.$AppID.'\')">
+			Erase Data
+		</div>
+		<div id="deleteButton'.$AppID.'"  class="lab-unit-button mode-red" description="Delete this unit?" messageBody="Are you sure you want to delete this unit?" okButton="Delete" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteunit'.$AppID.'\')">
 			Delete Unit
 		</div>
 	</div>
@@ -390,8 +416,11 @@ function closeApp<?echo $AppID?>(){
 	$('.trash_c').remove();
 }
 
-
 <?
+
+// prepare request
+$AppContainer->ExecuteFunctionRequest();
+
 // back button
 $AppContainer->Event(
 	"back",
@@ -446,6 +475,17 @@ $AppContainer->Event(
 	'main',
 	array(
 		'deleteunit' => $unitName
+	)
+);
+
+// add unit
+$AppContainer->Event(
+	"EraseData",
+	NULL,
+	$Folder,
+	'main',
+	array(
+		'eraseunit' => $unitName
 	)
 );
 ?>
