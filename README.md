@@ -168,7 +168,7 @@ function EraseData<?echo $AppID?>(){
 
 Вот что получаем:
 
-<img src="http://forest.hobbytes.com/media/os/Documentation/EFR.png" width="256">
+<img src="http://forest.hobbytes.com/media/os/Documentation/EFR.png" width="512">
 
 
 Event(FunctionName, Argument = NULL, Folder, File, RequestData = array(), CustomFunction = NULL, CustomContainer = NULL)
