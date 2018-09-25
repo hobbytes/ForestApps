@@ -244,10 +244,10 @@ foreach($b as $test){
 		<div class="lab-unit-button mode-blue" onclick="saveunit'.$AppID.'()">
 			Save
 		</div>
-		<div id="eraseButton'.$AppID.'" class="lab-unit-button mode-red" style="background:#808080" description="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'EraseData'.$AppID.'\')">
+		<div id="eraseButton'.$AppID.'" class="lab-unit-button mode-red" style="background:#808080" messageTitle="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'EraseData'.$AppID.'\')">
 			Erase Data
 		</div>
-		<div id="deleteButton'.$AppID.'"  class="lab-unit-button mode-red" description="Delete this unit?" messageBody="Are you sure you want to delete this unit?" okButton="Delete" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteunit'.$AppID.'\')">
+		<div id="deleteButton'.$AppID.'"  class="lab-unit-button mode-red" messageTitle="Delete this unit?" messageBody="Are you sure you want to delete this unit?" okButton="Delete" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteunit'.$AppID.'\')">
 			Delete Unit
 		</div>
 	</div>
