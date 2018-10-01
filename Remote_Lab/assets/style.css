@@ -124,3 +124,17 @@
 	left: 0;
 	z-index: 100;
 }
+
+.lab-condition{
+	background: #3e3e3e;
+	color: #fff;
+	padding: 3px 5px;
+	border-radius: 5px;
+}
+
+.lab-delete-condition{
+	padding: 3px 6px;
+	background: #f44336;
+	color: #fff;
+	border-radius: 5px;
+}

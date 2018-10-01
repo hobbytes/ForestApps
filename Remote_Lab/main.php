@@ -21,7 +21,7 @@ $AppContainer->appName = $AppName;
 $AppContainer->appID = $AppID;
 $AppContainer->LibraryArray = array('filesystem', 'bd');
 $AppContainer->height = '50vh';
-$AppContainer->width = '100%';
+$AppContainer->width = 'auto';
 $AppContainer->customStyle = 'padding-top: 0px;';
 $AppContainer->StartContainer();
 
@@ -140,9 +140,17 @@ if(isset($selectUnit)){ //	check new unit
 	$unitName = $selectUnit;// Unit Name
 	$hubFile = $unitFolder.'/'.$unitName.'/hub.foc';
 	$configFile = $unitFolder.'/'.$unitName.'/config.foc';
-	$hub = parse_ini_file($hubFile,true);
+	$conditionFile = $unitFolder.'/'.$unitName.'/conditions.foc';
+
+	if(!is_file($conditionFile)){
+		file_put_contents($conditionFile, '');
+	}else{
+		$conditions = file_get_contents($conditionFile);
+	}
+
+	$hub = parse_ini_file($hubFile, true);
 	$config = parse_ini_file($configFile);
-	$input_array = explode(',',$config['labels']);
+	$input_array = explode(',', $config['labels']);
 	$labels = '';
 
 	$count = 0;
@@ -153,6 +161,23 @@ if(isset($selectUnit)){ //	check new unit
 		$ts = date("d.m.y, H:i",$key['timestamp']);//convert unix to date
 		$labels = $labels.','."'$ts'";//get labels
 	}
+
+	//save condition
+	if(isset($_GET['operand1'])){
+		$condname = md5($_GET['operand1'].$_GET['operand2'].$_GET['condition'].$_GET['email'].date('dmyhis'));
+		$conditions = $conditions."\n\n"."[$condname]\noperand1='".$_GET['operand1']."'\ncondition='".$_GET['condition']."'\noperand2='".$_GET['operand2']."'\nemail='".$_GET['email']."'\nselfd='".$_GET['selfd']."'";
+		file_put_contents($conditionFile, $conditions);
+	}
+
+	//delete condition
+	if(isset($_GET['deletecondition'])){
+		$delete_condtition = $_GET['deletecondition'];
+			$file = file_get_contents($conditionFile);
+			$update_condition = preg_replace("%(?ms)^\[$delete_condtition](?:(?!^\[[^]\r\n]+]).)*%", '', $file);
+			file_put_contents($conditionFile, $update_condition);
+		}
+
+	$get_conditions = parse_ini_file($conditionFile, true);
 
 	$lastConnection = $value;//last data receive
 
@@ -302,6 +327,57 @@ foreach($b as $test){
 	echo '</div>
 	</div>
 
+	<div class="lab-unit resizeunit" style="width:auto;" id="notification'.$AppID.'">
+		<div>
+			<div class="unit-fullsize-button" onClick="changesize'.$AppID.'(\'notification'.$AppID.'\')">
+			</div>
+		</div>
+		<div class="lab-unit-label">
+			Notifications
+		</div>
+		<div style="width:90%; max-width:100%; min-width:300px;">
+		New notification
+			<div style="padding:10px; border-bottom: 1px solid #009688;">
+			<div style="text-align:center;">IF:
+				<select id="operand1'.$AppID.'" class="lab-unit-tag lab-unit-edit" style="cursor:default;">';
+			 foreach ($input_array as $data){
+ 				echo '<option value="'.$data.'">'.$data.'</option>';
+ 			}
+  echo '</select>
+				<select id="condition'.$AppID.'" class="lab-unit-tag lab-unit-edit" style="cursor:default;">
+				<option value="&gt;">&gt;</option>
+				<option value="&lt;">&lt;</option>
+				<option value="==">==</option>
+				<option value="&gt;=">&gt;=</option>
+				<option value="&lt;=">&lt;=</option>
+				<option value="!=">!=</option>
+				</select>
+				<span id="operand2'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">0</span>
+			</div>
+				send to e-mail: <input id="email'.$AppID.'" type="email" placeholder="e-mail">
+				<div class="lab-unit-tag lab-unit-edit">
+					<input style="width:auto;" type="checkbox" id="selfdestr'.$AppID.'" name="selfdestr'.$AppID.'">
+					<label for="selfdestr'.$AppID.'">self-destruction</label>
+				</div>
+				<div class="lab-unit-button" onclick="addnotification'.$AppID.'()">
+					Create
+				</div></div>
+				<div style="padding:10px;">All Conditions</div>
+				<div style="text-align:left; padding:10px;">';
+				$i = 0;
+				foreach ($get_conditions as $key => $value){
+					$selfd = $value['selfd'];
+					$i++;
+					if($selfd == 'true'){
+						$prefix = '(destruct)';
+					}
+					echo '<div style="padding:5px; color:#9c27b0;"><b>condition-'.$i.':</b> <span class="lab-condition">'.$value['operand1'].' '.$value['condition'].' '.$value['operand2'].'</span> <span id="delete'.$i.$AppID.'" messageTitle="Delete this condition?" messageBody="Are you sure you want to delete this condition?" okButton="Delete" cancelButton="Cancel" class="lab-delete-condition ui-forest-blink" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteCondition'.$AppID.'\', \''.$key.'\')">x</span><span style="padding:0px 10px; font-size: 12px; color: #676767;">'.$prefix.'</span></div>';
+					unset($prefix, $selfd);
+				}
+echo	'</div>
+		</div>
+	</div>
+
 	<div class="lab-unit resizeunit" id="raw-unit'.$AppID.'" style="width:auto;">
 		<div>
 			<div class="unit-fullsize-button" onClick="changesize'.$AppID.'(\'raw-unit'.$AppID.'\')">
@@ -441,6 +517,35 @@ $AppContainer->Event(
 	)
 );
 
+// add condition
+$AppContainer->Event(
+	"addnotification",
+	NULL,
+	$Folder,
+	'main',
+	array(
+		'operand1' => '"+escape($("#operand1'.$AppID.'").val())+"',
+		'condition' => '"+escape($("#condition'.$AppID.'").val())+"',
+		'operand2' => '"+escape($("#operand2'.$AppID.'").text())+"',
+		'email' => '"+escape($("#email'.$AppID.'").val())+"',
+		'selfd' => '"+escape($("#selfdestr'.$AppID.'").is(":checked"))+"',
+		'selectunit' => $unitName
+	)
+);
+
+// delete condition
+$AppContainer->Event(
+	"DeleteCondition",
+	"el",
+	$Folder,
+	'main',
+	array(
+		'deletecondition' => '"+el+"',
+		'selectunit' => $unitName
+	)
+);
+
+
 // save unit
 $AppContainer->Event(
 	"saveunit",
@@ -488,6 +593,7 @@ $AppContainer->Event(
 		'eraseunit' => $unitName
 	)
 );
+
 ?>
 
 //changesize function
