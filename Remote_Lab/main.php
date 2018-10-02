@@ -29,6 +29,10 @@ $fileaction = new fileaction;
 $bd = new readbd;
 $bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
 
+
+/* get localization file */
+$localization = parse_ini_file('assets/Lang/'.$_SESSION['locale'].'.lang');
+
 $key = $getdata;//get key
 
 /*--------App Logic--------*/
@@ -242,11 +246,11 @@ foreach($b as $test){
 			</div>
 		</div>
 		<div class="lab-unit-label">
-			Info
+			'.$localization['info_label'].'
 		</div>
 		<div style="background:#f9f9f9; padding:10px;">
-			<div style="text-align:left;">Name: <span id="name'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['name'].'</span></div><br>
-			<div style="text-align:left;">Intput data:<div style="display:inline-table; margin-bottom:10px;">
+			<div style="text-align:left;">'.$localization['name_label'].': <span id="name'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['name'].'</span></div><br>
+			<div style="text-align:left;">'.$localization['input_data_label'].':<div style="display:inline-table; margin-bottom:10px;">
 			';
 			foreach ($input_array as $data){
 				echo '<div class="lab-unit-tag">'.$data.'</div>';
@@ -254,26 +258,26 @@ foreach($b as $test){
 			echo '
 			</div>
 			</div>
-				<div style="text-align:left;">Chart Type:
+				<div style="text-align:left;">'.$localization['chart_type_label'].':
 					<select id="chartType'.$AppID.'" class="lab-unit-tag lab-unit-edit" style="cursor:default;">
 						<option value="line">Line</option>
 						<option value="bar">Bar</option>
 						<option value="radar">Radar</option>
 					</select>
 				</div><br>
-				<div style="text-align:left;">Step: <span id="step'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
-				<div style="text-align:left;">Current step: <span id="cstep'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
-				<div style="text-align:left;">Last connection: <span class="lab-unit-tag">'.$lastConnection.'</span></div>
+				<div style="text-align:left;">'.$localization['step_label'].': <span id="step'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['step'].'</span></div><br>
+				<div style="text-align:left;">'.$localization['current_step_label'].': <span id="cstep'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">'.$config['cstep'].'</span></div><br>
+				<div style="text-align:left;">'.$localization['last_connection'].': <span class="lab-unit-tag">'.$lastConnection.'</span></div>
 		</div><br>
-		<div style="text-align:left;">Request URL: <div class="lab-unit-tag" style="width:270px; font-size:10px; cursor:text;" contenteditable="true">'.$RequestURL.'</div></div>
+		<div style="text-align:left;">'.$localization['request_label'].': <div class="lab-unit-tag" style="width:270px; font-size:10px; cursor:text;" contenteditable="true">'.$RequestURL.'</div></div>
 		<div class="lab-unit-button mode-blue" onclick="saveunit'.$AppID.'()">
-			Save
+			'.$localization['save_button'].'
 		</div>
-		<div id="eraseButton'.$AppID.'" class="lab-unit-button mode-red" style="background:#808080" messageTitle="Erase data?" messageBody="Are you sure you want to erase all data?" okButton="Erase" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'EraseData'.$AppID.'\')">
-			Erase Data
+		<div id="eraseButton'.$AppID.'" class="lab-unit-button mode-red" style="background:#808080" messageTitle="'.$localization['erase_mt'].'" messageBody="'.$localization['erase_mb'].'" okButton="'.$localization['erase_ok_btn'].'" cancelButton="'.$localization['cancel_btn'].'" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'EraseData'.$AppID.'\')">
+			'.$localization['erase_button'].'
 		</div>
-		<div id="deleteButton'.$AppID.'"  class="lab-unit-button mode-red" messageTitle="Delete this unit?" messageBody="Are you sure you want to delete this unit?" okButton="Delete" cancelButton="Cancel" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteunit'.$AppID.'\')">
-			Delete Unit
+		<div id="deleteButton'.$AppID.'"  class="lab-unit-button mode-red" messageTitle="'.$localization['delete_mt'].'" messageBody="'.$localization['delete_mb'].'" okButton="'.$localization['delete_ok_btn'].'" cancelButton="'.$localization['cancel_btn'].'" onclick="ExecuteFunctionRequest'.$AppID.'(this, \'deleteunit'.$AppID.'\')">
+			'.$localization['delete_unit'].'
 		</div>
 	</div>
 
@@ -283,7 +287,7 @@ foreach($b as $test){
 			</div>
 		</div>
 		<div class="lab-unit-label">
-			Charts
+			'.$localization['charts_label'].'
 		</div>
 		<div style="width:90%; max-width:100%; min-width:500px;">
 			<canvas id="chart'.$AppID.'">
@@ -297,10 +301,10 @@ foreach($b as $test){
 			</div>
 		</div>
 		<div class="lab-unit-label">
-			Statistics
+			'.$localization['stat_label'].'
 		</div>
-		<div style="text-align:left;">Data received: <span class="lab-unit-tag">'.$count.'</span></div><br>
-		<div class="lab-stat-block"><div class="lab-stat-block-label">Max values</div>';
+		<div style="text-align:left;">'.$localization['stat_datar_label'].': <span class="lab-unit-tag">'.$count.'</span></div><br>
+		<div class="lab-stat-block"><div class="lab-stat-block-label">'.$localization['stat_max'].'</div>';
 
 		foreach ($maxValues as $value){
 			foreach($value as $key => $value_){
@@ -308,7 +312,7 @@ foreach($b as $test){
 			}
 		}
 
-		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">Min values</div>';
+		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">'.$localization['stat_min'].'</div>';
 
 		foreach ($minValues as $value){
 			foreach($value as $key => $value_){
@@ -316,7 +320,7 @@ foreach($b as $test){
 			}
 		}
 
-		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">Average values</div>';
+		echo '</div><div class="lab-stat-block"><div class="lab-stat-block-label">'.$localization['stat_avg'].'</div>';
 
 		foreach ($avgValues as $value){
 			foreach($value as $key => $value_){
@@ -333,12 +337,12 @@ foreach($b as $test){
 			</div>
 		</div>
 		<div class="lab-unit-label">
-			Notifications
+			'.$localization['not_label'].'
 		</div>
 		<div style="width:90%; max-width:100%; min-width:300px;">
-		New notification
+		'.$localization['not_new_label'].'
 			<div style="padding:10px; border-bottom: 1px solid #009688;">
-			<div style="text-align:center;">IF:
+			<div style="text-align:center;">'.$localization['not_if_label'].':
 				<select id="operand1'.$AppID.'" class="lab-unit-tag lab-unit-edit" style="cursor:default;">';
 			 foreach ($input_array as $data){
  				echo '<option value="'.$data.'">'.$data.'</option>';
@@ -354,24 +358,29 @@ foreach($b as $test){
 				</select>
 				<span id="operand2'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">0</span>
 			</div>
-				send to e-mail: <input id="email'.$AppID.'" type="email" placeholder="e-mail">
+				'.$localization['not_email_label'].': <input id="email'.$AppID.'" type="email" placeholder="e-mail">
 				<div class="lab-unit-tag lab-unit-edit">
 					<input style="width:auto;" type="checkbox" id="selfdestr'.$AppID.'" name="selfdestr'.$AppID.'">
-					<label for="selfdestr'.$AppID.'">self-destruction</label>
+					<label for="selfdestr'.$AppID.'">'.$localization['not_selfd_label'].'</label>
 				</div>
 				<div class="lab-unit-button" onclick="addnotification'.$AppID.'()">
-					Create
+					'.$localization['new_unit_button'].'
 				</div></div>
-				<div style="padding:10px;">All Conditions</div>
+				<div style="padding:10px;">'.$localization['not_allc_label'].'</div>
 				<div style="text-align:left; padding:10px;">';
 				$i = 0;
 				foreach ($get_conditions as $key => $value){
 					$selfd = $value['selfd'];
 					$i++;
 					if($selfd == 'true'){
-						$prefix = '(destruct)';
+						$prefix = '('.$localization['not_destr_label'].')';
 					}
-					echo '<div style="padding:5px; color:#9c27b0;"><b>condition-'.$i.':</b> <span class="lab-condition">'.$value['operand1'].' '.$value['condition'].' '.$value['operand2'].'</span> <span id="delete'.$i.$AppID.'" messageTitle="Delete this condition?" messageBody="Are you sure you want to delete this condition?" okButton="Delete" cancelButton="Cancel" class="lab-delete-condition ui-forest-blink" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteCondition'.$AppID.'\', \''.$key.'\')">x</span><span style="padding:0px 10px; font-size: 12px; color: #676767;">'.$prefix.'</span></div>';
+					echo
+				 '<div style="padding:5px; color:#9c27b0;">
+						<b>'.$localization['not_cond_label'].'-'.$i.':</b>
+						<span class="lab-condition">'.$value['operand1'].' '.$value['condition'].' '.$value['operand2'].'</span>
+						<span id="delete'.$i.$AppID.'" messageTitle="'.$localization['cond_mt'].'" messageBody="'.$localization['cond_mb'].'" okButton="'.$localization['cond_ok_btn'].'" cancelButton="'.$localization['cancel_btn'].'" class="lab-delete-condition ui-forest-blink" onClick="ExecuteFunctionRequest'.$AppID.'(this, \'DeleteCondition'.$AppID.'\', \''.$key.'\')">x</span><span style="padding:0px 10px; font-size: 12px; color: #676767;">'.$prefix.'</span>
+					</div>';
 					unset($prefix, $selfd);
 				}
 echo	'</div>
@@ -384,7 +393,7 @@ echo	'</div>
 			</div>
 		</div>
 		<div class="lab-unit-label">
-			RAW Data
+			'.$localization['raw_label'].'
 		</div>
 		<div style="white-space:pre-wrap; text-align:left; overflow:hidden; overflow-y:auto; padding:10px; border:2px dashed #4dc6fd; cursor:text; background:#f9f9f9; #color:#3a3a3a; height:200px;" contenteditable="true">
 		'.file_get_contents($hubFile).'
@@ -419,14 +428,14 @@ echo	'</div>
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'Date'
+							labelString: '<?echo $localization['charts_x']?>'
 						}
 					}],
 					yAxes: [{
 						display: true,
 						scaleLabel: {
 							display: true,
-							labelString: 'Value'
+							labelString: '<?echo $localization['charts_y']?>'
 						}
 					}]
 				}
@@ -447,11 +456,11 @@ echo	'</div>
 ?>
 <div class="lab-unit">
 	<div class="lab-unit-label">
-		New Unit
+		<? echo $localization['new_unit_label'] ?>
 	</div>
-	<input id="newunit<?echo $AppID?>" type="text" placeholder="Unit Name">
+	<input id="newunit<?echo $AppID?>" type="text" placeholder="<? echo $localization['new_unit_name_label'] ?>">
 	<div class="lab-unit-button" onclick="addunit<?echo $AppID?>()">
-		Create
+		<? echo $localization['new_unit_button'] ?>
 	</div>
 	<?
 	if($TwinUnitError == 'true'){

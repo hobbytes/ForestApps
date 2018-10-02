@@ -2,6 +2,7 @@
 header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Expires: " . date("r"));
 clearstatcache();
+
 if(isset($_GET)){
   $array = $_GET;
   $timestamp = $_GET['timestamp'];
@@ -56,12 +57,17 @@ if(isset($_GET)){
 
             if(filter_var($email, FILTER_VALIDATE_EMAIL)){
               $prefix_email = NULL;
+
+              /* get localization file */
+              $get_locale = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/settings/language.foc');
+              $localization = parse_ini_file('assets/Lang/'.$get_locale.'.lang');
+
               if($value['selfd'] == 'true'){
-                $prefix_email = ' and self-destruct';
+                $prefix_email = $localization['prefix_email'];
               }
               $fuid = $bd->readglobal2("fuid", "forestusers", "login", $user, true);
-              $mt = "Remote Lab. Condition for unit $uname";
-              $mb = "Hello from Remote Lab &#x1F52C;! Your condition for unit <span style='background-color:#03A9F4; color:#FFF; padding: 1px; border-radius: 5px;'>$uname - '<b>$condition_title</b>'; [$op1 = $find]</span> is fuldiled $prefix_email";
+              $mt = $localization['hub_mt']." $uname";
+              $mb = $localization['hub_mb_1']."<span style='background-color:#03A9F4; color:#FFF; padding: 1px; border-radius: 5px;'>$uname - '<b>$condition_title</b>'; [$op1 = $find]</span> ".$localization['hub_mb_2']." $prefix_email";
               $data = http_build_query(array('fuid' => $fuid, 'mt' => $mt, 'mb' => $mb, 'mr' => $email, 'hash' => md5(date('dmyhis').$email.$mt.$mb.$mr.$fuid)));
               $check = file_get_contents('http://forest.hobbytes.com/media/os/modules/EmailSender.php?'.$data);
               echo $check;

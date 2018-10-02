@@ -1,0 +1,64 @@
+[Remote_Lab_Main]
+new_unit_label = Новый юнит
+new_unit_name_label = Имя юнита
+new_unit_button = Создать
+
+[Remote_Lab_Info]
+info_label = Информация
+name_label = Имя
+input_data_label = Входные данные
+chart_type_label = Тип графика
+step_label = Шаг
+current_step_label = Текущий шаг
+last_connection = Последнее соединение
+request_label = Request URL
+save_button = Сохранить
+erase_button = Отчистить данные
+delete_unit = Удалить юнит
+
+erase_mt = "Отчистить данные?"
+erase_mb = "Вы уверены что хотите отчистить все данные юнита?"
+erase_ok_btn = Отчистить
+
+delete_mt = "Удалить этот юнит?"
+delete_mb = "Вы уверены что хотите удалить этот юнит?"
+delete_ok_btn = Удалить
+
+cancel_btn = отмена
+
+
+[Remote_Lab_Charts]
+charts_label = Графики
+charts_y = Значение
+charts_x = Дата
+
+
+[Remote_Lab_Stat]
+stat_label = Статистика
+stat_datar_label = Всего принято
+stat_max = МАКС. Значение
+stat_min = МИН. Значение
+stat_avg = СРЕД. Значение
+
+[Remote_Lab_Notifications]
+not_label = Уведомления
+not_new_label = Новое уведомление
+not_if_label = ЕСЛИ
+not_email_label = отправить на e-mail
+not_selfd_label = самоуничтожить условие
+not_allc_label = Все условия
+not_destr_label = уничтожится
+not_cond_label = условие
+
+cond_mt = "Удалить это условие?"
+cond_mb = "Вы уверены что хотите удалить это условие?"
+cond_ok_btn = Удалить
+
+[Remote_Lab_RAW]
+raw_label = Исходные данные
+
+[Remote_Lab_hub]
+prefix_email = " и самоуничтожилось"
+hub_mt = "Remote Lab. Условие для юнита "
+hub_mb_1 = "Привет от Remote Lab &#x1F52C;! Ваше условие для юнита "
+hub_mb_2 = "выполнено"
