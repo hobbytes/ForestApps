@@ -27,6 +27,11 @@ if(isset($_GET)){
     $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/documents/Remote_Lab/Units/'.$token.'/';
     if(is_dir($dir)){
 
+      $confing = parse_ini_file($dir.'config.foc');//parse config file
+      $step = $confing['step']; // get step
+      $cstep = $confing['cstep']; // get current $step
+      $uname = mb_strtoupper($confing['name']); // get unit name
+
       $conditions_file = $dir.'conditions.foc';
       if(is_file($conditions_file)){
         $conditions = parse_ini_file($conditions_file, true);
@@ -42,16 +47,21 @@ if(isset($_GET)){
           $op = 'return '.$find.$value['condition'].$value['operand2'].";";
           $condition = eval("$op");
 
+          $op1 = $value['operand1'];
+
           if($condition){
 
             //send emeail
             $email = $value['email'];
 
             if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+              $prefix_email = NULL;
+              if($value['selfd'] == 'true'){
+                $prefix_email = ' and self-destruct';
+              }
               $fuid = $bd->readglobal2("fuid", "forestusers", "login", $user, true);
-              $mt = "Remote Lab. Condition ($condition_title)";
-              $mb = "Hello from Remote Lab! Your condition '<b>$condition_title</b>' is fuldiled";
-
+              $mt = "Remote Lab. Condition for unit $uname";
+              $mb = "Hello from Remote Lab &#x1F52C;! Your condition for unit <span style='background-color:#03A9F4; color:#FFF; padding: 1px; border-radius: 5px;'>$uname - '<b>$condition_title</b>'; [$op1 = $find]</span> is fuldiled $prefix_email";
               $data = http_build_query(array('fuid' => $fuid, 'mt' => $mt, 'mb' => $mb, 'mr' => $email, 'hash' => md5(date('dmyhis').$email.$mt.$mb.$mr.$fuid)));
               $check = file_get_contents('http://forest.hobbytes.com/media/os/modules/EmailSender.php?'.$data);
               echo $check;
@@ -69,10 +79,6 @@ if(isset($_GET)){
 
         }
       }
-
-      $confing = parse_ini_file($dir.'config.foc');//parse config file
-      $step = $confing['step'];// get step
-      $cstep = $confing['cstep'];// get current $step
 
       $cfile = file_get_contents($dir.'config.foc');// get config file
     if($step == $cstep){
