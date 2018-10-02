@@ -169,7 +169,7 @@ if(isset($selectUnit)){ //	check new unit
 	//save condition
 	if(isset($_GET['operand1'])){
 		$condname = md5($_GET['operand1'].$_GET['operand2'].$_GET['condition'].$_GET['email'].date('dmyhis'));
-		$conditions = $conditions."\n\n"."[$condname]\noperand1='".$_GET['operand1']."'\ncondition='".$_GET['condition']."'\noperand2='".$_GET['operand2']."'\nemail='".$_GET['email']."'\nselfd='".$_GET['selfd']."'";
+		$conditions = $conditions."\n\n"."[$condname]\noperand1='".$_GET['operand1']."'\ncondition='".$_GET['condition']."'\noperand2='".$_GET['operand2']."'\nemail='".$_GET['email']."'\nrequest='".$_GET['request']."'\nselfd='".$_GET['selfd']."'";
 		file_put_contents($conditionFile, $conditions);
 	}
 
@@ -358,7 +358,10 @@ foreach($b as $test){
 				</select>
 				<span id="operand2'.$AppID.'" contenteditable="true" class="lab-unit-tag lab-unit-edit">0</span>
 			</div>
-				'.$localization['not_email_label'].': <input id="email'.$AppID.'" type="email" placeholder="e-mail">
+			<div style="padding: 5px; border: 1px dashed #009688; margin: 17px 0;">
+				<div style="padding: 5px; text-align: left;">'.$localization['not_email_label'].': <input style="width:100%;" id="email'.$AppID.'" type="email" placeholder="e-mail"></div>
+				<div style="padding: 5px; text-align: left;">'.$localization['not_request_label'].': <input style="width:100%;" id="request'.$AppID.'" type="text" placeholder="http://test.com?key1=value1"></div>
+			</div>
 				<div class="lab-unit-tag lab-unit-edit">
 					<input style="width:auto;" type="checkbox" id="selfdestr'.$AppID.'" name="selfdestr'.$AppID.'">
 					<label for="selfdestr'.$AppID.'">'.$localization['not_selfd_label'].'</label>
@@ -537,6 +540,7 @@ $AppContainer->Event(
 		'condition' => '"+escape($("#condition'.$AppID.'").val())+"',
 		'operand2' => '"+escape($("#operand2'.$AppID.'").text())+"',
 		'email' => '"+escape($("#email'.$AppID.'").val())+"',
+		'request' => '"+escape($("#request'.$AppID.'").val())+"',
 		'selfd' => '"+escape($("#selfdestr'.$AppID.'").is(":checked"))+"',
 		'selectunit' => $unitName
 	)

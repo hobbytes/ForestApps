@@ -55,7 +55,8 @@ if(isset($_GET)){
             //send emeail
             $email = $value['email'];
 
-            if(filter_var($email, FILTER_VALIDATE_EMAIL)){
+            if(filter_var($email, FILTER_VALIDATE_EMAIL) || !empty($value['request'])){
+
               $prefix_email = NULL;
 
               /* get localization file */
@@ -65,6 +66,7 @@ if(isset($_GET)){
               if($value['selfd'] == 'true'){
                 $prefix_email = $localization['prefix_email'];
               }
+
               $fuid = $bd->readglobal2("fuid", "forestusers", "login", $user, true);
               $mt = $localization['hub_mt']." $uname";
               $mb = $localization['hub_mb_1']."<span style='background-color:#03A9F4; color:#FFF; padding: 1px; border-radius: 5px;'>$uname - '<b>$condition_title</b>'; [$op1 = $find]</span> ".$localization['hub_mb_2']." $prefix_email";
@@ -74,6 +76,18 @@ if(isset($_GET)){
             }else{
               echo "$email - wrong email!";
             }
+
+            //make request
+            if(!empty($value['request'])){
+              $url = $value['request'];
+              $ch = curl_init();
+              curl_setopt($ch, CURLOPT_URL, $url);
+              curl_setopt($ch, CURLOPT_HEADER, false);
+              curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+              $output = curl_exec($ch);
+              curl_close($ch);
+            }
+
             //delete if self-destruct
             if($value['selfd'] == 'true'){
               $file = file_get_contents($conditions_file);

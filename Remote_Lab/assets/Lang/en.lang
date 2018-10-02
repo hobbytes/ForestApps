@@ -45,6 +45,7 @@ not_label = Notifications
 not_new_label = New notification
 not_if_label = IF
 not_email_label = send to e-mail
+not_request_label = Make request
 not_selfd_label = self-destruction
 not_allc_label = All Conditions
 not_destr_label = destruct
