@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Image Viewer';
 $AppContainer->SecondNameInfo = 'Просмотр изображений';
-$AppContainer->VersionInfo = '1.2';
+$AppContainer->VersionInfo = '1.2.1';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Container Info */
@@ -32,10 +32,10 @@ $hash = new fileaction;
 $object = new gui;
 $newpermission = new PermissionRequest;
 $security	=	new security;
-$click=$_GET['mobile'];
-$Folder=$_GET['destination'];
+$click = $_GET['mobile'];
+$Folder = $_GET['destination'];
 
-$_dest = str_replace($_SERVER['DOCUMENT_ROOT'],'',$_GET['defaultloader']);
+$_dest = str_replace($_SERVER['DOCUMENT_ROOT'], '', $_GET['defaultloader']);
 if(empty($_dest)){
   $_dest = $_GET['photoviewload'];
 }
@@ -43,17 +43,44 @@ if(empty($_dest)){
 $result = explode('?', $_dest);
 $_dest = $result[0];
 
-$dest = $hash->filehash('../../..'.$_dest, 'false');
+$dest = $hash->filehash('../../../'.$_dest, 'false');
+
 //Ассоциируем файлы
 $newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $Folder.'main.php', 'photoviewload', $AppName);
 
 if($dest  ==  ''){
   $dest = $_dest;
 }
+
 $photo = $dest;
 
 /*local file?*/
 $isLocal = realpath((dirname($dest)));
+
+if(!empty($isLocal)){
+  $download = 'false';
+}else{
+  $download = 'true';
+}
+
+function setwall($photo, $downloadDir, $dest, $hash){
+  if(is_file($photo)){
+    $_photo = $photo;
+  }else{
+    $_photo = $downloadDir.'/'.basename($dest);
+  }
+  $wall_link = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
+
+  if(copy($_photo, $wall_link)){
+    $wall = $hash->filehash($wall_link);
+    $wall = str_replace($_SERVER['DOCUMENT_ROOT'], '', $wall);
+    ?>
+    <script>
+    $("#background-wall").attr("src", "<?echo $wall?>");
+    </script>
+  <?
+}
+}
 
 /*download image*/
 if($_GET['download'] == 'true'){
@@ -77,24 +104,15 @@ if($_GET['download'] == 'true'){
     </script>
     <?
   }else{
-    if(is_file($photo)){
-      $_photo = $photo;
-    }else{
-      $_photo = $downloadDir.'/'.basename($dest);
-    }
-    $wall_link = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION["loginuser"].'/settings/etc/wall.jpg';
-    if(copy($_photo, $wall_link)){
-      $wall = $hash->filehash($wall_link);
-      $wall = str_replace($_SERVER['DOCUMENT_ROOT'], '', $wall);
-      ?>
-      <script>
-      $("#background-wall").attr("src", "<?echo $wall?>");
-      </script>
-    <?
-  }
+    setwall($photo, $downloadDir, $dest, $hash);
   }
 }
+}else{
+  if(isset($_GET['setwall'])){
+    setwall($photo, $downloadDir, $dest, $hash);
+  }
 }
+
 ?>
 
 <style>
@@ -158,13 +176,14 @@ if($_GET['download'] == 'true'){
 <?echo ".setwall".$AppID;?> {
   margin-top: 50px;
 }
+
 </style>
 <div style="width:100%; height:100%;">
 	<img src="<?echo $photo;?>" id="photo<?echo $AppName.$AppID?>" class="photo<?echo $AppID?>">
 </div>
 <div class="button<?echo $AppID?> zoom-in<?echo $AppID?>"><i class="material-icons">-</i></div>
 <div class="button<?echo $AppID?> zoom-out<?echo $AppID?>"><i class="material-icons">+</i></div>
-<div class="button<?echo $AppID?> setwall<?echo $AppID?>"><span class="material-icons">wall</span></div>
+<div class="button<?echo $AppID?> setwall<?echo $AppID?>" messageTitle="Set the image?" messageBody="Make a desktop background image?" okButton="Set wall" cancelButton="Cancel" onclick="ExecuteFunctionRequest<?echo $AppID?>(this, 'setwall<?echo $AppID?>')"><span class="material-icons">wall</span></div>
 <?
 if(empty($isLocal)){
   ?>
@@ -174,6 +193,14 @@ if(empty($isLocal)){
 $AppContainer->EndContainer();
 ?>
 <script>
+
+<?
+
+// prepare request
+$AppContainer->ExecuteFunctionRequest();
+
+?>
+
 var zoom = 1;
 $(document).ready(function(){
 
@@ -195,9 +222,9 @@ $('#downloadImage<?echo $AppID?>').click(function(){
 });
 
 /*set wall*/
-$('.setwall<?echo $AppID?>').click(function(){
-  $("#<?echo $AppID?>").load("<?echo $Folder;?>main.php?photoviewload=<?echo $dest?>&setwall=true&download=true&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$Folder;?>");
-});
+function setwall<?echo $AppID?>(){
+  $("#<?echo $AppID?>").load("<?echo $Folder;?>main.php?photoviewload=<?echo $dest?>&setwall=true&download=<?echo $download?>&id=<?echo rand(0,10000).'&appid='.$AppID.'&mobile='.$click.'&appname='.$AppName.'&destination='.$Folder;?>");
+};
 
 $( function() {
   $( "#photo<?echo $AppName.$AppID;?>" ).draggable();
