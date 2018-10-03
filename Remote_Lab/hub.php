@@ -19,10 +19,17 @@ if(isset($_GET)){
   unset($array['token']);
 
     $labels = '';
-  if(!empty($array) && !empty($timestamp) && !empty($token) && !empty($user)){
+  if(!empty($array) && !empty($token) && !empty($user)){
     /* get timezone */
     $timezone = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/settings/timezone.foc');
     date_default_timezone_set("$timezone");
+
+    /* if empty timestamp, then generate timestamp and push in array */
+    if(empty($timestamp)){
+      $_date = new DateTime();
+      $timestamp = $_date->getTimestamp();
+      $array['timestamp'] = $timestamp;
+    }
 
     /* check dir */
     $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/documents/Remote_Lab/Units/'.$token.'/';

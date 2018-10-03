@@ -138,3 +138,13 @@
 	color: #fff;
 	border-radius: 5px;
 }
+
+.lab-update{
+	width:40px;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.lab-update:hover{
+	transform:rotateZ(90deg);
+}

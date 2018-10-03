@@ -23,17 +23,22 @@ $AppContainer->LibraryArray = array('filesystem', 'bd');
 $AppContainer->height = '50vh';
 $AppContainer->width = 'auto';
 $AppContainer->customStyle = 'padding-top: 0px;';
+//$AppContainer->showStatistics = true;
+
+// Create static container
+$AppContainer->StartStaticContainer();
+
+$AppContainer->EndStaticContainer();
+
+
 $AppContainer->StartContainer();
 
-$fileaction = new fileaction;
 $bd = new readbd;
-$bd->readglobal2("password","forestusers","login",$_SESSION['superuser']);
-
+$key = $bd->readglobal2("password", "forestusers", "login", $_SESSION['superuser'], true);
+$fileaction = new fileaction;
 
 /* get localization file */
 $localization = parse_ini_file('assets/Lang/'.$_SESSION['locale'].'.lang');
-
-$key = $getdata;//get key
 
 /*--------App Logic--------*/
 $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$_SESSION['loginuser'].'/documents/Remote_Lab/';
@@ -42,16 +47,23 @@ if(!is_dir($dir)){ // check folder
 	mkdir($dir);
 }
 
+$selectUnit = $_GET['selectunit'];
+
+$style_link = $Folder.$fileaction->filehash('assets/style.css','false');
+echo '<link rel="stylesheet" href="'.$style_link.'">';
 ?>
 
-<link rel="stylesheet" href="<?echo $Folder.$fileaction->filehash('assets/style.css','false')?>">
-<div style="min-width:600px; width:auto; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none;">
-	<div id="applabel<?echo $AppID?>" onclick="back<?echo $AppID?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600;">
+<div style="min-width:600px; width:auto; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none; display:grid; grid-template-columns: 17% 25%;">
+	<div id="applabel<?echo $AppID?>" onclick="back<?echo $AppID?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600; margin: 0 auto;">
 		Remote Lab
 	</div>
+	<?
+	if(!empty($selectUnit)){
+		echo '<span><img class="lab-update" id="'.$selectUnit.'" onClick="selectunit'.$AppID.'(this)" src="'.$Folder.$fileaction->filehash('assets/update.png','false').'" /></span>';
+	}
+	?>
 </div>
 <?
-$selectUnit = $_GET['selectunit'];
 
 /* Erase Data */
 if(isset($_GET['eraseunit'])){
@@ -448,8 +460,7 @@ echo	'</div>
 
 			var ctx = document.getElementById('chart<?echo $AppID?>').getContext('2d');
 			window.myLine = new Chart(ctx, config);
-			var applabel = $("#applabel<?echo $AppID?>").text();
-			$("#applabel<?echo $AppID?>").text("<"+applabel);
+			$("#applabel<?echo $AppID?>").text("< <? echo $localization['back_button'] ?>");
 			$("#applabel<?echo $AppID?>").addClass('lab-unit-app-button');
 			$("#chartType<?echo $AppID?> option[value=<?echo $config['type']?>]").attr('selected', 'selected');
 	</script>

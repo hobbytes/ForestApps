@@ -2,6 +2,7 @@
 new_unit_label = New unit
 new_unit_name_label = Unit Name
 new_unit_button = Create
+back_button = Back
 
 [Remote_Lab_Info]
 info_label = Info
