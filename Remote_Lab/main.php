@@ -23,13 +23,6 @@ $AppContainer->LibraryArray = array('filesystem', 'bd');
 $AppContainer->height = '50vh';
 $AppContainer->width = 'auto';
 $AppContainer->customStyle = 'padding-top: 0px;';
-//$AppContainer->showStatistics = true;
-
-// Create static container
-$AppContainer->StartStaticContainer();
-
-$AppContainer->EndStaticContainer();
-
 
 $AppContainer->StartContainer();
 
@@ -50,6 +43,7 @@ if(!is_dir($dir)){ // check folder
 $selectUnit = $_GET['selectunit'];
 
 $style_link = $Folder.$fileaction->filehash('assets/style.css','false');
+
 echo '<link rel="stylesheet" href="'.$style_link.'">';
 ?>
 
