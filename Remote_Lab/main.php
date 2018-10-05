@@ -47,13 +47,13 @@ $style_link = $Folder.$fileaction->filehash('assets/style.css','false');
 echo '<link rel="stylesheet" href="'.$style_link.'">';
 ?>
 
-<div style="min-width:600px; width:auto; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none; display:grid; grid-template-columns: 17% 25%;">
-	<div id="applabel<?echo $AppID?>" onclick="back<?echo $AppID?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600; margin: 0 auto;">
+<div style="min-width:600px; width:auto; padding:10px; font-size:20px; font-variant-caps:all-small-caps; background:#fff; border-bottom:1px solid #d9e2e7; color:#447ab7; user-select:none; display:grid; grid-template-columns: 20% 80%;">
+	<div id="applabel<?echo $AppID?>" onclick="back<?echo $AppID?>()" style="width:fit-content; color:#026158; padding:10px; border: 2px solid; border-radius:5px; font-weight:600;">
 		Remote Lab
 	</div>
 	<?
 	if(!empty($selectUnit)){
-		echo '<span><img class="lab-update" id="'.$selectUnit.'" onClick="selectunit'.$AppID.'(this)" src="'.$Folder.$fileaction->filehash('assets/update.png','false').'" /></span>';
+		echo '<div style="text-align:right;"><img class="lab-update" id="'.$selectUnit.'" onClick="selectunit'.$AppID.'(this)" src="'.$Folder.$fileaction->filehash('assets/update.png','false').'" /></div>';
 	}
 	?>
 </div>

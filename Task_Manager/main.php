@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Task Manager';
 $AppContainer->SecondNameInfo = 'Диспетчер задач';
-$AppContainer->VersionInfo = '1.0.1';
+$AppContainer->VersionInfo = '1.0.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Container Info */
@@ -22,6 +22,7 @@ $AppContainer->appID = $AppID;
 $AppContainer->height = '300px';
 $AppContainer->width = '600px';
 $AppContainer->customStyle = 'padding-top:0px;';
+
 $AppContainer->StartContainer();
 
 /*--------get lang--------*/
@@ -78,7 +79,9 @@ $language  = parse_ini_file('app.lang');
 	$AppContainer->EndContainer();
 	?>
 <script>
+
 clearInterval(timer<?echo $AppID;?>);
+
 var temp_id = 0;
 var new_id  = 0;
 var new_name = '';
@@ -88,7 +91,7 @@ $(".process-container").each(function(index, element){
   var p_name = $("#drag"+p_id + "> .process-title").text();
   var p_loc = $(element).attr("location");
 	var _applength = $("#app" + p_id).attr("applength-" + p_id);
-	var p_applength = (_applength / 1024).toPrecision(3) + " KB";
+	var p_applength = bytesToSize(_applength);
   $("#taskcontainer<?echo $AppID?>").append('<tr class="trmngr" t_id="'+p_id+'" t_applength="'+_applength+'" id="task'+p_id+'"><td>'+p_name+'</td><td>'+p_id+'</td><td style="transition:all 0.3s ease;" id="length-container-'+p_id+'">'+p_applength+'</td><td class="tm-box-left""><span onClick="open_folder('+p_id+')">'+p_loc+'</span><div class="tm-box-close ui-forest-blink" onClick="task_close('+p_id+'); checkwindows();">x</div></td></tr>');
   temp_id = p_id;
 });
@@ -99,7 +102,7 @@ function task_check<?echo $AppID;?>(){
     new_name = $("#drag"+new_id + "> .process-title").text();
     new_loc = $(element).attr("location");
 		_applength = $("#app" + new_id).attr("applength-" + new_id);
-		new_applength = (_applength / 1024).toPrecision(3) + " KB";
+		new_applength = bytesToSize(_applength);
   });
   if(new_id > temp_id){
     temp_id = new_id;
@@ -114,7 +117,7 @@ function task_check<?echo $AppID;?>(){
     }
 		if(_al > $("#task" + get_id).attr('t_applength')){
 			$("#length-container-" + get_id).css('color','#2196F3');
-			$("#length-container-" + get_id).html((_al / 1024).toPrecision(3) + " KB");
+			$("#length-container-" + get_id).html(bytesToSize(_al));
 			$("#task" + get_id).attr('t_applength', _al);
 		}else{
 			$("#length-container-" + get_id).css('color','#000');

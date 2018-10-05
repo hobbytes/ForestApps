@@ -143,6 +143,7 @@
 	width:40px;
 	transition: all 0.3s ease;
 	cursor: pointer;
+	margin-right: 20px;
 }
 
 .lab-update:hover{
