@@ -133,7 +133,7 @@ ExecuteFunctionRequest(ObjectName, FunctionName, FunctionArgument = null)
 | ------ | ------ | ------ |
 | *object* | ObjectName | Объект, который делает запрос |
 | *string* | FunctionName | Название функции |
-| *string/array* | FunctionArgument | Аргумент функции (по умолчанию null). Может быть строкой и массивом |
+| *string / array* | FunctionArgument | Аргумент функции (по умолчанию null). Может быть строкой и массивом |
 
 **Как это работает**
 
