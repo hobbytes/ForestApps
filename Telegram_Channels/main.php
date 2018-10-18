@@ -30,11 +30,6 @@ $user = $_SESSION['loginuser'];
 $bd = new readbd;
 global $security;
 
-$tempDir ='./temp';
-if(!is_dir($tempDir)){
-	mkdir($tempDir);
-}
-
 $dir = $_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/documents/Telegram_Channels/';
 if(!is_dir($dir)){ // check folder
 	mkdir($dir);
@@ -104,12 +99,24 @@ if(isset($getAPI) && isset($getName) && isset($_GET['send'])){
 	border: 2px dashed #1a6daf;
 	cursor: pointer;
 }
+
+.remove-file-telegram{
+	margin: 5px;
+	font-size: 15px;
+	font-weight: 900;
+	width: max-content;
+	text-align: center;
+	background: #f44336;
+	color: #9e150b;
+	padding: 5px;
+	cursor: pointer;
+}
 </style>
 
 <div style="min-width: 400px; width: 100%;">
 	<div style="display: flex; padding: 10px 5px; background: #2196F3; color: #fff;">
 		<div style="padding: 5px;">Bot API Key: </div>
-		<input id="APIChannel<?echo $AppID?>" style="border: none; padding: 0 3px; color: #293840; font-size: 15px;" type="text" value="<?echo $getAPI?>" placeholder="bot1234567890:ABCDEFGHIJKLMNOP">
+		<input id="APIChannel<?echo $AppID?>" style="border: none; padding: 0 3px; color: #293840; font-size: 15px; filter: contrast(0); transition: all 0.2s ease;" type="text" value="<?echo $getAPI?>" placeholder="bot1234567890:ABCDEFGHIJKLMNOP">
 	</div>
 
 	<div style="display: flex; padding: 10px 5px; background: #03A9F4; color: #fff;">
@@ -120,13 +127,14 @@ if(isset($getAPI) && isset($getName) && isset($_GET['send'])){
 	<div style="padding: 10px 5px; background: #E6E6E6; color: #000;">
 		<div style="padding: 5px;">Что опубликовать: </div>
 		<div>
-			<textarea id="Message<?echo $AppID?>" style="border: none; padding: 5px; color: #000; font-size: 15px; width: 97%; height: 100px; margin: 0 5px;" placeholder="Сообщение..."></textarea>
+			<textarea id="Message<?echo $AppID?>" style="border: none; padding: 5px; color: #000; font-size: 15px; width: 97%; height: 100px; margin: 0 5px;" placeholder="Сообщение / Подпись..."></textarea>
 		</div>
 		<div>
 			<div onClick="addFileTelegram<?echo $AppID?>()" id="addfile<?echo $AppID?>" filesource<?echo $AppID?>="none" class="add-file-telegram ui-forest-blink">+</div>
 			<div id="containercheck<?echo $AppID?>" style="display:none; width: 100%;">
+				<div onclick="removeFile<?echo $AppID?>()" class="remove-file-telegram ui-forest-blink">Отменить</div>
 				Отправить как:
-				<select id="documentmode<?echo $AppID?>" name="documentmode<?echo $AppID?>">
+				<select id="documentmode<?echo $AppID?>" name="documentmode<?echo $AppID?>" style="padding: 5px; border: 1px solid #2570ac;">
 					<option value="Document" selected>Документ</option>
 					<option value="Photo">Изображение</option>
 					<option value="Video">Видео</option>
@@ -136,6 +144,7 @@ if(isset($getAPI) && isset($getName) && isset($_GET['send'])){
 				</select>
 			</div>
 		</div>
+		<div id="info<?echo $AppID?>">
 		<?
 		if(empty($output) && isset($_GET['send'])){
 			echo 'Ошибка! Проверьте введеные данные';
@@ -143,6 +152,7 @@ if(isset($getAPI) && isset($getName) && isset($_GET['send'])){
 			echo 'Cообщение отправлено!';
 		}
 		?>
+	</div>
 	</div>
 
 </div>
@@ -162,6 +172,20 @@ function mouseEnterApp<?echo $AppID?>(){
 		$("#containercheck<?echo $AppID?>").css('display', 'none');
 	}
 }
+
+function removeFile<?echo $AppID?>(){
+	$("#addfile<?echo $AppID?>").attr("filesource<?echo $AppID?>", '');
+	$("#addfile<?echo $AppID?>").text('+');
+	$("#containercheck<?echo $AppID?>").css('display', 'none');
+}
+
+$("#APIChannel<?echo $AppID?>")
+.mouseenter(function(){
+	$("#APIChannel<?echo $AppID?>").css('filter', 'contrast(1)');
+})
+.mouseout(function(){
+	$("#APIChannel<?echo $AppID?>").css('filter', 'contrast(0)');
+});
 
 <?
 
@@ -184,18 +208,10 @@ $AppContainer->Event(
 
 ?>
 
-function mouseEnterApp<?echo $AppID?>(){
-	var get_file<?echo $AppID?> = $("#addfile<?echo $AppID?>").attr("filesource<?echo $AppID?>");
-	if(get_file<?echo $AppID?> != 'none'){
-		$("#containercheck<?echo $AppID?>").css('display', 'block');
-	}else{
-		$("#containercheck<?echo $AppID?>").css('display', 'none');
-	}
-}
-
 function addFileTelegram<?echo $AppID?>(){
 	data = {callback:"filesource<?echo $AppID?>"};
 	makeprocess('system/apps/Explorer/main.php', 'selector', 'explorermode', 'Explorer', JSON.stringify(data));
+	$("#info<?echo $AppID?>").html('');
 }
 
 </script>
