@@ -58,14 +58,16 @@ if(isset($getAPI) && isset($getName) && isset($_GET['send'])){
 
 	$arrayData = array('chat_id' => $getName);
 
+	$message = preg_replace('#%u([0-9A-F]{4})#se','iconv("UTF-16BE","UTF-8",pack("H4","$1"))', $_GET['message']);
+
 	if(isset($_GET['file']) && $_GET['file'] != 'none'){
 		$mode = 'send'.$_GET['mode'];
 		$type = mb_strtolower($_GET['mode']);
 		$arrayData["$type"] = new CURLFile(realpath($_GET['file']));
-		$arrayData['caption'] = $_GET['message'];
+		$arrayData['caption'] = $message;
 	}else{
 		$mode = 'sendMessage';
-		$arrayData['text'] = $_GET['message'];
+		$arrayData['text'] = $message;
 	}
 
 	$url = "https://api.telegram.org/$getAPI/$mode?";
