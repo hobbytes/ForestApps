@@ -44,7 +44,7 @@ if(isset($_GET['webpicloader'])){
 	$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].$_GET['webpicloader']);
 	$name = pathinfo($_SERVER['DOCUMENT_ROOT'].$_GET['webpicloader'])['filename'];
 }else{
-	$data = '<div style="width:200px; height:200px; color: #FFF; background: linear-gradient(to top, #67b26f, #4ca2cd); padding: 20px; border-radius: 50px"><div style="font-weight: 600; font-size: 50px; padding-top:90px">Web Picture</div></div>';
+	$data = '<div style="width:200px; height:200px; color: #FFF; background: linear-gradient(to top, #67b26f, #4ca2cd); padding: 20px; border-radius: 50px"><div style="font-weight: 600; font-size: 50px; padding-top:90px; text-align: center;">Web Picture</div></div>';
 }
 
 ?>

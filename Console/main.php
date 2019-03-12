@@ -24,13 +24,13 @@ if($_SESSION['loginuser'] == $_SESSION['superuser']){
 }
 //Логика
 ?>
-<textarea cols="50" rows="10" style="background-color:#1b1b1b; color:#f2f2f2; width:100%; margin:auto; border: 1px solid #3c3c3c;" id="command<?echo $appid;?>"></textarea>
+<textarea cols="50" rows="10" style="background-color: #1e1f29; color: #50fb6f; width:100%; margin:auto; border: none; padding: 10px;" id="command<?echo $appid;?>"></textarea>
 <?
 if($_SESSION['loginuser'] == $_SESSION['superuser']){
 ?>
 <div id="launchapp" style="display:block; margin:auto;" onClick="launch<?echo $appid;?>(this);" class="ui-button ui-widget ui-corner-all">Выполнить</div>
 <?}?>
-<div style="background-color:#1b1b1b; color:#fff; word-wrap:break-word; width:400px; padding:10px; margin:auto; text-align:left;">
+<div style="background-color:#1e1f29; color:#fff; word-wrap:break-word; width:400px; padding:10px; margin:auto; text-align:left;">
 <?
 echo 'Команда: <i style="color:grey;">'.$text.'</i><br>Ответ: ';
 if($_SESSION['loginuser'] == $_SESSION['superuser']){

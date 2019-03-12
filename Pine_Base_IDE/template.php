@@ -4,6 +4,8 @@
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
+$isMobile = $_GET['mobile'];
+$Folder = $_GET['destination'];
 
 /*--------Require Mercury library--------*/
 require $_SERVER['DOCUMENT_ROOT'].'/system/core/library/Mercury/AppContainer.php';
@@ -32,14 +34,6 @@ $AppContainer->showError = false; // error display @boolean *not necessary
 
 /* start app container */
 $AppContainer->StartContainer();
-
-/*
-$isMobile - click or touch event,
-$folder - application directory
-*/
-
-$isMobile = $_GET['mobile'];
-$folder = $_GET['destination'];
 
 /* print Hello World! */
 

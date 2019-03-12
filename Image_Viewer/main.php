@@ -46,7 +46,7 @@ $_dest = $result[0];
 $dest = $hash->filehash('../../../'.$_dest, 'false');
 
 //Ассоциируем файлы
-$newpermission->fileassociate(array('png','jpg','jpeg','bmp','gif'), $Folder.'main.php', 'photoviewload', $AppName);
+$newpermission->fileassociate(array('png', 'jpg', 'jpeg', 'bmp', 'gif', 'svg'), $Folder.'main.php', 'photoviewload', $AppName);
 
 if($dest  ==  ''){
   $dest = $_dest;
