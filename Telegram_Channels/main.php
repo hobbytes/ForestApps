@@ -1,5 +1,5 @@
 <?
-/* Web App */
+/* Telegram Channels */
 
 $AppName = $_GET['appname'];
 $AppID = $_GET['appid'];
@@ -13,7 +13,7 @@ $AppContainer = new AppContainer;
 /* App Info */
 $AppContainer->AppNameInfo = 'Telegram Channels';
 $AppContainer->SecondNameInfo = 'Telegram Channels';
-$AppContainer->VersionInfo = '0.1';
+$AppContainer->VersionInfo = '0.2';
 $AppContainer->AuthorInfo = 'Forest Media';
 
 /* Container Info */
@@ -35,20 +35,23 @@ if(!is_dir($dir)){ // check folder
 	mkdir($dir);
 }
 
+
+$file_name = md5($bd->readglobal2("password", "forestusers", "login", $user, true).$user);
+
 if(isset($_GET['api']) && isset($_GET['name'])){
 	$key = $bd->readglobal2("password", "forestusers", "login", $user, true);
 	$api = $security->__encode($_GET['api'], $key);
 	$name = $security->__encode($_GET['name'], $key);
 	$foc_content = "[configuration]\n\napi='$api'\n\nname='$name'";
-	file_put_contents($dir.'config.foc', $foc_content);
+	file_put_contents($dir.$file_name.'.foc', $foc_content);
 }
 
 	$getAPI = NULL;
 	$getName = NULL;
 
-if(is_file($dir.'config.foc')){
+if(is_file($dir.$file_name.'.foc')){
 	$key = $bd->readglobal2("password", "forestusers", "login", $user, true);
-	$config = parse_ini_file($dir.'config.foc');
+	$config = parse_ini_file($dir.$file_name.'.foc');
 	$getAPI = $security->__decode($config['api'], $key);
 	$getName = $security->__decode($config['name'], $key);
 }
