@@ -17,8 +17,8 @@ if(isset($_GET)){
 
   unset($array['user']);
   unset($array['token']);
+  $labels = '';
 
-    $labels = '';
   if(!empty($array) && !empty($token) && !empty($user)){
     /* get timezone */
     $timezone = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/system/users/'.$user.'/settings/timezone.foc');
@@ -107,41 +107,54 @@ if(isset($_GET)){
         }
       }
 
-      $cfile = file_get_contents($dir.'config.foc');// get config file
+    $cfile = file_get_contents($dir.'config.foc'); // get config file
     if($step == $cstep){
       $content = "[".date('d.m.y, H:i:s')."]\n";
+
+      //print_r($array); //ПОСМОТРИ ЧТО ТУТ ВЫХОДИТ!
 
       foreach ($array as $value => $key){
         $content.="$value='$key'\n";
         if($value != 'timestamp'){
-          $labels = $labels.','.$value;
+          $labels .= $value.',';
         }
       }
 
-      $labels_part = explode(',', $labels);
+      $labels_part = explode(',', mb_substr($labels, 0, -1));
+
+      $newlabels = "";
 
       foreach($labels_part as $part){
-        if(!preg_match("%$part%", $confing['labels']) && !preg_match("%$part%", $labels)){
-          $labels =  $confing['labels'].','.$part;
-        }else{
-          $labels = $confing['labels'];
+        if(!preg_match("%$part%", $confing['labels'])){ //&& !preg_match("%$part%", $labels)
+          $newlabels .= $part.',';
         }
       }
 
-      $_content = file_get_contents($dir.'hub.foc');
-      file_put_contents($dir.'hub.foc',"$_content\n$content");
-      $labels = ltrim($labels,',');// get labels
+      $newlabels = mb_substr($newlabels, 0, -1);
 
-      if(!preg_match("/labels='$labels'/",$cfile)){//check labels
-        $cfile = preg_replace('~^labels=.*$~m',"labels='$labels'",$cfile);
+      if(!empty($newlabels)){
+        $labels = $confing['labels'].','.$newlabels;
+      }else{
+        $labels = $confing['labels'];
+      }
+
+
+
+      $_content = file_get_contents($dir.'hub.foc');
+      file_put_contents($dir.'hub.foc', "$_content\n$content");
+      $labels = ltrim($labels, ',');// get labels
+
+      if(!preg_match("/labels='$labels'/", $cfile)){ //check labels
+        $cfile = preg_replace('~^labels=.*$~m', "labels='$labels'", $cfile);
       }
 
       $cfile = str_replace("cstep='$cstep'","cstep='0'",$cfile);
-      file_put_contents($dir.'config.foc',$cfile);
+      file_put_contents($dir.'config.foc', $cfile);
+
   }else{
-    $_cstep = $cstep+1;
-    $cfile = str_replace("cstep='$cstep'","cstep='$_cstep'",$cfile);
-    file_put_contents($dir.'config.foc',$cfile);
+    $_cstep = $cstep + 1;
+    $cfile = str_replace("cstep='$cstep'", "cstep='$_cstep'", $cfile);
+    file_put_contents($dir.'config.foc', $cfile);
   }
 }else{
   die();

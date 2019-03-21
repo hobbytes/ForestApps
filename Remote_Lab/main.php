@@ -162,9 +162,9 @@ if(isset($selectUnit)){ //	check new unit
 	$config = parse_ini_file($configFile);
 	$input_array = explode(',', $config['labels']);
 	$labels = '';
-
 	$count = 0;
 	$a = array();
+
 	foreach ($hub as $value => $key){
 		array_push($a,$key);
 		$count++;
@@ -182,10 +182,10 @@ if(isset($selectUnit)){ //	check new unit
 	//delete condition
 	if(isset($_GET['deletecondition'])){
 		$delete_condtition = $_GET['deletecondition'];
-			$file = file_get_contents($conditionFile);
-			$update_condition = preg_replace("%(?ms)^\[$delete_condtition](?:(?!^\[[^]\r\n]+]).)*%", '', $file);
-			file_put_contents($conditionFile, $update_condition);
-		}
+		$file = file_get_contents($conditionFile);
+		$update_condition = preg_replace("%(?ms)^\[$delete_condtition](?:(?!^\[[^]\r\n]+]).)*%", '', $file);
+		file_put_contents($conditionFile, $update_condition);
+	}
 
 	$get_conditions = parse_ini_file($conditionFile, true);
 
@@ -208,7 +208,7 @@ if(isset($selectUnit)){ //	check new unit
 	$avgValues = array();
 	$count_ = 0;
 	foreach ($input_array as $keys) {
-	$c = array($keys => array_column($a,"$keys"));
+	$c = array($keys => array_column($a, "$keys"));
 	array_push($b,$c);
 	array_push($avgValues,array($keys => round(array_sum($b[$count_][$keys])/$count)));
 	array_push($minValues,array($keys => min($b[$count_][$keys])));
@@ -220,6 +220,7 @@ if(isset($selectUnit)){ //	check new unit
 /*get series*/
 $Count = 0; //set zero for counter
 $series = '';
+
 foreach($b as $test){
 		foreach ($test as $key => $value) {
 			$color = newColor($Count);// get color
