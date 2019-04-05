@@ -4,14 +4,15 @@
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
-    margin: 1em 0;
+    margin: 0 auto;
     padding: 0 24px;
-    width: 100%;
-    height: 96px;
+    width: 97%;
+    height: 50%;
     align-items: center;
     border: 1px solid #DDE2E6;
     border-radius: 4px;
     background: #fff;
+    min-height: 100px;
 }
 
 .audioplayer-playpause {
